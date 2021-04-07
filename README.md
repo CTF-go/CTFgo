@@ -1,5 +1,5 @@
 # CTFgo - CTF Platform written in Golang
-![CTFgo-logo](CTFgo-logo-16_9.png)
+![CTFgo-logo](ctfgo-logo.png)
 
 ![issues](https://img.shields.io/github/issues/Le0nsec/CTFgo)
 ![forks](https://img.shields.io/github/forks/Le0nsec/CTFgo)
