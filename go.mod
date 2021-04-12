@@ -1,4 +1,4 @@
-module gin
+module CTFgo
 
 go 1.15
 
