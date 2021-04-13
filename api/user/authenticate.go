@@ -1,12 +1,33 @@
 package userapi
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 )
 
+// 定义接收Login数据的结构体
+type Login_struct struct {
+	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
+	User   string `form:"username" json:"username" binding:"required"`
+	Passwd string `form:"password" json:"password" binding:"required"`
+}
+
 func Login(c *gin.Context) {
-	name := c.DefaultQuery("name", "jack")
-	c.String(200, fmt.Sprintf("hello %s\n", name))
+	var form Login_struct
+	// Bind()默认解析并绑定form格式
+	// 根据请求头中content-type自动推断
+	if err := c.Bind(&form); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	// 判断用户名密码是否正确
+	//等一下实现sqlite，先起个架构
+	if form.User != "root" || form.Passwd != "admin" {
+		c.JSON(400, gin.H{"status": "304"})
+		return
+	}
+	c.JSON(200, gin.H{"status": "200"})
+}
+
+func Register(c *gin.Context) {
+	//cy,cyyds
 }
