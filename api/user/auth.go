@@ -1,4 +1,4 @@
-package userapi
+package apiUser
 
 import (
 	"github.com/gin-gonic/gin"
