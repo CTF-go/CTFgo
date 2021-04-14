@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 定义接收Login数据的结构体
+// Login_struct定义接收Login数据的结构体。
 type Login_struct struct {
 	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
 	User   string `form:"username" json:"username" binding:"required"`
@@ -29,5 +29,5 @@ func Login(c *gin.Context) {
 }
 
 func Register(c *gin.Context) {
-	//cy,cyyds
+	//cy,yyds
 }

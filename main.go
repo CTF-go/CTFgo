@@ -2,11 +2,37 @@ package main
 
 import (
 	i "CTFgo/api/init"
+	"CTFgo/logs"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 )
+
+//exitfunc：执行CTFgo退出前释放资源等一些操作。
+func exitfunc() {
+	logs.Save_log(i.Log_path)
+	fmt.Println("CTFgo has stopped")
+	os.Exit(0)
+}
 
 func main() {
 	r := i.SetupRouter()
+	//创建监听退出chan
+	c := make(chan os.Signal)
+	//监听指定信号 ctrl+c kill，实现优雅退出
+	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	go func() {
+		for s := range c {
+			switch s {
+			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
+				fmt.Println("exit: ", s)
+				exitfunc()
+			default:
+				fmt.Println("other", s)
+			}
+		}
+	}()
 	if err := r.Run(); err != nil {
 		fmt.Printf("startup service failed, err:%v\n", err)
 	}
