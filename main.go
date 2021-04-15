@@ -11,7 +11,7 @@ import (
 
 //exitfunc：执行CTFgo退出前释放资源等一些操作。
 func exitfunc() {
-	logs.Save_log(i.Log_path)
+	logs.Save_log()
 	fmt.Println("CTFgo has stopped")
 	os.Exit(0)
 }
