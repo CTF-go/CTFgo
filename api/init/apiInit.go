@@ -30,7 +30,7 @@ func SetupRouter() *gin.Engine {
 		Formatter: func(params gin.LogFormatterParams) string {
 			return fmt.Sprintf("[GIN] %s - [%s] \"%s %s %s %3d %s \"%s\" %s\"\n",
 				params.ClientIP,
-				params.TimeStamp.Format("2006/01/02 - 15:04:05"),
+				params.TimeStamp.Format("2006/01/02 15:04:05"),
 				params.Method,
 				params.Path,
 				params.Request.Proto,

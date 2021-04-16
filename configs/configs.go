@@ -17,7 +17,7 @@ func init() {
 	Save_log_path = Log_dir + "/" + log_times() + ".log"
 }
 
-//log_times设置日志文件名。
+//log_times设置日志文件名，格式如2021-4-15-14_55。
 func log_times() string {
 	// 东八区，先默认这个，后面再改成动态配置的
 	time_zone := time.FixedZone("CST", 8*3600)
@@ -36,6 +36,15 @@ func log_times() string {
 	//second := n.Second()
 	// 获取时间，格式如2021-4-15-14_55
 	t := fmt.Sprintf("%d-%d-%d-%d_%d", year, month, day, hour, minute)
-	//t := n.Format("2006-01-02 15:04:05")
+	return t
+}
+
+//Times()用于获取当前时间，格式如2006/01/02 15:04:05。
+func Times() string {
+	// 东八区，先默认这个，后面再改成动态配置的
+	time_zone := time.FixedZone("CST", 8*3600)
+	n := time.Now().In(time_zone)
+	// 获取时间，格式如2006/01/02 15:04:05
+	t := n.Format("2006/01/02 15:04:05")
 	return t
 }

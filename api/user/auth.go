@@ -1,6 +1,8 @@
 package apiUser
 
 import (
+	"CTFgo/logs"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,12 +18,14 @@ func Login(c *gin.Context) {
 	// Bind()默认解析并绑定form格式
 	// 根据请求头中content-type自动推断
 	if err := c.Bind(&form); err != nil {
+		logs.WARNING("warning", err)
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	// 判断用户名密码是否正确
 	//等一下实现sqlite，先起个架构
 	if form.User != "root" || form.Passwd != "admin" {
+		logs.INFO("login success!", nil)
 		c.JSON(400, gin.H{"status": "304"})
 		return
 	}
@@ -29,5 +33,12 @@ func Login(c *gin.Context) {
 }
 
 func Register(c *gin.Context) {
-	//cy,yyds
+	var form Login_struct
+	// Bind()默认解析并绑定form格式
+	// 根据请求头中content-type自动推断
+	if err := c.Bind(&form); err != nil {
+		logs.ERROR("warning", err)
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 }
