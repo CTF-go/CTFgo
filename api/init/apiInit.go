@@ -1,5 +1,5 @@
 /*
-Package apiInit包实现初始化API接口功能。
+Package apiInit实现初始化API接口功能。
 */
 package apiInit
 

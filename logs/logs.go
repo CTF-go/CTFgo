@@ -1,5 +1,5 @@
 /*
-Package logs包实现日志相关功能函数。
+Package logs实现日志相关功能函数。
 */
 package logs
 

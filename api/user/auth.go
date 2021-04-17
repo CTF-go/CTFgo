@@ -1,5 +1,5 @@
 /*
-Package apiUser包实现用户和其他普通API接口功能。
+Package apiUser实现用户和其他普通API接口功能。
 */
 package apiUser
 
