@@ -31,9 +31,9 @@ func SetupRouter() *gin.Engine {
 		SkipPaths: []string{"/test"},
 		// log格式
 		Formatter: func(params gin.LogFormatterParams) string {
-			return fmt.Sprintf("[GIN] %s - [%s] \"%s %s %s %3d %s \"%s\" %s\"\n",
-				params.ClientIP,
+			return fmt.Sprintf("[GIN] [%s] %s - \"%s %s %s %3d %s \"%s\" %s\"\n",
 				params.TimeStamp.Format("2006/01/02 15:04:05"),
+				params.ClientIP,
 				params.Method,
 				params.Path,
 				params.Request.Proto,
