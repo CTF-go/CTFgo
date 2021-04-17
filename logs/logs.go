@@ -1,6 +1,7 @@
+/*
+Package logs包实现日志相关功能函数。
+*/
 package logs
-
-//日志功能函数
 
 import (
 	c "CTFgo/configs"
@@ -22,6 +23,7 @@ func Save_log() {
 	}
 }
 
+//info_output输出info信息到控制台和日志文件。
 func info_output(msg string, err error) {
 	_, _ = fmt.Fprintf(gin.DefaultWriter, "[INFO] [%s] %s \n",
 		c.Times(),
@@ -30,6 +32,7 @@ func info_output(msg string, err error) {
 	return
 }
 
+//warning_output输出warning和错误信息到控制台和日志文件。
 func warning_output(msg string, err error) {
 	_, _ = fmt.Fprintf(gin.DefaultWriter, "[WARNING] [%s] %s - %s\n",
 		c.Times(),
@@ -39,6 +42,7 @@ func warning_output(msg string, err error) {
 	return
 }
 
+//error_output输出error和错误信息到控制台和日志文件，然后停止CTFgo程序。
 func error_output(msg string, err error) {
 	_, _ = fmt.Fprintf(gin.DefaultWriter, "[ERROR] [%s] %s - %s\n",
 		c.Times(),
@@ -66,16 +70,19 @@ func attack_output(params gin.LogFormatterParams, msg string, err error) {
 }
 */
 
+//INFO函数传参(msg string, err error)，err处填nil，不可省略，输出提示信息。
 func INFO(msg string, err error) {
 	info_output(msg, err)
 	return
 }
 
+//WARNING函数传参(msg string, err error)，输出报错信息但不退出。
 func WARNING(msg string, err error) {
 	warning_output(msg, err)
 	return
 }
 
+//ERROR函数传参(msg string, err error)，输出报错信息并退出程序。
 func ERROR(msg string, err error) {
 	error_output(msg, err)
 	return

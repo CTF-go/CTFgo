@@ -1,6 +1,7 @@
+/*
+Package configs用于存放常量和常用变量，尽量不引入CTFgo的包，可以引入系统包。
+*/
 package configs
-
-//存放常量等，尽量不引入CTFgo的包，可以引入系统包
 
 import (
 	"fmt"
@@ -10,6 +11,7 @@ import (
 
 var Work_dir, Log_dir, Current_log_path, Save_log_path string
 
+//init初始化常量。
 func init() {
 	Work_dir, _ = os.Getwd()
 	Log_dir = Work_dir + "/logs"

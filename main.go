@@ -9,13 +9,14 @@ import (
 	"syscall"
 )
 
-//exitfunc：执行CTFgo退出前释放资源等一些操作。
+//exitfunc用于执行CTFgo退出前释放资源等一些操作。
 func exitfunc() {
 	logs.Save_log()
 	fmt.Println("CTFgo has stopped")
 	os.Exit(0)
 }
 
+//main执行启动CTFgo及关闭CTFgo相关操作。
 func main() {
 	r := i.SetupRouter()
 	//创建监听退出chan
