@@ -1,9 +1,10 @@
 /*
-Package configs用于存放常量和常用变量，尽量不引入CTFgo的包，可以引入系统包。
+Package configs用于存放常量和常用变量，不引入CTFgo的包，可以引入系统包。
 */
 package configs
 
 import (
+	"crypto/md5"
 	"fmt"
 	"os"
 	"time"
@@ -49,4 +50,13 @@ func Times() string {
 	// 获取时间，格式如2006/01/02 15:04:05
 	t := n.Format("2006/01/02 15:04:05")
 	return t
+}
+
+//MD5进行md5加密。
+func MD5(str string) string {
+	data := []byte(str)
+	has := md5.Sum(data)
+	//将[]byte转成16进制
+	md5_str := fmt.Sprintf("%x", has)
+	return md5_str
 }

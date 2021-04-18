@@ -24,7 +24,7 @@ func Save_log() {
 }
 
 //info_output输出info信息到控制台和日志文件。
-func info_output(msg string, err error) {
+func info_output(msg string) {
 	_, _ = fmt.Fprintf(gin.DefaultWriter, "[INFO] [%s] %s \n",
 		c.Times(),
 		msg,
@@ -70,9 +70,9 @@ func attack_output(params gin.LogFormatterParams, msg string, err error) {
 }
 */
 
-//INFO函数传参(msg string, err error)，err处填nil，不可省略，输出提示信息。
-func INFO(msg string, err error) {
-	info_output(msg, err)
+//INFO函数传参(msg string)，无err，仅输出提示信息。
+func INFO(msg string) {
+	info_output(msg)
 	return
 }
 
