@@ -60,8 +60,8 @@ func SetupRouter() *gin.Engine {
 //暂时跨域。
 func cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var params gin.LogFormatterParams
-		method := params.Method
+		method := c.Request.Method
+		fmt.Println(method)
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
 		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
