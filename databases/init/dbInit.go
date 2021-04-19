@@ -1,3 +1,6 @@
+/*
+Package dbInit实现初始化数据库接口功能。
+*/
 package dbInit
 
 import (
