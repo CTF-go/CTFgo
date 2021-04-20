@@ -12,7 +12,7 @@ import (
 //exitfunc用于执行CTFgo退出前释放资源等一些操作。
 func exitfunc() {
 	logs.Save_log()
-	fmt.Println("CTFgo has stopped")
+	fmt.Println("[EXIT] CTFgo has stopped")
 	os.Exit(0)
 }
 
@@ -27,10 +27,10 @@ func main() {
 		for s := range c {
 			switch s {
 			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
-				fmt.Println("exit: ", s)
+				fmt.Println("[EXIT] ", s)
 				exitfunc()
 			default:
-				fmt.Println("other", s)
+				fmt.Println("[EXIT] ", s)
 			}
 		}
 	}()

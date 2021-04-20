@@ -10,6 +10,7 @@ import (
 	"database/sql"
 	"fmt"
 	"regexp"
+	"strings"
 	"time"
 	"unicode/utf8"
 
@@ -49,7 +50,12 @@ type register_struct struct {
 	Email  string `form:"email" json:"email" binding:"required"`
 }
 
-//先写通过用户名登录简单的
+//Install实现初始化数据库，生成随机密钥等功能。
+func Install(c *gin.Context) {
+	//...
+}
+
+//Login实现用户名或邮箱登录。
 func Login(c *gin.Context) {
 	var json login_struct
 	var user user
@@ -60,15 +66,32 @@ func Login(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "msg": err.Error()})
 		return
 	}
+	//判断传入的是用户名还是邮箱，字符串中匹配到@字符则为邮箱，返回索引，匹配不到返回-1
+	if strings.Index(json.User, "@") != -1 {
+		//判断为邮箱，验证邮箱格式
+		if !email_verify(json.User) {
+			c.JSON(400, gin.H{"code": 400, "msg": "Email format error!"})
+			return
+		}
+		//查询数据
+		sql_str := "SELECT password FROM user WHERE email = ?;"
+		row := db.QueryRow(sql_str, json.User)
+		row.Scan(&user.password)
+	} else {
+		//判断为用户名，验证用户名格式
+		if !name_verify(json.User) {
+			c.JSON(400, gin.H{"code": 400, "msg": "Username format error!"})
+			return
+		}
+		//查询数据
+		sql_str := "SELECT password FROM user WHERE username = ?;"
+		row := db.QueryRow(sql_str, json.User)
+		row.Scan(&user.password)
+	}
+
 	//password进行md5加密
 	json.Passwd = cfg.MD5(json.Passwd)
-
-	//查询数据
-	sql_str := "SELECT password FROM user WHERE username = ?;"
-	row := db.QueryRow(sql_str, json.User)
-	row.Scan(&user.password)
-
-	// 判断用户名密码是否正确
+	//判断密码是否正确
 	if json.Passwd != user.password {
 		logs.INFO("[" + json.User + "]" + " login error!")
 		c.JSON(200, gin.H{"code": 400, "msg": "Login error!"})
@@ -78,6 +101,7 @@ func Login(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "Login success!"})
 }
 
+//Register实现注册功能。
 func Register(c *gin.Context) {
 	var json register_struct
 	var user user

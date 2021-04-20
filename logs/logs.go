@@ -19,7 +19,7 @@ func Save_log() {
 	if err != nil {
 		fmt.Printf("the rename operation failed %q\n", err)
 	} else {
-		fmt.Println("save logs success!")
+		fmt.Println("[EXIT] Save logs success!")
 	}
 }
 
