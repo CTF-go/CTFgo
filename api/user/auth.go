@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"regexp"
 	"time"
+	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
 )
@@ -70,11 +71,11 @@ func Login(c *gin.Context) {
 	// 判断用户名密码是否正确
 	if json.Passwd != user.password {
 		logs.INFO("[" + json.User + "]" + " login error!")
-		c.JSON(400, gin.H{"code": "400", "msg": "login error!"})
+		c.JSON(200, gin.H{"code": "400", "msg": "Login error!"})
 		return
 	}
 	logs.INFO("[" + json.User + "]" + " login success!")
-	c.JSON(200, gin.H{"code": "200", "msg": "login success!"})
+	c.JSON(200, gin.H{"code": "200", "msg": "Login success!"})
 }
 
 func Register(c *gin.Context) {
@@ -86,9 +87,13 @@ func Register(c *gin.Context) {
 		c.JSON(400, gin.H{"code": "400", "msg": err.Error()})
 		return
 	}
-	//限制传入用户名为中文、数字、大小写字母下划线和横杠
+	//限制传入用户名为中文、数字、大小写字母下划线和横杠，1到10位
 	if !name_verify(json.User) {
 		c.JSON(400, gin.H{"code": "400", "msg": "Username format error!"})
+		return
+	}
+	if !passwd_verify(json.Passwd) {
+		c.JSON(400, gin.H{"code": "400", "msg": "Password format error!"})
 		return
 	}
 	//限制传入邮箱符合格式
@@ -98,22 +103,31 @@ func Register(c *gin.Context) {
 	}
 	//判断用户名是否已被使用
 	if user_exists(user, json.User) {
-		c.JSON(400, gin.H{"code": "1000", "msg": "Username has already been used!"})
+		c.JSON(200, gin.H{"code": "1000", "msg": "Username has already been used!"})
 		return
 	}
 	//判断邮箱是否已被使用
 	if email_exists(user, json.Email) {
-		c.JSON(400, gin.H{"code": "1001", "msg": "Email has already been used!"})
+		c.JSON(200, gin.H{"code": "1001", "msg": "Email has already been used!"})
 		return
 	}
-	/*
-		//向数据库插入用户
-		sql_str := "INSERT INTO user (token,username,password,email,created) VALUES (?,?,?,?,?);"
-		res, err := db.Exec(sql_str)
-		id, err := res.LastInsertId()
-	*/
-	//还没写完，先别用
-	return
+	//向数据库插入用户
+	sql_str := "INSERT INTO user (token,username,password,email,created) VALUES (?,?,?,?,?);"
+	res, err := db.Exec(sql_str, cfg.Token(), json.User, cfg.MD5(json.Passwd), json.Email, cfg.Timestamp())
+	if err != nil {
+		logs.WARNING("register insert error: ", err)
+		c.JSON(400, gin.H{"code": "400", "msg": "Register error!"})
+		return
+	}
+	//id, _ := res.LastInsertId()
+	affected, _ := res.RowsAffected()
+	if affected == 0 {
+		logs.WARNING("register insert error: ", err)
+		c.JSON(400, gin.H{"code": "400", "msg": "Register error!"})
+		return
+	}
+	logs.INFO("[" + json.User + "]" + " register success!")
+	c.JSON(200, gin.H{"code": "200", "msg": "Register success!"})
 }
 
 //Ping是一些功能测试接口。
@@ -133,11 +147,22 @@ func email_verify(email string) bool {
 	return reg.MatchString(email)
 }
 
-//name_verify验证是否符合中文数字字母下划线横杠，返回true或false。
+//name_verify验证用户名是否符合中文数字字母下划线横杠，长度1到10位，返回true或false。
 func name_verify(username string) bool {
-	pattern := `-\w\p{Han}]+`
+	if !(utf8.RuneCountInString(username) > 0) || !(utf8.RuneCountInString(username) < 11) {
+		return false
+	}
+	pattern := `[-\w\p{Han}]+`
 	reg := regexp.MustCompile(pattern)
 	return reg.MatchString(username)
+}
+
+//passwd_verify验证密码是否符合长度6到20位，返回true或false。
+func passwd_verify(password string) bool {
+	if !(utf8.RuneCountInString(password) > 5) || !(utf8.RuneCountInString(password) < 21) {
+		return false
+	}
+	return true
 }
 
 //user_exists判断用户名是否已经被占用，被占用返回true，未被占用则返回false。

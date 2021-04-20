@@ -5,7 +5,9 @@ package configs
 
 import (
 	"crypto/md5"
+	"crypto/rand"
 	"fmt"
+	"io"
 	"os"
 	"time"
 )
@@ -42,7 +44,7 @@ func log_times() string {
 	return t
 }
 
-//Times()用于获取当前时间，格式如2006/01/02 15:04:05。
+//Times用于获取当前时间，格式如2006/01/02 15:04:05。
 func Times() string {
 	// 东八区，先默认这个，后面再改成动态配置的
 	time_zone := time.FixedZone("CST", 8*3600)
@@ -52,11 +54,38 @@ func Times() string {
 	return t
 }
 
+//Timestamp用于获取当前10位数时间戳。
+func Timestamp() int32 {
+	// 东八区，先默认这个，后面再改成动态配置的
+	time_zone := time.FixedZone("CST", 8*3600)
+	t := time.Now().In(time_zone).Unix()
+	return int32(t)
+}
+
 //MD5进行md5加密。
 func MD5(str string) string {
 	data := []byte(str)
 	has := md5.Sum(data)
 	//将[]byte转成16进制
+	md5_str := fmt.Sprintf("%x", has)
+	return md5_str
+}
+
+//Random生成随机数。
+func Random() []byte {
+	b := make([]byte, 32)
+	//ReadFull从rand.Reader精确地读取len(b)字节数据填充进b
+	//rand.Reader是一个全局、共享的密码用强随机数生成器
+	if _, err := io.ReadFull(rand.Reader, b); err != nil {
+		fmt.Printf("random number generation error: %v", err)
+	}
+	return b
+}
+
+//Token生成随机token。
+func Token() string {
+	b := Random()
+	has := md5.Sum(b)
 	md5_str := fmt.Sprintf("%x", has)
 	return md5_str
 }
