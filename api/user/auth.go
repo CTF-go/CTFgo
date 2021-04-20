@@ -57,7 +57,7 @@ func Login(c *gin.Context) {
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&json); err != nil {
 		logs.WARNING("bindjson error: ", err)
-		c.JSON(400, gin.H{"code": "400", "msg": err.Error()})
+		c.JSON(400, gin.H{"code": 400, "msg": err.Error()})
 		return
 	}
 	//password进行md5加密
@@ -71,11 +71,11 @@ func Login(c *gin.Context) {
 	// 判断用户名密码是否正确
 	if json.Passwd != user.password {
 		logs.INFO("[" + json.User + "]" + " login error!")
-		c.JSON(200, gin.H{"code": "400", "msg": "Login error!"})
+		c.JSON(200, gin.H{"code": 400, "msg": "Login error!"})
 		return
 	}
 	logs.INFO("[" + json.User + "]" + " login success!")
-	c.JSON(200, gin.H{"code": "200", "msg": "Login success!"})
+	c.JSON(200, gin.H{"code": 200, "msg": "Login success!"})
 }
 
 func Register(c *gin.Context) {
@@ -84,31 +84,31 @@ func Register(c *gin.Context) {
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&json); err != nil {
 		logs.WARNING("bindjson error: ", err)
-		c.JSON(400, gin.H{"code": "400", "msg": err.Error()})
+		c.JSON(400, gin.H{"code": 400, "msg": err.Error()})
 		return
 	}
 	//限制传入用户名为中文、数字、大小写字母下划线和横杠，1到10位
 	if !name_verify(json.User) {
-		c.JSON(400, gin.H{"code": "400", "msg": "Username format error!"})
+		c.JSON(400, gin.H{"code": 400, "msg": "Username format error!"})
 		return
 	}
 	if !passwd_verify(json.Passwd) {
-		c.JSON(400, gin.H{"code": "400", "msg": "Password format error!"})
+		c.JSON(400, gin.H{"code": 400, "msg": "Password format error!"})
 		return
 	}
 	//限制传入邮箱符合格式
 	if !email_verify(json.Email) {
-		c.JSON(400, gin.H{"code": "400", "msg": "Email format error!"})
+		c.JSON(400, gin.H{"code": 400, "msg": "Email format error!"})
 		return
 	}
 	//判断用户名是否已被使用
 	if user_exists(user, json.User) {
-		c.JSON(200, gin.H{"code": "1000", "msg": "Username has already been used!"})
+		c.JSON(200, gin.H{"code": 1000, "msg": "Username has already been used!"})
 		return
 	}
 	//判断邮箱是否已被使用
 	if email_exists(user, json.Email) {
-		c.JSON(200, gin.H{"code": "1001", "msg": "Email has already been used!"})
+		c.JSON(200, gin.H{"code": 1001, "msg": "Email has already been used!"})
 		return
 	}
 	//向数据库插入用户
@@ -116,18 +116,18 @@ func Register(c *gin.Context) {
 	res, err := db.Exec(sql_str, cfg.Token(), json.User, cfg.MD5(json.Passwd), json.Email, cfg.Timestamp())
 	if err != nil {
 		logs.WARNING("register insert error: ", err)
-		c.JSON(400, gin.H{"code": "400", "msg": "Register error!"})
+		c.JSON(400, gin.H{"code": 400, "msg": "Register error!"})
 		return
 	}
 	//id, _ := res.LastInsertId()
 	affected, _ := res.RowsAffected()
 	if affected == 0 {
 		logs.WARNING("register insert error: ", err)
-		c.JSON(400, gin.H{"code": "400", "msg": "Register error!"})
+		c.JSON(400, gin.H{"code": 400, "msg": "Register error!"})
 		return
 	}
 	logs.INFO("[" + json.User + "]" + " register success!")
-	c.JSON(200, gin.H{"code": "200", "msg": "Register success!"})
+	c.JSON(200, gin.H{"code": 200, "msg": "Register success!"})
 }
 
 //Ping是一些功能测试接口。
