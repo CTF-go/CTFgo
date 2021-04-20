@@ -71,7 +71,7 @@ func Login(c *gin.Context) {
 	// 判断用户名密码是否正确
 	if json.Passwd != user.password {
 		logs.INFO("[" + json.User + "]" + " login error!")
-		c.JSON(200, gin.H{"code": "400", "msg": "Login error!"})
+		c.JSON(200, gin.H{"code": "400", "msg": "login error!"})
 		return
 	}
 	logs.INFO("[" + json.User + "]" + " login success!")
