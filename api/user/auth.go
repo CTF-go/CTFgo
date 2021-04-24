@@ -50,11 +50,6 @@ type register_struct struct {
 	Email  string `form:"email" json:"email" binding:"required"`
 }
 
-//Install实现初始化数据库，生成随机密钥等功能。
-func Install(c *gin.Context) {
-	//...
-}
-
 //Login实现用户名或邮箱登录。
 func Login(c *gin.Context) {
 	var json login_struct
@@ -116,6 +111,7 @@ func Register(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "msg": "Username format error!"})
 		return
 	}
+	//限制密码长度6到20位
 	if !passwd_verify(json.Passwd) {
 		c.JSON(400, gin.H{"code": 400, "msg": "Password format error!"})
 		return
@@ -166,7 +162,7 @@ func Ping(c *gin.Context) {
 
 //email_verify验证是否符合邮箱格式，返回true或false。
 func email_verify(email string) bool {
-	pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`
+	pattern := `^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$`
 	reg := regexp.MustCompile(pattern)
 	return reg.MatchString(email)
 }
@@ -176,7 +172,7 @@ func name_verify(username string) bool {
 	if !(utf8.RuneCountInString(username) > 0) || !(utf8.RuneCountInString(username) < 11) {
 		return false
 	}
-	pattern := `[-\w\p{Han}]+`
+	pattern := `^[-\w\p{Han}]+$`
 	reg := regexp.MustCompile(pattern)
 	return reg.MatchString(username)
 }

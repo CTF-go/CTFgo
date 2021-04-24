@@ -22,7 +22,10 @@ func SetupRouter() *gin.Engine {
 		fmt.Printf("create logs dir error, err:%v\n", err)
 	}
 	// 创建run.log
-	log_path, _ := os.Create(c.Current_log_path)
+	log_path, err := os.Create(c.Current_log_path)
+	if err != nil {
+		fmt.Printf("create logs file error, err:%v\n", err)
+	}
 	// 将log输出到控制台和文件
 	gin.DefaultWriter = io.MultiWriter(log_path, os.Stdout)
 	c := gin.LoggerConfig{
@@ -50,7 +53,11 @@ func SetupRouter() *gin.Engine {
 	r.Use(cors())
 	v1 := r.Group("/v1")
 	{
+		//CTFgo初始化
+		v1.POST("/install", u.Install)
+		//用户登录
 		v1.POST("/login", u.Login)
+		//用户注册
 		v1.POST("/register", u.Register)
 		v1.GET("/ping", u.Ping)
 	}

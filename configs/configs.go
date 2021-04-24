@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var Work_dir, Log_dir, Current_log_path, Save_log_path string
+var Work_dir, Log_dir, Current_log_path, Save_log_path, DB_dir, DB_file string
 
 //init初始化常量。
 func init() {
@@ -20,6 +20,9 @@ func init() {
 	Log_dir = Work_dir + "/logs"
 	Current_log_path = Log_dir + "/run.log"
 	Save_log_path = Log_dir + "/" + log_times() + ".log"
+	//Key_file = Work_dir + "/security.key"
+	DB_dir = Work_dir + "/databases"
+	DB_file = DB_dir + "/ctfgo.db"
 }
 
 //log_times设置日志文件名，格式如2021-4-15-14_55。

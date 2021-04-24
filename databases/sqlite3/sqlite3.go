@@ -18,7 +18,7 @@ func Create_db() {
 
 //Sqlite_conn实现连接sqlite3数据库，返回(*sql.DB)。
 func Sqlite_conn() *sql.DB {
-	db, err := sql.Open("sqlite3", c.Work_dir+"/databases/ctfgo.db")
+	db, err := sql.Open("sqlite3", c.DB_file)
 	if err != nil {
 		logs.ERROR("sqlite connect error: ", err)
 	}
