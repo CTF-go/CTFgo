@@ -13,8 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// SetupRouter用于注册api，对应功能实现在CTFgo/api下。
-func SetupRouter() *gin.Engine {
+// SetupAPI用于注册api，对应功能实现在CTFgo/api下。
+func SetupAPI() *gin.Engine {
 	// 禁用控制台颜色，将日志写入文件时不需要控制台颜色。
 	gin.DisableConsoleColor()
 	err := os.MkdirAll(cfg.Log_dir, 0777)
@@ -31,7 +31,7 @@ func SetupRouter() *gin.Engine {
 	c := gin.LoggerConfig{
 		Output: gin.DefaultWriter,
 		// 需要跳过记录log的API
-		SkipPaths: []string{"/js", "/css", "/img", "/fonts"},
+		SkipPaths: []string{"/test"},
 		// log格式
 		Formatter: func(params gin.LogFormatterParams) string {
 			return fmt.Sprintf("[GIN] [%s] %s - \"%s %s %s %3d %s \"%s\" %s\"\n",
@@ -61,20 +61,6 @@ func SetupRouter() *gin.Engine {
 		v1.POST("/register", u.Register)
 		v1.GET("/ping", u.Ping)
 	}
-	r.Static("/css", cfg.Static_path+"/css")
-	r.Static("/js", cfg.Static_path+"/js")
-	r.Static("/img", cfg.Static_path+"/img")
-	r.Static("/fonts", cfg.Static_path+"/fonts")
-
-	r.StaticFile("/home", cfg.Static_path+"/index.html")
-	r.StaticFile("/users", cfg.Static_path+"/index.html")
-	r.StaticFile("/scoreboard", cfg.Static_path+"/index.html")
-	r.StaticFile("/challenges", cfg.Static_path+"/index.html")
-
-	r.GET("/", func(c *gin.Context) {
-		c.Request.URL.Path = "/home"
-		r.HandleContext(c)
-	})
 	return r
 }
 
