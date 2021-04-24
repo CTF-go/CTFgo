@@ -69,9 +69,11 @@ func Login(c *gin.Context) {
 			return
 		}
 		//查询数据
-		sql_str := "SELECT password FROM user WHERE email = ?;"
+		sql_str := "SELECT username,password FROM user WHERE email = ?;"
 		row := db.QueryRow(sql_str, json.User)
-		row.Scan(&user.password)
+		row.Scan(&user.username, &user.password)
+		//邮箱替换为用户名
+		json.User = user.username
 	} else {
 		//判断为用户名，验证用户名格式
 		if !name_verify(json.User) {
