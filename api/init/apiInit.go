@@ -5,7 +5,7 @@ package apiInit
 
 import (
 	u "CTFgo/api/user"
-	c "CTFgo/configs"
+	cfg "CTFgo/configs"
 	"fmt"
 	"io"
 	"os"
@@ -17,12 +17,12 @@ import (
 func SetupRouter() *gin.Engine {
 	// 禁用控制台颜色，将日志写入文件时不需要控制台颜色。
 	gin.DisableConsoleColor()
-	err := os.MkdirAll(c.Log_dir, 0777)
+	err := os.MkdirAll(cfg.Log_dir, 0777)
 	if err != nil {
 		fmt.Printf("create logs dir error, err:%v\n", err)
 	}
 	// 创建run.log
-	log_path, err := os.Create(c.Current_log_path)
+	log_path, err := os.Create(cfg.Current_log_path)
 	if err != nil {
 		fmt.Printf("create logs file error, err:%v\n", err)
 	}
@@ -31,7 +31,7 @@ func SetupRouter() *gin.Engine {
 	c := gin.LoggerConfig{
 		Output: gin.DefaultWriter,
 		// 需要跳过记录log的API
-		SkipPaths: []string{"/test"},
+		SkipPaths: []string{"/js", "/css", "/img", "/fonts"},
 		// log格式
 		Formatter: func(params gin.LogFormatterParams) string {
 			return fmt.Sprintf("[GIN] [%s] %s - \"%s %s %s %3d %s \"%s\" %s\"\n",
@@ -61,6 +61,20 @@ func SetupRouter() *gin.Engine {
 		v1.POST("/register", u.Register)
 		v1.GET("/ping", u.Ping)
 	}
+	r.Static("/css", cfg.Static_path+"/css")
+	r.Static("/js", cfg.Static_path+"/js")
+	r.Static("/img", cfg.Static_path+"/img")
+	r.Static("/fonts", cfg.Static_path+"/fonts")
+
+	r.StaticFile("/home", cfg.Static_path+"/index.html")
+	r.StaticFile("/users", cfg.Static_path+"/index.html")
+	r.StaticFile("/scoreboard", cfg.Static_path+"/index.html")
+	r.StaticFile("/challenges", cfg.Static_path+"/index.html")
+
+	r.GET("/", func(c *gin.Context) {
+		c.Request.URL.Path = "/home"
+		r.HandleContext(c)
+	})
 	return r
 }
 
