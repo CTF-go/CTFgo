@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/gin-gonic/gin v1.7.1
 	github.com/golang/protobuf v1.4.2 // indirect
+	github.com/gorilla/sessions v1.2.1
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/mattn/go-sqlite3 v1.14.7
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

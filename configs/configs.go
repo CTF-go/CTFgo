@@ -12,11 +12,12 @@ import (
 	"time"
 )
 
-var Work_dir, Log_dir, Current_log_path, Save_log_path, DB_dir, DB_file, Static_path string
+var Work_dir, Log_dir, Current_log_path, Save_log_path, DB_dir, DB_file, Static_path, Session_dir string
 
 //init初始化常量。
 func init() {
 	Work_dir, _ = os.Getwd()
+	Session_dir = Work_dir + "/sessions"
 	Log_dir = Work_dir + "/logs"
 	Current_log_path = Log_dir + "/run.log"
 	Save_log_path = Log_dir + "/" + log_times() + ".log"

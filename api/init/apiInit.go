@@ -57,9 +57,12 @@ func SetupAPI() *gin.Engine {
 		v1.POST("/install", u.Install)
 		//用户登录
 		v1.POST("/login", u.Login)
+		//用户注销
+		v1.GET("/logout", u.Logout)
 		//用户注册
 		v1.POST("/register", u.Register)
-		v1.GET("/ping", u.Ping)
+		//获取当前用户信息，判断session是否登录态
+		v1.GET("/session", u.Session)
 	}
 	return r
 }

@@ -8,10 +8,8 @@ import (
 	i "CTFgo/databases/init"
 	"CTFgo/logs"
 	"database/sql"
-	"fmt"
 	"regexp"
 	"strings"
-	"time"
 	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
@@ -20,19 +18,19 @@ import (
 var db *sql.DB = i.DB
 
 //user定义用户结构体。
-type user struct {
-	id          int    //用户id，唯一，自增
-	token       string //用户token，唯一，API鉴权使用
-	username    string //用户名，唯一
-	password    string //用户密码，md5(程序启动时生成的随机密钥+原密码）
-	email       string //邮箱，唯一
-	affiliation string //组织、战队或机构等，非必需
-	country     string //国家，非必需
-	hidden      int    //1：隐藏，0：显示，默认为0
-	banned      int    //1：禁止，0：正常，默认为1，邮箱激活后为0
-	team_id     int    //队伍id，在团队模式下必须，个人模式非必需
-	created     string //用户注册时间，10位数时间戳
-	role        int    //1：管理员，0：普通用户，默认为0
+type Users struct {
+	ID          int    `json:"id"`          //用户id，唯一，自增
+	Token       string `json:"token"`       //用户token，唯一，API鉴权使用
+	Username    string `json:"username"`    //用户名，唯一
+	Password    string `json:"password"`    //用户密码md5值，md5(原密码）
+	Email       string `json:"email"`       //邮箱，唯一
+	Affiliation string `json:"affiliation"` //组织、战队或机构等，非必需
+	Country     string `json:"country"`     //国家，非必需
+	Hidden      int    `json:"hidden"`      //1：隐藏，0：显示，默认为0
+	Banned      int    `json:"banned"`      //1：禁止，0：正常，默认为1，邮箱激活后为0
+	Team_id     int    `json:"team_id"`     //队伍id，在团队模式下必须，个人模式非必需
+	Created     string `json:"created"`     //用户注册时间，10位数时间戳
+	Role        int    `json:"role"`        //1：管理员，0：普通用户，默认为0
 }
 
 // login_struct定义接收Login数据的结构体。
@@ -53,7 +51,7 @@ type register_struct struct {
 //Login实现用户名或邮箱登录。
 func Login(c *gin.Context) {
 	var json login_struct
-	var user user
+	var user Users
 
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -69,11 +67,9 @@ func Login(c *gin.Context) {
 			return
 		}
 		//查询数据
-		sql_str := "SELECT username,password FROM user WHERE email = ?;"
+		sql_str := "SELECT * FROM user WHERE email = ?;"
 		row := db.QueryRow(sql_str, json.User)
-		row.Scan(&user.username, &user.password)
-		//邮箱替换为用户名
-		json.User = user.username
+		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Hidden, &user.Banned, &user.Team_id, &user.Created, &user.Role)
 	} else {
 		//判断为用户名，验证用户名格式
 		if !name_verify(json.User) {
@@ -81,27 +77,52 @@ func Login(c *gin.Context) {
 			return
 		}
 		//查询数据
-		sql_str := "SELECT password FROM user WHERE username = ?;"
+		sql_str := "SELECT * FROM user WHERE username = ?;"
 		row := db.QueryRow(sql_str, json.User)
-		row.Scan(&user.password)
+		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Hidden, &user.Banned, &user.Team_id, &user.Created, &user.Role)
 	}
 
 	//password进行md5加密
 	json.Passwd = cfg.MD5(json.Passwd)
 	//判断密码是否正确
-	if json.Passwd != user.password {
+	if json.Passwd != user.Password {
 		logs.INFO("[" + json.User + "]" + " login error!")
 		c.JSON(200, gin.H{"code": 400, "msg": "Login error!"})
 		return
 	}
+	session, err := Store.Get(c.Request, "CTFGOSESSID")
+	if err != nil {
+		session.Save(c.Request, c.Writer)
+		c.JSON(400, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
+		return
+	}
+	session.Options.HttpOnly = true
+	session.Options.Secure = true
+	session.Options.MaxAge = 86400 //86400秒:有效期一天
+	session.Values["id"] = user.ID
+	session.Values["token"] = user.Token
+	session.Values["username"] = user.Username
+	session.Values["email"] = user.Email
+	session.Values["affiliation"] = user.Affiliation
+	session.Values["country"] = user.Country
+	session.Values["hidden"] = user.Hidden
+	session.Values["banned"] = user.Banned
+	session.Values["team_id"] = user.Team_id
+	session.Values["created"] = user.Created
+	session.Values["role"] = user.Role
+	err = session.Save(c.Request, c.Writer)
+	if err != nil {
+		logs.WARNING("can not save session:", err)
+	}
+
 	logs.INFO("[" + json.User + "]" + " login success!")
-	c.JSON(200, gin.H{"code": 200, "username": json.User, "msg": "Login success!"})
+	c.JSON(200, gin.H{"code": 200, "username": user.Username, "msg": "Login success!"})
 }
 
 //Register实现注册功能。
 func Register(c *gin.Context) {
 	var json register_struct
-	var user user
+	var user Users
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&json); err != nil {
 		logs.WARNING("bindjson error: ", err)
@@ -152,14 +173,50 @@ func Register(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "Register success!"})
 }
 
-//Ping是一些功能测试接口。
-func Ping(c *gin.Context) {
-	fmt.Println("Beginning 20s")
-	for i := 0; i <= 20; i++ {
-		fmt.Println(i)
-		time.Sleep(1 * 1e9)
+//Logout实现注销登录。
+func Logout(c *gin.Context) {
+	session, err := Store.Get(c.Request, "CTFGOSESSID")
+	if err != nil {
+		c.JSON(400, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
+		return
 	}
-	fmt.Println("End of 20s")
+	if session.Values["username"] == nil {
+		c.JSON(400, gin.H{"code": 400, "msg": "No session"})
+		return
+	}
+	logout_user := session.Values["username"].(string)
+	session.Options.MaxAge = -1
+	session.Save(c.Request, c.Writer)
+	logs.INFO("[" + logout_user + "]" + " logout success!")
+	c.JSON(200, gin.H{"code": 200, "msg": "Logout success!"})
+}
+
+//Session获取当前用户session信息，判断是否有效，即是否处于登录态。
+func Session(c *gin.Context) {
+	var user Users
+	session, err := Store.Get(c.Request, "CTFGOSESSID")
+	if err != nil {
+		session.Save(c.Request, c.Writer)
+		c.JSON(200, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
+		return
+	}
+	if session.Values["username"] == nil {
+		session.Save(c.Request, c.Writer)
+		c.JSON(200, gin.H{"code": 400, "msg": "No session"})
+		return
+	}
+	user.ID = session.Values["id"].(int)
+	user.Token = session.Values["token"].(string)
+	user.Username = session.Values["username"].(string)
+	user.Email = session.Values["email"].(string)
+	user.Affiliation = session.Values["affiliation"].(string)
+	user.Country = session.Values["country"].(string)
+	user.Hidden = session.Values["hidden"].(int)
+	user.Banned = session.Values["banned"].(int)
+	user.Team_id = session.Values["team_id"].(int)
+	user.Created = session.Values["created"].(string)
+	user.Role = session.Values["role"].(int)
+	c.JSON(200, gin.H{"code": 200, "msg": "here is the user info", "data": user})
 }
 
 //email_verify验证是否符合邮箱格式，返回true或false。
@@ -188,9 +245,9 @@ func passwd_verify(password string) bool {
 }
 
 //user_exists判断用户名是否已经被占用，被占用返回true，未被占用则返回false。
-func user_exists(user user, username string) bool {
+func user_exists(user Users, username string) bool {
 	sql_str := `SELECT username FROM user WHERE username = ?`
-	err := db.QueryRow(sql_str, username).Scan(&user.username)
+	err := db.QueryRow(sql_str, username).Scan(&user.Username)
 	if err != nil {
 		//数据库没有该用户名时，返回sql.ErrNoRows错误，即没有占用。
 		if err != sql.ErrNoRows {
@@ -204,9 +261,9 @@ func user_exists(user user, username string) bool {
 }
 
 //email_exists判断邮箱是否已经被占用，被占用返回true，未被占用则返回false。
-func email_exists(user user, email string) bool {
+func email_exists(user Users, email string) bool {
 	sql_str := `SELECT email FROM user WHERE email = ?`
-	err := db.QueryRow(sql_str, email).Scan(&user.email)
+	err := db.QueryRow(sql_str, email).Scan(&user.Email)
 	if err != nil {
 		//数据库没有该邮箱时，返回sql.ErrNoRows错误，即没有占用。
 		if err != sql.ErrNoRows {

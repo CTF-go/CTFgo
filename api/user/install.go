@@ -83,6 +83,11 @@ func Install(c *gin.Context) {
 			logs.ERROR("admin insert error", err)
 		}
 		logs.INFO("Administrator account [" + json.User + "]" + " register success!")
+		//新建sessions文件夹
+		err = os.MkdirAll(cfg.Session_dir, 0755)
+		if err != nil {
+			logs.ERROR("create sessions dir error:", err)
+		}
 		c.JSON(200, gin.H{"code": 200, "msg": "CTFgo installed successfully!"})
 		return
 	} else {
