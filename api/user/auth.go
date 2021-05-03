@@ -67,7 +67,7 @@ func Login(c *gin.Context) {
 			return
 		}
 		//查询数据
-		sql_str := "SELECT * FROM user WHERE email = ?;"
+		sql_str := "SELECT * FROM user WHERE email = ? LIMIT 1;"
 		row := db.QueryRow(sql_str, json.User)
 		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Hidden, &user.Banned, &user.Team_id, &user.Created, &user.Role)
 	} else {
@@ -77,7 +77,7 @@ func Login(c *gin.Context) {
 			return
 		}
 		//查询数据
-		sql_str := "SELECT * FROM user WHERE username = ?;"
+		sql_str := "SELECT * FROM user WHERE username = ? LIMIT 1;"
 		row := db.QueryRow(sql_str, json.User)
 		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Hidden, &user.Banned, &user.Team_id, &user.Created, &user.Role)
 	}
@@ -246,7 +246,7 @@ func passwd_verify(password string) bool {
 
 //user_exists判断用户名是否已经被占用，被占用返回true，未被占用则返回false。
 func user_exists(user Users, username string) bool {
-	sql_str := `SELECT username FROM user WHERE username = ?`
+	sql_str := "SELECT username FROM user WHERE username = ? LIMIT 1;"
 	err := db.QueryRow(sql_str, username).Scan(&user.Username)
 	if err != nil {
 		//数据库没有该用户名时，返回sql.ErrNoRows错误，即没有占用。
@@ -262,7 +262,7 @@ func user_exists(user Users, username string) bool {
 
 //email_exists判断邮箱是否已经被占用，被占用返回true，未被占用则返回false。
 func email_exists(user Users, email string) bool {
-	sql_str := `SELECT email FROM user WHERE email = ?`
+	sql_str := "SELECT email FROM user WHERE email = ? LIMIT 1;"
 	err := db.QueryRow(sql_str, email).Scan(&user.Email)
 	if err != nil {
 		//数据库没有该邮箱时，返回sql.ErrNoRows错误，即没有占用。
