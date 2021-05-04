@@ -33,19 +33,28 @@ type Users struct {
 	Role        int    `json:"role"`        //1：管理员，0：普通用户，默认为0
 }
 
-// login_struct定义接收Login数据的结构体。
+//login_struct定义接收Login数据的结构体。
 type login_struct struct {
 	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
 	User   string `form:"username" json:"username" binding:"required"`
 	Passwd string `form:"password" json:"password" binding:"required"`
 }
 
-// register_struct定义接收Login数据的结构体。
+//register_struct定义接收Login数据的结构体。
 type register_struct struct {
 	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
 	User   string `form:"username" json:"username" binding:"required"`
 	Passwd string `form:"password" json:"password" binding:"required"`
 	Email  string `form:"email" json:"email" binding:"required"`
+}
+
+//info_struct定义接收用户信息的结构体。
+type info_struct struct {
+	User        string `form:"username" json:"username"`
+	Passwd      string `form:"password" json:"password"`
+	Email       string `form:"email" json:"email"`
+	Affiliation string `form:"affiliation" json:"affiliation"`
+	Country     string `form:"country" json:"country"`
 }
 
 //Login实现用户名或邮箱登录。
@@ -217,6 +226,171 @@ func Session(c *gin.Context) {
 	user.Created = session.Values["created"].(string)
 	user.Role = session.Values["role"].(int)
 	c.JSON(200, gin.H{"code": 200, "msg": "here is the user info", "data": user})
+}
+
+func Updateinfo(c *gin.Context) {
+	var json info_struct
+	var user Users
+
+	//用ShouldBindJSON解析绑定传入的Json数据。
+	if err := c.ShouldBindJSON(&json); err != nil {
+		logs.WARNING("bindjson error: ", err)
+		c.JSON(400, gin.H{"code": 400, "msg": err.Error()})
+		return
+	}
+
+	session, err := Store.Get(c.Request, "CTFGOSESSID")
+	if err != nil {
+		session.Save(c.Request, c.Writer)
+		c.JSON(200, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
+		return
+	}
+	if session.Values["username"] == nil {
+		session.Save(c.Request, c.Writer)
+		c.JSON(200, gin.H{"code": 400, "msg": "No session"})
+		return
+	}
+
+	if json.User != "" {
+		//限制传入用户名为中文、数字、大小写字母下划线和横杠，1到10位
+		if !name_verify(json.User) {
+			c.JSON(400, gin.H{"code": 400, "msg": "Username format error!"})
+			return
+		}
+		//判断用户名是否已被使用
+		if user_exists(user, json.User) {
+			c.JSON(200, gin.H{"code": 1000, "msg": "Username has already been used!"})
+			return
+		}
+		//修改用户名
+		sql_str := "UPDATE user SET username = ? where id = ?;"
+		res, err := db.Exec(sql_str, json.User, session.Values["id"].(int))
+		if err != nil {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		affected, _ := res.RowsAffected()
+		if affected == 0 {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		logs.INFO("[" + session.Values["username"].(string) + "] change username to [" + json.User + "]")
+		session.Values["username"] = json.User
+		session.Save(c.Request, c.Writer)
+	}
+
+	if json.Passwd != "" {
+		//限制密码长度6到20位
+		if !passwd_verify(json.Passwd) {
+			c.JSON(400, gin.H{"code": 400, "msg": "Password format error!"})
+			return
+		}
+		//修改密码
+		json.Passwd = cfg.MD5(json.Passwd)
+		sql_str := "UPDATE user SET password = ? where id = ?;"
+		res, err := db.Exec(sql_str, json.Passwd, session.Values["id"].(int))
+		if err != nil {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		affected, _ := res.RowsAffected()
+		if affected == 0 {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		logs.INFO("[" + session.Values["username"].(string) + "] change password successfully")
+	}
+
+	if json.Email != "" {
+		//限制传入邮箱符合格式
+		if !email_verify(json.Email) {
+			c.JSON(400, gin.H{"code": 400, "msg": "Email format error!"})
+			return
+		}
+		//判断邮箱是否已被使用
+		if email_exists(user, json.Email) {
+			c.JSON(200, gin.H{"code": 1001, "msg": "Email has already been used!"})
+			return
+		}
+		//修改邮箱
+		sql_str := "UPDATE user SET email = ? where id = ?;"
+		res, err := db.Exec(sql_str, json.Email, session.Values["id"].(int))
+		if err != nil {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		affected, _ := res.RowsAffected()
+		if affected == 0 {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		logs.INFO("[" + session.Values["username"].(string) + "] change email to [" + json.Email + "]")
+		session.Values["email"] = json.Email
+		session.Save(c.Request, c.Writer)
+	}
+
+	if json.Affiliation != "" {
+		//限制传入名称为中文、数字、大小写字母下划线和横杠，1到10位
+		if !name_verify(json.Affiliation) {
+			c.JSON(400, gin.H{"code": 400, "msg": "Affiliation format error!"})
+			return
+		}
+		//修改Affiliation
+		sql_str := "UPDATE user SET affiliation = ? where id = ?;"
+		res, err := db.Exec(sql_str, json.Affiliation, session.Values["id"].(int))
+		if err != nil {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		affected, _ := res.RowsAffected()
+		if affected == 0 {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		logs.INFO("[" + session.Values["username"].(string) + "] change affiliation to [" + json.Affiliation + "]")
+		session.Values["affiliation"] = json.Affiliation
+		session.Save(c.Request, c.Writer)
+	}
+
+	if json.Country != "" {
+		//限制传入名称为中文、数字、大小写字母下划线和横杠，1到10位
+		//暂定，等商量country存储格式后修改过滤
+		if !name_verify(json.Country) {
+			c.JSON(400, gin.H{"code": 400, "msg": "Country format error!"})
+			return
+		}
+		//修改Country
+		sql_str := "UPDATE user SET country = ? where id = ?;"
+		res, err := db.Exec(sql_str, json.Country, session.Values["id"].(int))
+		if err != nil {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		affected, _ := res.RowsAffected()
+		if affected == 0 {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		logs.INFO("[" + session.Values["username"].(string) + "] change country to [" + json.Country + "]")
+		session.Values["country"] = json.Country
+		session.Save(c.Request, c.Writer)
+	}
+
+	if json.User == "" && json.Passwd == "" && json.Email == "" && json.Affiliation == "" && json.Country == "" {
+		c.JSON(400, gin.H{"code": 400, "msg": "Nothing to be update!"})
+		return
+	}
+	c.JSON(200, gin.H{"code": 200, "msg": "Update userinfo success!"})
 }
 
 //email_verify验证是否符合邮箱格式，返回true或false。

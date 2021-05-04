@@ -61,8 +61,10 @@ func SetupAPI() *gin.Engine {
 		v1.GET("/logout", u.Logout)
 		//用户注册
 		v1.POST("/register", u.Register)
-		//获取当前用户信息，判断session是否登录态
+		//获取当前用户信息，判断用户是否登录态
 		v1.GET("/session", u.Session)
+		//修改用户信息
+		v1.POST("/updateinfo", u.Updateinfo)
 	}
 	return r
 }
