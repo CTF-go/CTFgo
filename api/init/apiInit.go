@@ -55,6 +55,7 @@ func SetupAPI() *gin.Engine {
 	{
 		//CTFgo初始化
 		v1.POST("/install", u.Install)
+
 		//用户登录
 		v1.POST("/login", u.Login)
 		//用户注销
@@ -65,6 +66,11 @@ func SetupAPI() *gin.Engine {
 		v1.GET("/session", u.Session)
 		//修改用户信息
 		v1.POST("/updateinfo", u.Updateinfo)
+
+		//获取验证码id
+		v1.GET("/captchaid", u.Captcha_id)
+		//验证验证码
+		v1.POST("/captcha", u.Captcha_verify)
 	}
 	return r
 }

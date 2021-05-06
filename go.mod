@@ -3,6 +3,7 @@ module CTFgo
 go 1.15
 
 require (
+	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/gin-gonic/gin v1.7.1
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/gorilla/sessions v1.2.1
