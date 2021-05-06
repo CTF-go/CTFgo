@@ -1,10 +1,10 @@
 # CTFgo - CTF Platform written in Golang
-![CTFgo-logo](themes/default/img/ctfgo-logo.png)
+![CTFgo-logo](logo.png)
 
-![issues](https://img.shields.io/github/issues/Le0nsec/CTFgo)
-![forks](https://img.shields.io/github/forks/Le0nsec/CTFgo)
-![stars](https://img.shields.io/github/stars/Le0nsec/CTFgo)
-![license](https://img.shields.io/github/license/Le0nsec/CTFgo)
+![issues](https://img.shields.io/github/issues/CTF-go/CTFgo)
+![forks](https://img.shields.io/github/forks/CTF-go/CTFgo)
+![stars](https://img.shields.io/github/stars/CTF-go/CTFgo)
+![license](https://img.shields.io/github/license/CTF-go/CTFgo)
 
 A Golang CTF Platform with high concurrency, security, and low hardware requirements.
 
