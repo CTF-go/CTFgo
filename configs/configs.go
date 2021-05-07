@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -93,4 +94,25 @@ func Token() string {
 	has := md5.Sum(b)
 	md5_str := fmt.Sprintf("%x", has)
 	return md5_str
+}
+
+//ID_verify 验证id是否为非负正整数。
+func ID_verify(id string) bool {
+	pattern := `^[1-9]\d*$`
+	reg := regexp.MustCompile(pattern)
+	return reg.MatchString(id)
+}
+
+//num_compare 判断s1是否小于等于s2，小于等于返回true，大于返回false。
+func Num_compare(s1, s2 string) bool {
+	if len(s1) == len(s2) {
+		if s1 <= s2 {
+			return true
+		} else {
+			return false
+		}
+	} else if len(s1) < len(s2) {
+		return true
+	}
+	return false
 }

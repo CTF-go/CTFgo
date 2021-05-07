@@ -82,7 +82,7 @@ func main() {
 		for s := range c {
 			switch s {
 			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
-				fmt.Println("[EXIT] ", s)
+				fmt.Println("[EXIT] Exit by", s)
 				exitfunc()
 			default:
 				fmt.Println("[EXIT] ", s)

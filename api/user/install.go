@@ -70,7 +70,13 @@ func Install(c *gin.Context) {
 				"created"	TEXT NOT NULL,
 				"role"	INTEGER NOT NULL DEFAULT 0,
 				PRIMARY KEY("id" AUTOINCREMENT)
-			)
+			);
+			CREATE TABLE "scores" (
+				"id"	INTEGER NOT NULL UNIQUE,
+				"username"	TEXT NOT NULL UNIQUE,
+				"scores"	INTEGER NOT NULL,
+				PRIMARY KEY("id" AUTOINCREMENT)
+			);
 			`
 		_, err = db.Exec(table_sql)
 		if err != nil {
@@ -78,8 +84,10 @@ func Install(c *gin.Context) {
 		}
 		logs.INFO("create user table success!")
 		sql_str := "INSERT INTO user (token,username,password,email,hidden,banned,created,role) VALUES (?,?,?,?,?,?,?,?);"
-		_, err = db.Exec(sql_str, cfg.Token(), json.User, cfg.MD5(json.Passwd), json.Email, 1, 0, cfg.Timestamp(), 1)
-		if err != nil {
+		_, err1 := db.Exec(sql_str, cfg.Token(), json.User, cfg.MD5(json.Passwd), json.Email, 1, 0, cfg.Timestamp(), 1)
+		sql_str2 := "INSERT INTO scores (id,username,scores) VALUES (1,?,0);"
+		_, err2 := db.Exec(sql_str2, json.User)
+		if err1 != nil || err2 != nil {
 			logs.ERROR("admin insert error", err)
 		}
 		logs.INFO("Administrator account [" + json.User + "]" + " register success!")

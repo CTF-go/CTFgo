@@ -166,7 +166,9 @@ func Register(c *gin.Context) {
 	//向数据库插入用户
 	sql_str := "INSERT INTO user (token,username,password,email,created) VALUES (?,?,?,?,?);"
 	res, err := db.Exec(sql_str, cfg.Token(), json.User, cfg.MD5(json.Passwd), json.Email, cfg.Timestamp())
-	if err != nil {
+	sql_str2 := "INSERT INTO scores (username,scores) VALUES (?,0);"
+	_, err2 := db.Exec(sql_str2, json.User)
+	if err != nil || err2 != nil {
 		logs.WARNING("register insert error: ", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Register error!"})
 		return
@@ -228,6 +230,7 @@ func Session(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "here is the user info", "data": user})
 }
 
+//Updateinfo 更新用户信息。
 func Updateinfo(c *gin.Context) {
 	var json info_struct
 	var user Users
