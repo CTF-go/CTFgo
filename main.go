@@ -2,7 +2,6 @@ package main
 
 import (
 	i "CTFgo/api/init"
-	u "CTFgo/api/user"
 	cfg "CTFgo/configs"
 	"CTFgo/logs"
 	"fmt"
@@ -60,9 +59,6 @@ func setup_frontend() *gin.Engine {
 		c.Request.URL.Path = "/home"
 		r.HandleContext(c)
 	})
-
-	//输出验证码图片
-	r.GET("/captcha/:img", u.Captcha_server)
 	return r
 }
 

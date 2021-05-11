@@ -67,10 +67,12 @@ func SetupAPI() *gin.Engine {
 		//修改用户信息
 		v1.POST("/updateinfo", u.Updateinfo)
 
-		//获取验证码id
-		v1.GET("/captchaid", u.Captcha_id)
+		//获取验证码图片base64
+		v1.GET("/captcha", u.Captcha)
 		//验证验证码
 		v1.POST("/captcha", u.Captcha_verify)
+		//输出验证码图片
+		v1.GET("/captcha/:img", u.Captcha_server)
 
 		//获取指定id用户分数
 		v1.GET("/scores/specify/:id", u.Specified_score)

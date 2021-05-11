@@ -6,6 +6,8 @@ package apiUser
 import (
 	"CTFgo/logs"
 	"bytes"
+	"encoding/base64"
+	"io/ioutil"
 	"net/http"
 	"path"
 	"strings"
@@ -22,10 +24,15 @@ type captcha_struct struct {
 	Captcha_solution string `form:"solution" json:"solution" binding:"required"`
 }
 
-//Captcha_id 返回一个captcha id。
-func Captcha_id(c *gin.Context) {
+//Captcha 返回captcha图片的base64值。
+func Captcha(c *gin.Context) {
 	id := captcha.New()
-	c.JSON(200, gin.H{"code": 200, "data": id})
+	b64 := captcha_base64(id)
+	if b64 == "" {
+		c.JSON(400, gin.H{"code": 400, "msg": "Cannot get captcha!"})
+		return
+	}
+	c.JSON(200, gin.H{"code": 200, "id": id, "data": b64})
 }
 
 //Captcha_verify 验证验证码id对应的验证码与用户输入的验证码正确与否。
@@ -47,8 +54,20 @@ func Captcha_verify(c *gin.Context) {
 	}
 }
 
-//Captcha_server 提供验证码图片，?reload=xxx可以刷新验证码，
-//如 http://127.0.0.1:8080/captcha/YFTqRiHD0zz7ejRpI5zv.png?reload=1。
+//captcha_base64 返回验证码图片的base64值。
+func captcha_base64(id string) string {
+	imgurl := "http://127.0.0.1:8081/v1/captcha/" + id + ".png"
+	response, err := http.Get(imgurl)
+	if err != nil || response.StatusCode != 200 {
+		logs.WARNING("get captcha image error", err)
+		return ""
+	}
+	img, err := ioutil.ReadAll(response.Body)
+	imgb64 := base64.StdEncoding.EncodeToString([]byte(img))
+	return imgb64
+}
+
+//Captcha_server 提供验证码图片.
 func Captcha_server(c *gin.Context) {
 	ServeHTTP(c.Writer, c.Request)
 }
