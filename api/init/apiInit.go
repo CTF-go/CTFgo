@@ -76,6 +76,8 @@ func SetupAPI() *gin.Engine {
 
 		//获取指定id用户分数
 		v1.GET("/scores/specify/:id", u.Specified_score)
+		//获取所有用户分数，降序排列。
+		v1.GET("/scores/all", u.All_scores)
 	}
 	return r
 }

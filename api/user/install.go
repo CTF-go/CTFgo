@@ -74,7 +74,7 @@ func Install(c *gin.Context) {
 			CREATE TABLE "scores" (
 				"id"	INTEGER NOT NULL UNIQUE,
 				"username"	TEXT NOT NULL UNIQUE,
-				"scores"	INTEGER NOT NULL,
+				"scores"	INTEGER NOT NULL DEFAULT 0,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
 			`

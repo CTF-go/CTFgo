@@ -30,7 +30,7 @@ type Users struct {
 	Banned      int    `json:"banned"`      //1：禁止，0：正常，默认为1，邮箱激活后为0
 	Team_id     int    `json:"team_id"`     //队伍id，在团队模式下必须，个人模式非必需
 	Created     string `json:"created"`     //用户注册时间，10位数时间戳
-	Role        int    `json:"role"`        //1：管理员，0：普通用户，默认为0
+	Role        int    `json:"role"`        //0：普通用户，默认为0，1：普通管理员，2：所有者（最高权限）
 }
 
 //login_struct定义接收Login数据的结构体。
