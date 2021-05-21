@@ -38,9 +38,9 @@ func Specified_score(c *gin.Context) {
 
 //All_scores 按降序排列返回所有当前得分及对应用户和用户ID。
 func All_scores(c *gin.Context) {
-	var user scores_struct
-	var users []scores_struct
-	sql_str := "SELECT * FROM scores ORDER BY scores DESC;"
+	var user scores
+	var users []scores
+	sql_str := "SELECT * FROM scores;"
 	rows, err := db.Query(sql_str)
 	if err != nil {
 		logs.WARNING("get all scores error", err)

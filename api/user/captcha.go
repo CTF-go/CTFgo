@@ -30,7 +30,7 @@ func Captcha(c *gin.Context) {
 
 //Captcha_verify 验证验证码id对应的验证码与用户输入的验证码正确与否。
 func Captcha_verify(c *gin.Context) {
-	var json captcha_struct
+	var json captchaRequest
 
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&json); err != nil {

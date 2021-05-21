@@ -19,7 +19,7 @@ var db *sql.DB = i.DB
 
 //Login实现用户名或邮箱登录。
 func Login(c *gin.Context) {
-	var json login_struct
+	var json loginRequest
 	var user Users
 
 	//用ShouldBindJSON解析绑定传入的Json数据。
@@ -90,7 +90,7 @@ func Login(c *gin.Context) {
 
 //Register实现注册功能。
 func Register(c *gin.Context) {
-	var json register_struct
+	var json registerRequest
 	var user Users
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -192,7 +192,7 @@ func Session(c *gin.Context) {
 
 //Updateinfo 更新用户信息。
 func Updateinfo(c *gin.Context) {
-	var json info_struct
+	var json infoRequest
 	var user Users
 
 	//用ShouldBindJSON解析绑定传入的Json数据。

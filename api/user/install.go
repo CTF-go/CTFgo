@@ -15,7 +15,7 @@ import (
 
 //Install实现初始化数据库等功能。
 func Install(c *gin.Context) {
-	var json install_struct
+	var json installRequest
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&json); err != nil {
 		logs.WARNING("bindjson error: ", err)
@@ -80,8 +80,9 @@ func Install(c *gin.Context) {
 				"tags"	TEXT,
 				"hints"	TEXT,
 				"requirements"	TEXT,
+				"solves"	TEXT,
 				PRIMARY KEY("id" AUTOINCREMENT)
-			);
+			)
 			`
 		_, err = db.Exec(table_sql)
 		if err != nil {

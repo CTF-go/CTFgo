@@ -19,23 +19,23 @@ type Users struct {
 	Role        int    `json:"role"`        //0：普通用户，默认为0，1：普通管理员，2：所有者（最高权限）
 }
 
-//login_struct定义接收Login数据的结构体。
-type login_struct struct {
+// loginRequest 定义接收登录数据的结构体。
+type loginRequest struct {
 	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
 	User   string `form:"username" json:"username" binding:"required"`
 	Passwd string `form:"password" json:"password" binding:"required"`
 }
 
-//register_struct定义接收Login数据的结构体。
-type register_struct struct {
+// registerRequest 定义接收注册数据的结构体。
+type registerRequest struct {
 	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
 	User   string `form:"username" json:"username" binding:"required"`
 	Passwd string `form:"password" json:"password" binding:"required"`
 	Email  string `form:"email" json:"email" binding:"required"`
 }
 
-//info_struct定义接收用户信息的结构体。
-type info_struct struct {
+// infoRequest 定义接收用户信息的结构体。
+type infoRequest struct {
 	User        string `form:"username" json:"username"`
 	Passwd      string `form:"password" json:"password"`
 	Email       string `form:"email" json:"email"`
@@ -43,24 +43,34 @@ type info_struct struct {
 	Country     string `form:"country" json:"country"`
 }
 
-//scores_struct 定义返回得分情况结构体。
-type scores_struct struct {
+// scores 定义返回得分情况结构体。
+type scores struct {
 	ID    int
 	User  string
 	Score int
 }
 
-//captcha_struct 定义接收用户输入验证码和验证码id的结构体。
-type captcha_struct struct {
-	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
+// captchaRequest 定义接收用户输入验证码和验证码id的结构体。
+type captchaRequest struct {
 	Captcha_id       string `form:"id" json:"id" binding:"required"`
 	Captcha_solution string `form:"solution" json:"solution" binding:"required"`
 }
 
-//install_struct定义接收install数据的结构体。
-type install_struct struct {
-	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
+// installRequest 定义接收installRequest数据的结构体。
+type installRequest struct {
 	User   string `form:"username" json:"username" binding:"required"`
 	Passwd string `form:"password" json:"password" binding:"required"`
 	Email  string `form:"email" json:"email" binding:"required"`
+}
+
+// challenges 定义返回challenges的相关信息。
+type challenges struct {
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	Score    int    `json:"score"`
+	Descrip  string `json:"description"`
+	Category string `json:"category"`
+	Tags     string `json:"tags"`
+	Hints    string `json:"hints"`
+	Solves   string `json:"solves"`
 }
