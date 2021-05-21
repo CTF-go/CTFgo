@@ -10,13 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//scores_struct 定义返回得分情况结构体。
-type scores_struct struct {
-	ID    int
-	User  string
-	Score int
-}
-
 //Specified_score 获取指定id用户得分。
 func Specified_score(c *gin.Context) {
 	var maxid string

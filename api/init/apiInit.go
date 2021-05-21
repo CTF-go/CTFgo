@@ -78,6 +78,9 @@ func SetupAPI() *gin.Engine {
 		v1.GET("/scores/specify/:id", u.Specified_score)
 		//获取所有用户分数，降序排列。
 		v1.GET("/scores/all", u.All_scores)
+
+		//获取所有题目信息
+		v1.GET("/challenges/all", u.All_challenges)
 	}
 	return r
 }

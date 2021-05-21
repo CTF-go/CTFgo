@@ -17,13 +17,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//captcha_struct 定义接收用户输入验证码和验证码id的结构体。
-type captcha_struct struct {
-	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
-	Captcha_id       string `form:"id" json:"id" binding:"required"`
-	Captcha_solution string `form:"solution" json:"solution" binding:"required"`
-}
-
 //Captcha 返回captcha图片的base64值。
 func Captcha(c *gin.Context) {
 	id := captcha.New()

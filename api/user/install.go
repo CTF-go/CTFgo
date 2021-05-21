@@ -13,14 +13,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-//install_struct定义接收install数据的结构体。
-type install_struct struct {
-	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
-	User   string `form:"username" json:"username" binding:"required"`
-	Passwd string `form:"password" json:"password" binding:"required"`
-	Email  string `form:"email" json:"email" binding:"required"`
-}
-
 //Install实现初始化数据库等功能。
 func Install(c *gin.Context) {
 	var json install_struct
@@ -75,6 +67,19 @@ func Install(c *gin.Context) {
 				"id"	INTEGER NOT NULL UNIQUE,
 				"username"	TEXT NOT NULL UNIQUE,
 				"scores"	INTEGER NOT NULL DEFAULT 0,
+				PRIMARY KEY("id" AUTOINCREMENT)
+			);
+			CREATE TABLE "challenges" (
+				"id"	INTEGER NOT NULL UNIQUE,
+				"name"	TEXT NOT NULL UNIQUE,
+				"score"	INTEGER NOT NULL,
+				"flag"	TEXT NOT NULL,
+				"max_attempts"	INTEGER NOT NULL DEFAULT 0,
+				"description"	TEXT,
+				"category"	TEXT,
+				"tags"	TEXT,
+				"hints"	TEXT,
+				"requirements"	TEXT,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
 			`
