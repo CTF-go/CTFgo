@@ -38,7 +38,7 @@ func Captcha_verify(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "msg": "Missing parameters or format error!"})
 		return
 	}
-	if !captcha.VerifyString(json.Captcha_id, json.Captcha_solution) {
+	if !captcha.VerifyString(json.CaptchaID, json.Solution) {
 		c.JSON(200, gin.H{"code": 400, "msg": "Captcha verify failed"})
 		return
 	} else {

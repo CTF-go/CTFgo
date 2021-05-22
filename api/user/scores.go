@@ -49,7 +49,7 @@ func All_scores(c *gin.Context) {
 	}
 	// 循环读取数据
 	for rows.Next() {
-		rows.Scan(&user.ID, &user.User, &user.Score)
+		rows.Scan(&user.ID, &user.Username, &user.Score)
 		users = append(users, user)
 	}
 	c.JSON(200, gin.H{"code": 200, "data": users})

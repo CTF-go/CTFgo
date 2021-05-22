@@ -4,6 +4,7 @@ Package apiInit实现初始化API接口功能。
 package apiInit
 
 import (
+	admin "CTFgo/api/admin"
 	u "CTFgo/api/user"
 	cfg "CTFgo/configs"
 	"fmt"
@@ -51,37 +52,62 @@ func SetupAPI() *gin.Engine {
 	r.Use(gin.LoggerWithConfig(c))
 	r.Use(gin.Recovery())
 	r.Use(cors())
-	v1 := r.Group("/v1")
+
+	api := r.Group("/v1")
+
+	// 公共api，无需登陆即可访问
+	public := api.Group("")
 	{
 		//CTFgo初始化
-		v1.POST("/install", u.Install)
+		public.POST("/install", u.Install)
 
-		//用户登录
-		v1.POST("/login", u.Login)
-		//用户注销
-		v1.GET("/logout", u.Logout)
 		//用户注册
-		v1.POST("/register", u.Register)
-		//获取当前用户信息，判断用户是否登录态
-		v1.GET("/session", u.Session)
-		//修改用户信息
-		v1.POST("/updateinfo", u.Updateinfo)
-
+		public.POST("/register", u.Register)
+		//用户登录
+		public.POST("/login", u.Login)
+		//用户注销
+		public.GET("/logout", u.Logout)
 		//获取验证码图片base64
-		v1.GET("/captcha", u.Captcha)
+		public.GET("/captcha", u.Captcha)
 		//验证验证码
-		v1.POST("/captcha", u.Captcha_verify)
+		public.POST("/captcha", u.Captcha_verify)
 		//输出验证码图片
-		v1.GET("/captcha/:img", u.Captcha_server)
+		public.GET("/captcha/:img", u.Captcha_server)
 
 		//获取指定id用户分数
-		v1.GET("/scores/specify/:id", u.Specified_score)
+		public.GET("/scores/specify/:id", u.Specified_score)
 		//获取所有用户分数，降序排列。
-		v1.GET("/scores/all", u.All_scores)
+		public.GET("/scores/all", u.All_scores)
 
 		//获取所有题目信息
-		v1.GET("/challenges/all", u.All_challenges)
+		public.GET("/challenges/all", u.All_challenges)
 	}
+
+	// 普通用户api，需要用户登陆且Role=0才能访问
+	personal := api.Group("")
+	personal.Use(u.AuthRequired())
+	{
+		// 获取当前用户信息
+		personal.GET("/session", u.Session)
+		// 修改用户信息
+		personal.POST("/updateinfo", u.UpdateInfo)
+
+		// TODO: 获取challenge
+
+		// TODO: 提交flag
+
+	}
+
+	// 管理者api，需要用户登陆且Role=1才能访问
+	manager := api.Group("")
+	manager.Use(admin.AuthRequired())
+	{
+		// TODO: 上架、修改、删除challenge
+
+		// TODO: 发布notice
+
+	}
+
 	return r
 }
 

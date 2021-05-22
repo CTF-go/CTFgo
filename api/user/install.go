@@ -23,17 +23,17 @@ func Install(c *gin.Context) {
 		return
 	}
 	//限制传入用户名为中文、数字、大小写字母下划线和横杠，1到10位
-	if !name_verify(json.User) {
+	if !checkUsername(json.Username) {
 		c.JSON(400, gin.H{"code": 400, "msg": "Username format error!"})
 		return
 	}
 	//限制密码长度6到20位
-	if !passwd_verify(json.Passwd) {
+	if !checkPassword(json.Password) {
 		c.JSON(400, gin.H{"code": 400, "msg": "Password format error!"})
 		return
 	}
 	//限制传入邮箱符合格式
-	if !email_verify(json.Email) {
+	if !checkEmail(json.Email) {
 		c.JSON(400, gin.H{"code": 400, "msg": "Email format error!"})
 		return
 	}
@@ -90,13 +90,13 @@ func Install(c *gin.Context) {
 		}
 		logs.INFO("create user table success!")
 		sql_str := "INSERT INTO user (token,username,password,email,hidden,banned,created,role) VALUES (?,?,?,?,?,?,?,?);"
-		_, err1 := db.Exec(sql_str, cfg.Token(), json.User, cfg.MD5(json.Passwd), json.Email, 1, 0, cfg.Timestamp(), 1)
+		_, err1 := db.Exec(sql_str, cfg.Token(), json.Username, cfg.MD5(json.Password), json.Email, 1, 0, cfg.Timestamp(), 1)
 		sql_str2 := "INSERT INTO scores (id,username,scores) VALUES (1,?,0);"
-		_, err2 := db.Exec(sql_str2, json.User)
+		_, err2 := db.Exec(sql_str2, json.Username)
 		if err1 != nil || err2 != nil {
 			logs.ERROR("admin insert error", err)
 		}
-		logs.INFO("Administrator account [" + json.User + "]" + " register success!")
+		logs.INFO("Administrator account [" + json.Username + "]" + " register success!")
 		//新建sessions文件夹
 		err = os.MkdirAll(cfg.Session_dir, 0755)
 		if err != nil {
