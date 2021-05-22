@@ -64,15 +64,11 @@ func Login(c *gin.Context) {
 	// 至此，身份认证完成
 
 	// 设置session
-	session, err := Store.Get(c.Request, cfg.SessionID)
-	if err != nil {
-		c.JSON(400, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
-		return
-	}
-
+	session, _ := Store.Get(c.Request, cfg.SessionID)
+	user.Password = ""
 	session.Values["user"] = user
 
-	err = session.Save(c.Request, c.Writer)
+	err := session.Save(c.Request, c.Writer)
 	if err != nil {
 		logs.WARNING("can not save session:", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Save CTFGOSESSID error"})
@@ -174,7 +170,7 @@ func Session(c *gin.Context) {
 	session, _ := Store.Get(c.Request, cfg.SessionID)
 	user = session.Values["user"].(User)
 
-	c.JSON(200, gin.H{"code": 200, "msg": "here is the user info", "data": user})
+	c.JSON(200, gin.H{"code": 200, "data": user})
 }
 
 // UpdateInfo 更新用户信息
