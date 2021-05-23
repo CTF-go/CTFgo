@@ -275,7 +275,6 @@ func UpdateInfo(c *gin.Context) {
 		user.Email = request.Email
 	}
 
-	// TODO: 队伍能随便改嘛？
 	if request.Affiliation != "" && request.Affiliation != user.Affiliation {
 		//限制传入名称为中文、数字、大小写字母下划线和横杠，1到10位
 		if !checkUsername(request.Affiliation) {

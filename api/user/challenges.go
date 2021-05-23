@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//All_challenges 返回所有题目信息。
-func All_challenges(c *gin.Context) {
+//GetAllChallenges 返回所有题目信息。
+func GetAllChallenges(c *gin.Context) {
 
 }

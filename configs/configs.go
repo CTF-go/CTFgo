@@ -92,10 +92,8 @@ func Random() []byte {
 
 //Token生成随机token。
 func Token() string {
-	b := Random()
-	has := md5.Sum(b)
-	md5_str := fmt.Sprintf("%x", has)
-	return md5_str
+	b := Random()[:16]
+	return fmt.Sprintf("%x", b)
 }
 
 //ID_verify 验证id是否为非负正整数。

@@ -10,8 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//Specified_score 获取指定id用户得分。
-func Specified_score(c *gin.Context) {
+// GetScoreByUserID 获取指定id用户得分。
+func GetScoreByUserID(c *gin.Context) {
 	var maxid string
 	var scores int
 	id := c.Params.ByName("id")
@@ -36,8 +36,8 @@ func Specified_score(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "data": scores})
 }
 
-//All_scores 按降序排列返回所有当前得分及对应用户和用户ID。
-func All_scores(c *gin.Context) {
+//GetAllScores 按降序排列返回所有当前得分及对应用户和用户ID。
+func GetAllScores(c *gin.Context) {
 	var user scores
 	var users []scores
 	sql_str := "SELECT * FROM scores;"

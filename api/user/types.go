@@ -3,6 +3,10 @@ Package apiUser实现用户和其他普通API接口功能。
 */
 package apiUser
 
+import (
+	"time"
+)
+
 //user定义用户结构体。
 type User struct {
 	ID          int    `json:"id"`          //用户id，唯一，自增
@@ -63,7 +67,7 @@ type installRequest struct {
 	Email    string `form:"email" json:"email" binding:"required"`
 }
 
-// Challenge 定义返回challenges的相关信息。
+// Challenge 定义一个题目
 type Challenge struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
@@ -73,4 +77,13 @@ type Challenge struct {
 	Tags        string `json:"tags"`
 	Hints       string `json:"hints"`
 	Solves      string `json:"solves"`
+}
+
+// Bulletin 定义一个公告
+type Bulletin struct {
+	ID        int       `json:"id"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

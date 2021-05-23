@@ -75,16 +75,19 @@ func SetupAPI() *gin.Engine {
 		public.GET("/captcha/:img", u.Captcha_server)
 
 		//获取指定id用户分数
-		public.GET("/scores/specify/:id", u.Specified_score)
+		public.GET("/scores/specify/:id", u.GetScoreByUserID)
 		//获取所有用户分数，降序排列。
-		public.GET("/scores/all", u.All_scores)
+		public.GET("/scores/all", u.GetAllScores)
 
 		//获取所有题目信息
-		public.GET("/challenges/all", u.All_challenges)
+		public.GET("/challenges/all", u.GetAllChallenges)
+
+		// 获取所有公告
+		public.GET("/bulletin/all", admin.GetAllBulletins)
 	}
 
 	// 普通用户api，需要用户登陆且Role=0才能访问
-	personal := api.Group("")
+	personal := api.Group("/user")
 	personal.Use(u.AuthRequired())
 	{
 		// 获取当前用户信息
@@ -99,13 +102,17 @@ func SetupAPI() *gin.Engine {
 	}
 
 	// 管理者api，需要用户登陆且Role=1才能访问
-	manager := api.Group("")
+	manager := api.Group("/admin")
 	manager.Use(admin.AuthRequired())
 	{
 		// TODO: 上架、修改、删除challenge
 
-		// TODO: 发布notice
-
+		// 创建新公告
+		manager.POST("bulletin", admin.NewBulletin)
+		// 更改公告
+		manager.PATCH("bulletin", admin.EditBulletin)
+		// 删除公告
+		manager.DELETE("bulletin", admin.DeleteBulletin)
 	}
 
 	return r

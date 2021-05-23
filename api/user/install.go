@@ -69,7 +69,7 @@ func Install(c *gin.Context) {
 				"scores"	INTEGER NOT NULL DEFAULT 0,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
-			CREATE TABLE "challenges" (
+			CREATE TABLE "challenge" (
 				"id"	INTEGER NOT NULL UNIQUE,
 				"name"	TEXT NOT NULL UNIQUE,
 				"score"	INTEGER NOT NULL,
@@ -81,6 +81,14 @@ func Install(c *gin.Context) {
 				"hints"	TEXT,
 				"requirements"	TEXT,
 				"solves"	TEXT,
+				PRIMARY KEY("id" AUTOINCREMENT)
+			);
+			CREATE TABLE "bulletin" (
+			    "id" 	INTEGER NOT NULL UNIQUE,
+			    "title" TEXT NOT NULL,
+			    "content" TEXT,
+				"created_at" TIMESTAMP DEFAULT (datetime('now','localtime')),
+				"updated_at" DATETIME DEFAULT (datetime('now','localtime')),
 				PRIMARY KEY("id" AUTOINCREMENT)
 			)
 			`
