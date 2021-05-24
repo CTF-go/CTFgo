@@ -67,24 +67,3 @@ type installRequest struct {
 type isExistedRequest struct {
 	Username string `form:"username" json:"username" binding:"required"`
 }
-
-// Challenge 定义一个题目
-type Challenge struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Score       int    `json:"score"`
-	Description string `json:"description"`
-	Category    string `json:"category"`
-	Tags        string `json:"tags"`
-	Hints       string `json:"hints"`
-	Solves      string `json:"solves"`
-}
-
-// Bulletin 定义一个公告
-type Bulletin struct {
-	ID        int       `json:"id"`
-	Title     string    `json:"title"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
