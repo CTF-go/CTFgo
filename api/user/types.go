@@ -67,6 +67,11 @@ type installRequest struct {
 	Email    string `form:"email" json:"email" binding:"required"`
 }
 
+// isExistedRequest 定义接收用户名或邮箱数据的结构体。
+type isExistedRequest struct {
+	Username string `form:"username" json:"username" binding:"required"`
+}
+
 // Challenge 定义一个题目
 type Challenge struct {
 	ID          int    `json:"id"`
