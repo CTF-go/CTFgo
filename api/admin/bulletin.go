@@ -1,16 +1,25 @@
 package apiAdmin
 
 import (
-	u "CTFgo/api/user"
 	i "CTFgo/databases/init"
 	"CTFgo/logs"
 	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 var db *sql.DB = i.DB
+
+// Bulletin 定义一个公告
+type Bulletin struct {
+	ID        int       `json:"id"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
 
 // NewBulletin 新增一个公告
 func NewBulletin(c *gin.Context) {
@@ -22,7 +31,7 @@ func NewBulletin(c *gin.Context) {
 		return
 	}
 
-	bulletin := &u.Bulletin{
+	bulletin := &Bulletin{
 		Title:   request.Title,
 		Content: request.Content,
 	}
@@ -47,11 +56,11 @@ func EditBulletin(c *gin.Context) {
 	}
 
 	if !isBulletinExisted(request.ID) {
-		c.JSON(400, gin.H{"code": 400, "msg": fmt.Sprintf("bulletin [%d] does not exsit", request.ID)})
+		c.JSON(400, gin.H{"code": 400, "msg": "bulletin does not exist"})
 		return
 	}
 
-	bulletin := &u.Bulletin{
+	bulletin := &Bulletin{
 		ID:      request.ID,
 		Title:   request.Title,
 		Content: request.Content,
@@ -77,7 +86,7 @@ func DeleteBulletin(c *gin.Context) {
 	}
 
 	if !isBulletinExisted(request.ID) {
-		c.JSON(400, gin.H{"code": 400, "msg": fmt.Sprintf("bulletin [%d] does not exsit", request.ID)})
+		c.JSON(400, gin.H{"code": 400, "msg": "bulletin does not exist"})
 		return
 	}
 
@@ -93,7 +102,7 @@ func DeleteBulletin(c *gin.Context) {
 
 // GetAllBulletins 获取所有的公告
 func GetAllBulletins(c *gin.Context) {
-	var bulletins []u.Bulletin
+	var bulletins []Bulletin
 
 	if err := getAllBulletins(&bulletins); err != nil {
 		logs.WARNING("get bulletins error", err)
@@ -105,7 +114,7 @@ func GetAllBulletins(c *gin.Context) {
 }
 
 // addBulletin 操作数据库新增一个公告
-func addBulletin(b *u.Bulletin) error {
+func addBulletin(b *Bulletin) error {
 	command := "INSERT INTO bulletin (title,content) VALUES (?,?);"
 	res, err := db.Exec(command, b.Title, b.Content)
 	if err != nil {
@@ -120,7 +129,7 @@ func addBulletin(b *u.Bulletin) error {
 }
 
 // updateBulletin 操作数据库更新一个公告
-func updateBulletin(b *u.Bulletin) error {
+func updateBulletin(b *Bulletin) error {
 	command := "UPDATE bulletin SET title=?, content=?, updated_at=(datetime('now','localtime')) WHERE id=?;"
 	res, err := db.Exec(command, b.Title, b.Content, b.ID)
 	if err != nil {
@@ -159,7 +168,7 @@ func isBulletinExisted(id int) (exists bool) {
 	return exists
 }
 
-func getAllBulletins(bulletins *[]u.Bulletin) error {
+func getAllBulletins(bulletins *[]Bulletin) error {
 	command := "SELECT id, title, content, created_at, updated_at FROM bulletin;"
 	rows, err := db.Query(command)
 	if err != nil {
@@ -167,7 +176,7 @@ func getAllBulletins(bulletins *[]u.Bulletin) error {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var b u.Bulletin
+		var b Bulletin
 		err = rows.Scan(&b.ID, &b.Title, &b.Content, &b.CreatedAt, &b.UpdatedAt)
 		if err != nil {
 			return err

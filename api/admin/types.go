@@ -2,23 +2,38 @@ package apiAdmin
 
 // newChallengeRequest 定义新增题目的一个请求
 type newChallengeRequest struct {
+	Name        string `form:"name" json:"name" binding:"required"`
+	Score       int    `form:"score" json:"score" binding:"required"`
+	Flag        string `form:"flag" json:"flag"`
+	Description string `form:"description" json:"description"`
+	Category    string `form:"category" json:"category" binding:"required"`
+	Tags        string `form:"tags" json:"tags"`
+	Hints       string `form:"hints" json:"hints"`
+	Visible     int    `form:"visible" json:"visible"`
 }
 
 // editChallengeRequest 定义修改题目的一个请求
 type editChallengeRequest struct {
+	ID          int    `form:"id" json:"id" binding:"required"`
+	Name        string `form:"name" json:"name" binding:"required"`
+	Score       int    `form:"score" json:"score" binding:"required"`
+	Flag        string `form:"flag" json:"flag"`
+	Description string `form:"description" json:"description"`
+	Category    string `form:"category" json:"category" binding:"required"`
+	Tags        string `form:"tags" json:"tags"`
+	Hints       string `form:"hints" json:"hints"`
+	Visible     int    `form:"visible" json:"visible"`
 }
 
 // deleteChallengeRequest 定义删除题目的一个请求
 type deleteChallengeRequest struct {
+	ID int `form:"id" json:"id" binding:"required"`
 }
 
-//// Bulletin 定义一个公告
-//type Bulletin struct {
-//	ID        int       `json:"id"`
-//	Content   string    `json:"content"`
-//	CreatedAt time.Time `json:"created_at"`
-//	UpdatedAt time.Time `json:"updated_at"`
-//}
+// getChallengeByCategoryRequest 定义获取指定类别题目的一个请求
+type getChallengeByCategoryRequest struct {
+	Category string `form:"category" json:"category" binding:"required"`
+}
 
 // newBulletinRequest 定义新增公告的一个请求
 type newBulletinRequest struct {
@@ -36,4 +51,15 @@ type editBulletinRequest struct {
 // deleteBulletinRequest 定义删除公告的一个请求
 type deleteBulletinRequest struct {
 	ID int `form:"id" json:"id" binding:"required"`
+}
+
+// challengeResponse 定义获取题目的一个相应
+type challengeResponse struct {
+	ID          int    `form:"id" json:"id" binding:"required"`
+	Name        string `form:"name" json:"name" binding:"required"`
+	Score       int    `form:"score" json:"score" binding:"required"`
+	Description string `form:"description" json:"description"`
+	Category    string `form:"category" json:"category" binding:"required"`
+	Tags        string `form:"tags" json:"tags"`
+	Hints       string `form:"hints" json:"hints"`
 }

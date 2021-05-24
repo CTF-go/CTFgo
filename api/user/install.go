@@ -74,13 +74,11 @@ func Install(c *gin.Context) {
 				"name"	TEXT NOT NULL UNIQUE,
 				"score"	INTEGER NOT NULL,
 				"flag"	TEXT NOT NULL,
-				"max_attempts"	INTEGER NOT NULL DEFAULT 0,
 				"description"	TEXT,
-				"category"	TEXT,
+				"category"	TEXT NOT NULL,
 				"tags"	TEXT,
 				"hints"	TEXT,
-				"requirements"	TEXT,
-				"solves"	TEXT,
+				"visible" INTEGER,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
 			CREATE TABLE "bulletin" (

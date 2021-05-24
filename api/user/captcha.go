@@ -74,17 +74,17 @@ func Serve(w http.ResponseWriter, r *http.Request, id, ext, lang string, downloa
 	var content bytes.Buffer
 	switch ext {
 	case ".png":
-		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set("Content-Category", "image/png")
 		captcha.WriteImage(&content, id, width, height)
 	case ".wav":
-		w.Header().Set("Content-Type", "audio/x-wav")
+		w.Header().Set("Content-Category", "audio/x-wav")
 		captcha.WriteAudio(&content, id, lang)
 	default:
 		return captcha.ErrNotFound
 	}
 
 	if download {
-		w.Header().Set("Content-Type", "application/octet-stream")
+		w.Header().Set("Content-Category", "application/octet-stream")
 	}
 	http.ServeContent(w, r, id+ext, time.Time{}, bytes.NewReader(content.Bytes()))
 	return nil

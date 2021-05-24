@@ -81,9 +81,6 @@ func SetupAPI() *gin.Engine {
 		//获取所有用户分数，降序排列。
 		public.GET("/scores/all", u.GetAllScores)
 
-		//获取所有题目信息
-		public.GET("/challenges/all", u.GetAllChallenges)
-
 		// 获取所有公告
 		public.GET("/bulletin/all", admin.GetAllBulletins)
 	}
@@ -97,7 +94,10 @@ func SetupAPI() *gin.Engine {
 		// 修改用户信息
 		personal.POST("/updateinfo", u.UpdateInfo)
 
-		// TODO: 获取challenge
+		// 获取所有题目信息
+		personal.GET("/challenges/all", admin.GetAllChallenges)
+		// 获取指定类别的题目信息
+		personal.GET("/challenges", admin.GetChallengesByCategory)
 
 		// TODO: 提交flag
 
@@ -107,7 +107,12 @@ func SetupAPI() *gin.Engine {
 	manager := api.Group("/admin")
 	manager.Use(admin.AuthRequired())
 	{
-		// TODO: 上架、修改、删除challenge
+		// 创建新题目
+		manager.POST("challenge", admin.NewChallenge)
+		// 更改题目
+		manager.PATCH("challenge", admin.EditChallenge)
+		// 删除题目
+		manager.DELETE("challenge", admin.DeleteChallenge)
 
 		// 创建新公告
 		manager.POST("bulletin", admin.NewBulletin)
@@ -125,9 +130,9 @@ func cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
 		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
+		c.Header("Access-Control-Allow-Headers", "Content-Category,AccessToken,X-CSRF-Token, Authorization, Token")
 		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Category")
 		c.Header("Access-Control-Allow-Credentials", "true")
 		//放行所有OPTIONS方法
 		if method == "OPTIONS" {

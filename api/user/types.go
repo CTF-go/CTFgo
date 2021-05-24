@@ -3,10 +3,6 @@ Package apiUser实现用户和其他普通API接口功能。
 */
 package apiUser
 
-import (
-	"time"
-)
-
 //user定义用户结构体。
 type User struct {
 	ID          int    `json:"id"`          //用户id，唯一，自增
