@@ -29,9 +29,11 @@ type loginRequest struct {
 // registerRequest 定义接收注册数据的结构体。
 type registerRequest struct {
 	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
-	Username string `form:"username" json:"username" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-	Email    string `form:"email" json:"email" binding:"required"`
+	Username  string `form:"username" json:"username" binding:"required"`
+	Password  string `form:"password" json:"password" binding:"required"`
+	Email     string `form:"email" json:"email" binding:"required"`
+	CaptchaID string `form:"captchaid" json:"captchaid" binding:"required"`
+	Solution  string `form:"solution" json:"solution" binding:"required"`
 }
 
 // infoRequest 定义接收用户信息的结构体。
@@ -48,12 +50,6 @@ type scores struct {
 	ID       int
 	Username string
 	Score    int
-}
-
-// captchaRequest 定义接收用户输入验证码和验证码id的结构体。
-type captchaRequest struct {
-	CaptchaID string `form:"id" json:"id" binding:"required"`
-	Solution  string `form:"solution" json:"solution" binding:"required"`
 }
 
 // installRequest 定义接收installRequest数据的结构体。

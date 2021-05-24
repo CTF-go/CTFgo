@@ -71,8 +71,6 @@ func SetupAPI() *gin.Engine {
 		public.GET("/logout", u.Logout)
 		//获取验证码图片base64
 		public.GET("/captcha", u.Captcha)
-		//验证验证码
-		public.POST("/captcha", u.Captcha_verify)
 		//输出验证码图片
 		public.GET("/captcha/:img", u.Captcha_server)
 

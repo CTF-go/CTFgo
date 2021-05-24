@@ -86,7 +86,12 @@ func Register(c *gin.Context) {
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error: ", err)
-		c.JSON(400, gin.H{"code": 400, "msg": err.Error()})
+		c.JSON(400, gin.H{"code": 400, "msg": "Bind json error!"})
+		return
+	}
+	//判断验证码是否正确
+	if !captchaVerify(request.CaptchaID, request.Solution) {
+		c.JSON(200, gin.H{"code": 1002, "msg": "Captcha error!"})
 		return
 	}
 	//限制传入用户名为中文、数字、大小写字母下划线和横杠，1到10位

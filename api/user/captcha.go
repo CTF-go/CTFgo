@@ -28,26 +28,16 @@ func Captcha(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "id": id, "data": b64})
 }
 
-//Captcha_verify 验证验证码id对应的验证码与用户输入的验证码正确与否。
-func Captcha_verify(c *gin.Context) {
-	var json captchaRequest
-
-	//用ShouldBindJSON解析绑定传入的Json数据。
-	if err := c.ShouldBindJSON(&json); err != nil {
-		logs.WARNING("bindjson error: ", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Missing parameters or format error!"})
-		return
-	}
-	if !captcha.VerifyString(json.CaptchaID, json.Solution) {
-		c.JSON(200, gin.H{"code": 400, "msg": "Captcha verify failed"})
-		return
+// captchaVerify 验证验证码id对应的验证码与用户输入的验证码正确与否。
+func captchaVerify(id string, solution string) bool {
+	if !captcha.VerifyString(id, solution) {
+		return false
 	} else {
-		c.JSON(200, gin.H{"code": 200, "msg": "Captcha verify success"})
-		return
+		return true
 	}
 }
 
-//captcha_base64 返回验证码图片的base64值。
+// captcha_base64 返回验证码图片的base64值。
 func captcha_base64(id string) string {
 	imgurl := "http://127.0.0.1:8081/v1/captcha/" + id + ".png"
 	response, err := http.Get(imgurl)
@@ -60,12 +50,12 @@ func captcha_base64(id string) string {
 	return imgb64
 }
 
-//Captcha_server 提供验证码图片.
+// Captcha_server 提供验证码图片.
 func Captcha_server(c *gin.Context) {
 	ServeHTTP(c.Writer, c.Request)
 }
 
-//Serve 是captcha包原生函数，移植方便gin使用。
+// Serve 是captcha包原生函数，移植方便gin使用。
 func Serve(w http.ResponseWriter, r *http.Request, id, ext, lang string, download bool, width, height int) error {
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	w.Header().Set("Pragma", "no-cache")
@@ -90,7 +80,7 @@ func Serve(w http.ResponseWriter, r *http.Request, id, ext, lang string, downloa
 	return nil
 }
 
-//ServeHTTP 是captcha包原生函数，移植方便gin使用。
+// ServeHTTP 是captcha包原生函数，移植方便gin使用。
 func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	dir, file := path.Split(r.URL.Path)
 	ext := path.Ext(file)
