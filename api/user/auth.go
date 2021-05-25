@@ -223,7 +223,7 @@ func UpdateInfo(c *gin.Context) {
 		user.Username = request.Username
 	}
 
-	if request.Password != "" && request.Password != user.Password {
+	if request.Password != "" {
 		//限制密码长度6到20位
 		if !checkPassword(request.Password) {
 			c.JSON(400, gin.H{"code": 400, "msg": "Password format error!"})
@@ -246,7 +246,6 @@ func UpdateInfo(c *gin.Context) {
 		}
 
 		logs.INFO(fmt.Sprintf("[%s] change password successfully", user.Username))
-		user.Password = newPassword
 	}
 
 	if request.Email != "" && request.Email != user.Email {
