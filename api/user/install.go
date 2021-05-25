@@ -59,7 +59,7 @@ func Install(c *gin.Context) {
 				"hidden"	INTEGER NOT NULL DEFAULT 0,
 				"banned"	INTEGER NOT NULL DEFAULT 1,
 				"team_id"	INTEGER,
-				"created"	TEXT NOT NULL,
+				"created"	INTEGER NOT NULL,
 				"role"	INTEGER NOT NULL DEFAULT 0,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);

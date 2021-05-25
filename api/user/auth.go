@@ -26,7 +26,7 @@ func Login(c *gin.Context) {
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error: ", err)
-		c.JSON(400, gin.H{"code": 400, "msg": err.Error()})
+		c.JSON(400, gin.H{"code": 400, "msg": "Bind json error!"})
 		return
 	}
 	//判断传入的是用户名还是邮箱，字符串中匹配到@字符则为邮箱，返回索引，匹配不到返回-1
@@ -55,7 +55,6 @@ func Login(c *gin.Context) {
 	//password进行md5加密
 	hashedPassword := cfg.MD5(request.Password)
 	//判断密码是否正确
-	logs.INFO(fmt.Sprintf("%s %s", hashedPassword, user.Password))
 	if hashedPassword != user.Password {
 		logs.INFO(fmt.Sprintf("[%s] login error!", user.Username))
 		c.JSON(200, gin.H{"code": 400, "msg": "Login error!"})
@@ -186,7 +185,7 @@ func UpdateInfo(c *gin.Context) {
 	// 用ShouldBindJSON解析绑定传入的Json数据
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error: ", err)
-		c.JSON(400, gin.H{"code": 400, "msg": err.Error()})
+		c.JSON(400, gin.H{"code": 400, "msg": "Bind json error!"})
 		return
 	}
 
@@ -355,7 +354,7 @@ func IsExisted(c *gin.Context) {
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error: ", err)
-		c.JSON(400, gin.H{"code": 400, "msg": err.Error()})
+		c.JSON(400, gin.H{"code": 400, "msg": "Bind json error!"})
 		return
 	}
 	//判断传入的是用户名还是邮箱，字符串中匹配到@字符则为邮箱，返回索引，匹配不到返回-1
