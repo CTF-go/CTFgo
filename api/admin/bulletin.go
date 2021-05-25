@@ -1,13 +1,13 @@
 package apiAdmin
 
 import (
+	cfg "CTFgo/configs"
 	i "CTFgo/databases/init"
 	"CTFgo/logs"
 	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"time"
 )
 
 var db *sql.DB = i.DB
@@ -17,8 +17,8 @@ type Bulletin struct {
 	ID        int    `json:"id"`
 	Title     string `json:"title"`
 	Content   string `json:"content"`
-	CreatedAt int64  `json:"created_at"`
-	UpdatedAt int64  `json:"updated_at"`
+	CreatedAt int32  `json:"created_at"`
+	UpdatedAt int32  `json:"updated_at"`
 }
 
 // NewBulletin 新增一个公告
@@ -34,8 +34,8 @@ func NewBulletin(c *gin.Context) {
 	bulletin := &Bulletin{
 		Title:     request.Title,
 		Content:   request.Content,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
+		CreatedAt: cfg.Timestamp(),
+		UpdatedAt: cfg.Timestamp(),
 	}
 	if err := addBulletin(bulletin); err != nil {
 		logs.WARNING("add bulletin to database error", err)
@@ -66,7 +66,7 @@ func EditBulletin(c *gin.Context) {
 		ID:        request.ID,
 		Title:     request.Title,
 		Content:   request.Content,
-		UpdatedAt: time.Now().Unix(),
+		UpdatedAt: cfg.Timestamp(),
 	}
 	if err := updateBulletin(bulletin); err != nil {
 		logs.WARNING("update bulletin error", err)

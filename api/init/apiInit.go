@@ -97,8 +97,8 @@ func SetupAPI() *gin.Engine {
 		// 获取指定类别的题目信息
 		personal.GET("/challenges", admin.GetChallengesByCategory)
 
-		// TODO: 提交flag
-
+		// 提交flag
+		personal.POST("/flag", u.SubmitFlag)
 	}
 
 	// 管理者api，需要用户登陆且Role=1才能访问

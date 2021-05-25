@@ -46,7 +46,7 @@ type infoRequest struct {
 }
 
 // scores 定义返回得分情况结构体。
-type scores struct {
+type Score struct {
 	ID       int
 	Username string
 	Score    int
@@ -62,4 +62,9 @@ type installRequest struct {
 // isExistedRequest 定义接收用户名或邮箱数据的结构体。
 type isExistedRequest struct {
 	Username string `form:"username" json:"username" binding:"required"`
+}
+
+type submissionRequest struct {
+	ChallengeID int    `form:"challenge_id" json:"challenge_id" binding:"required"`
+	Flag        string `form:"flag" json:"flag" binding:"required"`
 }
