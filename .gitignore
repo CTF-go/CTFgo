@@ -1,2 +1,4 @@
 .DS_Store
 databases/ctfgo.db
+sessions/
+logs/2021*

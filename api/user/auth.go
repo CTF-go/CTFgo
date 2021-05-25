@@ -121,7 +121,7 @@ func Register(c *gin.Context) {
 	//向数据库插入用户
 	sql_str := "INSERT INTO user (token,username,password,email,created) VALUES (?,?,?,?,?);"
 	res, err := db.Exec(sql_str, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, cfg.Timestamp())
-	sql_str2 := "INSERT INTO scores (username,scores) VALUES (?,0);"
+	sql_str2 := "INSERT INTO score (username,score) VALUES (?,0);"
 	_, err2 := db.Exec(sql_str2, request.Username)
 	if err != nil || err2 != nil {
 		logs.WARNING("register insert error: ", err)
