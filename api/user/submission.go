@@ -37,11 +37,6 @@ func SubmitFlag(c *gin.Context) {
 		return
 	}
 
-	// 检查题目是否存在
-	if !isChallengeExisted(request.ChallengeID) {
-		c.JSON(400, gin.H{"code": 400, "msg": "Challenge does not exist!"})
-	}
-
 	// 获取UserID
 	session, err := Store.Get(c.Request, cfg.SessionID)
 	if err != nil {
@@ -52,6 +47,17 @@ func SubmitFlag(c *gin.Context) {
 	user, ok := session.Values["user"].(User)
 	if !ok {
 		c.JSON(200, gin.H{"code": 400, "msg": "No session"})
+		return
+	}
+
+	// 检查题目是否存在
+	if !isChallengeExisted(request.ChallengeID) {
+		c.JSON(400, gin.H{"code": 400, "msg": "Challenge does not exist!"})
+		return
+	}
+
+	if hasAlreadySolved(user.ID, request.ChallengeID) {
+		c.JSON(400, gin.H{"code": 400, "msg": "Already solved!"})
 		return
 	}
 
@@ -72,12 +78,12 @@ func SubmitFlag(c *gin.Context) {
 	// 获取flag
 	flag, err := getFlag(request.ChallengeID)
 	if err != nil {
-		c.JSON(400, gin.H{"code": 400, "msg": "Get Flag failure!"})
+		c.JSON(400, gin.H{"code": 400, "msg": "Get flag failure!"})
 		return
 	}
 	// 对比flag
 	if request.Flag != flag {
-		c.JSON(400, gin.H{"code": 400, "msg": "Wrong Flag!"})
+		c.JSON(400, gin.H{"code": 400, "msg": "Wrong flag!"})
 	} else {
 		// Solve记录
 		solve := &Solve{
@@ -94,11 +100,21 @@ func SubmitFlag(c *gin.Context) {
 		err = addScore(user.Username, request.ChallengeID)
 		if err != nil {
 			c.JSON(400, gin.H{"code": 400, "msg": "Add Score failure!"})
+			return
 		}
 
 		logs.INFO(fmt.Sprintf("[%s] user solved [%d].", user.Username, request.ChallengeID))
-		c.JSON(200, gin.H{"code": 200, "msg": "Correct Flag!"})
+		c.JSON(200, gin.H{"code": 200, "msg": "Correct flag!"})
 	}
+}
+
+func hasAlreadySolved(uid int, cid int) (exists bool) {
+	command := "SELECT EXISTS(SELECT 1 FROM solve WHERE uid=? AND cid=?);"
+	if err := db.QueryRow(command, uid, cid).Scan(&exists); err != nil {
+		logs.WARNING("query or scan error", err)
+		return false
+	}
+	return exists
 }
 
 // TODO: implement all functions below
@@ -163,7 +179,7 @@ func addScore(username string, cid int) error {
 }
 
 func recordSubmission(s *Submission) error {
-	command := "INSERT INTO submission (uid, cid, Flag, submitted_at) VALUES (?,?,?,?);"
+	command := "INSERT INTO submission (uid, cid, flag, submitted_at) VALUES (?,?,?,?);"
 	res, err := db.Exec(command, s.UserID, s.ChallengeID, s.Flag, s.Time)
 	if err != nil {
 		return err
@@ -177,7 +193,7 @@ func recordSubmission(s *Submission) error {
 }
 
 func getFlag(id int) (flag string, err error) {
-	command := "SELECT Flag FROM challenge WHERE id=?"
+	command := "SELECT flag FROM challenge WHERE id=?"
 	if err := db.QueryRow(command, id).Scan(&flag); err != nil {
 		return "", err
 	}
