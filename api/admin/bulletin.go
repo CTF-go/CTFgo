@@ -1,24 +1,24 @@
 package apiAdmin
 
 import (
+	cfg "CTFgo/configs"
 	i "CTFgo/databases/init"
 	"CTFgo/logs"
 	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"time"
 )
 
 var db *sql.DB = i.DB
 
 // Bulletin 定义一个公告
 type Bulletin struct {
-	ID        int       `json:"id"`
-	Title     string    `json:"title"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        int    `json:"id"`
+	Title     string `json:"title"`
+	Content   string `json:"content"`
+	CreatedAt int32  `json:"created_at"`
+	UpdatedAt int32  `json:"updated_at"`
 }
 
 // NewBulletin 新增一个公告
@@ -32,8 +32,10 @@ func NewBulletin(c *gin.Context) {
 	}
 
 	bulletin := &Bulletin{
-		Title:   request.Title,
-		Content: request.Content,
+		Title:     request.Title,
+		Content:   request.Content,
+		CreatedAt: cfg.Timestamp(),
+		UpdatedAt: cfg.Timestamp(),
 	}
 	if err := addBulletin(bulletin); err != nil {
 		logs.WARNING("add bulletin to database error", err)
@@ -61,9 +63,10 @@ func EditBulletin(c *gin.Context) {
 	}
 
 	bulletin := &Bulletin{
-		ID:      request.ID,
-		Title:   request.Title,
-		Content: request.Content,
+		ID:        request.ID,
+		Title:     request.Title,
+		Content:   request.Content,
+		UpdatedAt: cfg.Timestamp(),
 	}
 	if err := updateBulletin(bulletin); err != nil {
 		logs.WARNING("update bulletin error", err)
@@ -115,8 +118,8 @@ func GetAllBulletins(c *gin.Context) {
 
 // addBulletin 操作数据库新增一个公告
 func addBulletin(b *Bulletin) error {
-	command := "INSERT INTO bulletin (title,content) VALUES (?,?);"
-	res, err := db.Exec(command, b.Title, b.Content)
+	command := "INSERT INTO bulletin (title,content,created_at,updated_at) VALUES (?,?,?,?);"
+	res, err := db.Exec(command, b.Title, b.Content, b.CreatedAt, b.UpdatedAt)
 	if err != nil {
 		return err
 	}
@@ -130,8 +133,8 @@ func addBulletin(b *Bulletin) error {
 
 // updateBulletin 操作数据库更新一个公告
 func updateBulletin(b *Bulletin) error {
-	command := "UPDATE bulletin SET title=?, content=?, updated_at=(datetime('now','localtime')) WHERE id=?;"
-	res, err := db.Exec(command, b.Title, b.Content, b.ID)
+	command := "UPDATE bulletin SET title=?, content=?, updated_at=? WHERE id=?;"
+	res, err := db.Exec(command, b.Title, b.Content, b.UpdatedAt, b.ID)
 	if err != nil {
 		return err
 	}

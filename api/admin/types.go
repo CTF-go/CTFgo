@@ -53,7 +53,7 @@ type deleteBulletinRequest struct {
 	ID int `form:"id" json:"id" binding:"required"`
 }
 
-// challengeResponse 定义获取题目的一个相应
+// challengeResponse 定义获取题目的一个响应
 type challengeResponse struct {
 	ID          int    `form:"id" json:"id" binding:"required"`
 	Name        string `form:"name" json:"name" binding:"required"`
