@@ -85,8 +85,8 @@ func Install(c *gin.Context) {
 			    "id" 	INTEGER NOT NULL UNIQUE,
 			    "title" TEXT NOT NULL,
 			    "content" TEXT,
-				"created_at" TIMESTAMP DEFAULT (datetime('now','localtime')),
-				"updated_at" DATETIME DEFAULT (datetime('now','localtime')),
+				"created_at" INTEGER NOT NULL,
+				"updated_at" INTEGER NOT NULL,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			)
 			`
