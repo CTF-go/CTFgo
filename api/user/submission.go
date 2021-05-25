@@ -108,6 +108,7 @@ func SubmitFlag(c *gin.Context) {
 	}
 }
 
+// hasAlreadySolved 检查某道题是否已经被某用户解出
 func hasAlreadySolved(uid int, cid int) (exists bool) {
 	command := "SELECT EXISTS(SELECT 1 FROM solve WHERE uid=? AND cid=?);"
 	if err := db.QueryRow(command, uid, cid).Scan(&exists); err != nil {
