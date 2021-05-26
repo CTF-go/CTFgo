@@ -452,7 +452,7 @@ func AuthRequired() gin.HandlerFunc {
 			return
 		}
 
-		if user.Role != 0 {
+		if user.Role != 0 && user.Role != 1 {
 			c.JSON(200, gin.H{"code": 400, "msg": "Unauthorized access!"})
 			c.Abort()
 			return

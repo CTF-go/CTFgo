@@ -113,11 +113,11 @@ func SetupAPI() *gin.Engine {
 		manager.DELETE("challenge", admin.DeleteChallenge)
 
 		// 创建新公告
-		manager.POST("bulletin", admin.NewNotice)
+		manager.POST("notice", admin.NewNotice)
 		// 更改公告
-		manager.PATCH("bulletin", admin.EditNotice)
+		manager.PATCH("notice", admin.EditNotice)
 		// 删除公告
-		manager.DELETE("bulletin", admin.DeleteNotice)
+		manager.DELETE("notice", admin.DeleteNotice)
 	}
 
 	return r
