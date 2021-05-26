@@ -65,6 +65,22 @@ type isExistedRequest struct {
 }
 
 type submissionRequest struct {
-	ChallengeID int    `form:"challenge_id" json:"challenge_id" binding:"required"`
-	Flag        string `form:"flag" json:"flag" binding:"required"`
+	Cid  int    `form:"cid" json:"cid" binding:"required"`
+	Flag string `form:"flag" json:"flag" binding:"required"`
+}
+
+type getSubmissionsByUidRequest struct {
+	Uid int `form:"uid" json:"uid" binding:"required"`
+}
+
+type getSubmissionsByCidRequest struct {
+	Cid int `form:"cid" json:"cid" binding:"required"`
+}
+
+type getSolvesByUidRequest struct {
+	Uid int `form:"uid" json:"uid" binding:"required"`
+}
+
+type getSolvesByCidRequest struct {
+	Cid int `form:"cid" json:"cid" binding:"required"`
 }

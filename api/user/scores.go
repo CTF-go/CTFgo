@@ -40,7 +40,7 @@ func GetScoreByUserID(c *gin.Context) {
 func GetAllScores(c *gin.Context) {
 	var s Score
 	var scores []Score
-	sql_str := "SELECT * FROM score;"
+	sql_str := "SELECT * FROM score WHERE id != 1;"
 	rows, err := db.Query(sql_str)
 	if err != nil {
 		logs.WARNING("get all scores error", err)

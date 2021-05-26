@@ -99,6 +99,12 @@ func SetupAPI() *gin.Engine {
 
 		// 提交flag
 		personal.POST("/flag", u.SubmitFlag)
+		// 获取所有正确的flag提交记录
+		personal.GET("solves/all", u.GetAllSolves)
+		// 获取指定用户正确的flag提交记录
+		personal.GET("solves/uid", u.GetSolvesByUid)
+		// 获取指定题目正确的flag提交记录
+		personal.GET("solves/cid", u.GetSolvesByCid)
 	}
 
 	// 管理者api，需要用户登陆且Role=1才能访问
@@ -118,6 +124,13 @@ func SetupAPI() *gin.Engine {
 		manager.PATCH("notice", admin.EditNotice)
 		// 删除公告
 		manager.DELETE("notice", admin.DeleteNotice)
+
+		// 获取所有提交记录
+		manager.GET("submissions/all", u.GetAllSubmissions)
+		// 获取指定用户的提交记录
+		manager.GET("submissions/uid", u.GetSubmissionsByUid)
+		// 获取指定题目的提交记录
+		manager.GET("submissions/cid", u.GetSubmissionsByCid)
 	}
 
 	return r
