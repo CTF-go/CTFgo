@@ -80,7 +80,7 @@ func SetupAPI() *gin.Engine {
 		public.GET("/scores/all", u.GetAllScores)
 
 		// 获取所有公告
-		public.GET("/bulletin/all", admin.GetAllBulletins)
+		public.GET("/bulletin/all", admin.GetAllNotices)
 	}
 
 	// 普通用户api，需要用户登陆且Role=0才能访问
@@ -113,11 +113,11 @@ func SetupAPI() *gin.Engine {
 		manager.DELETE("challenge", admin.DeleteChallenge)
 
 		// 创建新公告
-		manager.POST("bulletin", admin.NewBulletin)
+		manager.POST("bulletin", admin.NewNotice)
 		// 更改公告
-		manager.PATCH("bulletin", admin.EditBulletin)
+		manager.PATCH("bulletin", admin.EditNotice)
 		// 删除公告
-		manager.DELETE("bulletin", admin.DeleteBulletin)
+		manager.DELETE("bulletin", admin.DeleteNotice)
 	}
 
 	return r

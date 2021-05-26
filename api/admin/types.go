@@ -35,21 +35,21 @@ type getChallengeByCategoryRequest struct {
 	Category string `form:"category" json:"category" binding:"required"`
 }
 
-// newBulletinRequest 定义新增公告的一个请求
-type newBulletinRequest struct {
+// newNoticeRequest 定义新增公告的一个请求
+type newNoticeRequest struct {
 	Title   string `form:"title" json:"title" binding:"required"`
 	Content string `form:"content" json:"content" binding:"required"`
 }
 
-// editBulletinRequest 定义修改公告的一个请求
-type editBulletinRequest struct {
+// editNoticeRequest 定义修改公告的一个请求
+type editNoticeRequest struct {
 	ID      int    `form:"id" json:"id" binding:"required"`
 	Title   string `form:"title" json:"title" binding:"required"`
 	Content string `form:"content" json:"content" binding:"required"`
 }
 
-// deleteBulletinRequest 定义删除公告的一个请求
-type deleteBulletinRequest struct {
+// deleteNoticeRequest 定义删除公告的一个请求
+type deleteNoticeRequest struct {
 	ID int `form:"id" json:"id" binding:"required"`
 }
 
