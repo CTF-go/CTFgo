@@ -96,7 +96,7 @@ func Install(c *gin.Context) {
 				"visible" INTEGER,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
-			CREATE TABLE "bulletin" (
+			CREATE TABLE "notice" (
 			    "id" 	INTEGER NOT NULL UNIQUE,
 			    "title" TEXT NOT NULL,
 			    "content" TEXT,

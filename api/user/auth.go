@@ -30,7 +30,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	//判断传入的是用户名还是邮箱，字符串中匹配到@字符则为邮箱，返回索引，匹配不到返回-1
-	if strings.Index(request.Username, "@") != -1 {
+	if strings.Contains(request.Username, "@") {
 		//判断为邮箱，验证邮箱格式
 		if !checkEmail(request.Username) {
 			c.JSON(400, gin.H{"code": 400, "msg": "Email format error!"})
@@ -356,22 +356,22 @@ func IsExisted(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "msg": "Bind json error!"})
 		return
 	}
-	//判断传入的是用户名还是邮箱，字符串中匹配到@字符则为邮箱，返回索引，匹配不到返回-1
-	if strings.Index(request.Username, "@") != -1 {
+	//判断传入的是用户名还是邮箱，字符串中匹配到@字符则为邮箱，匹配到返回true
+	if strings.Contains(request.Username, "@") {
 		//判断邮箱是否已被使用
 		if isEmailExisted(user, request.Username) {
-			c.JSON(200, gin.H{"code": 1001, "msg": "Email has already been used!"})
+			c.JSON(200, gin.H{"code": 200, "msg": "Email has already been used!"})
 			return
 		}
-		c.JSON(200, gin.H{"code": 200, "msg": "OK"})
+		c.JSON(200, gin.H{"code": 400, "msg": "OK"})
 		return
 	} else {
 		//判断用户名是否已被使用
 		if isNameExisted(user, request.Username) {
-			c.JSON(200, gin.H{"code": 1000, "msg": "Username has already been used!"})
+			c.JSON(200, gin.H{"code": 200, "msg": "Username has already been used!"})
 			return
 		}
-		c.JSON(200, gin.H{"code": 200, "msg": "OK"})
+		c.JSON(200, gin.H{"code": 400, "msg": "OK"})
 		return
 	}
 }
