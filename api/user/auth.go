@@ -8,6 +8,7 @@ import (
 	i "CTFgo/databases/init"
 	"CTFgo/logs"
 	"database/sql"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -205,15 +206,24 @@ func UpdateInfo(c *gin.Context) {
 			return
 		}
 		//修改用户名
-		sql_str := "UPDATE user SET username = ? where id = ?;"
-		res, err := db.Exec(sql_str, request.Username, user.ID)
-		if err != nil {
-			logs.WARNING("update info error: ", err)
+		sql1 := "UPDATE user SET username = ? where id = ?;"
+		res1, err1 := db.Exec(sql1, request.Username, user.ID)
+		sql2 := "UPDATE score SET username = ? where id = ?;"
+		res2, err2 := db.Exec(sql2, request.Username, user.ID)
+		if err1 != nil {
+			logs.WARNING("update info error: ", err1)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
 			return
 		}
-		affected, _ := res.RowsAffected()
-		if affected == 0 {
+		if err2 != nil {
+			logs.WARNING("update info error: ", err2)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		affected1, _ := res1.RowsAffected()
+		affected2, _ := res2.RowsAffected()
+		if affected1 == 0 || affected2 == 0 {
+			err := errors.New("0 rows affected")
 			logs.WARNING("update info error: ", err)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
 			return
@@ -231,8 +241,8 @@ func UpdateInfo(c *gin.Context) {
 		}
 		//修改密码
 		newPassword := cfg.MD5(request.Password)
-		sql_str := "UPDATE user SET password = ? where id = ?;"
-		res, err := db.Exec(sql_str, newPassword, user.ID)
+		sql := "UPDATE user SET password = ? where id = ?;"
+		res, err := db.Exec(sql, newPassword, user.ID)
 		if err != nil {
 			logs.WARNING("update info error: ", err)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
@@ -240,6 +250,7 @@ func UpdateInfo(c *gin.Context) {
 		}
 		affected, _ := res.RowsAffected()
 		if affected == 0 {
+			err := errors.New("0 rows affected")
 			logs.WARNING("update info error: ", err)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
 			return
@@ -260,8 +271,8 @@ func UpdateInfo(c *gin.Context) {
 			return
 		}
 		//修改邮箱
-		sql_str := "UPDATE user SET email = ? where id = ?;"
-		res, err := db.Exec(sql_str, request.Email, user.ID)
+		sql := "UPDATE user SET email = ? where id = ?;"
+		res, err := db.Exec(sql, request.Email, user.ID)
 		if err != nil {
 			logs.WARNING("update info error: ", err)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
@@ -269,6 +280,7 @@ func UpdateInfo(c *gin.Context) {
 		}
 		affected, _ := res.RowsAffected()
 		if affected == 0 {
+			err := errors.New("0 rows affected")
 			logs.WARNING("update info error: ", err)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
 			return
@@ -285,8 +297,8 @@ func UpdateInfo(c *gin.Context) {
 			return
 		}
 		//修改Affiliation
-		sql_str := "UPDATE user SET affiliation = ? where id = ?;"
-		res, err := db.Exec(sql_str, request.Affiliation, user.ID)
+		sql := "UPDATE user SET affiliation = ? where id = ?;"
+		res, err := db.Exec(sql, request.Affiliation, user.ID)
 		if err != nil {
 			logs.WARNING("update info error: ", err)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
@@ -294,6 +306,7 @@ func UpdateInfo(c *gin.Context) {
 		}
 		affected, _ := res.RowsAffected()
 		if affected == 0 {
+			err := errors.New("0 rows affected")
 			logs.WARNING("update info error: ", err)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
 			return
@@ -311,8 +324,8 @@ func UpdateInfo(c *gin.Context) {
 			return
 		}
 		//修改Country
-		sql_str := "UPDATE user SET country = ? where id = ?;"
-		res, err := db.Exec(sql_str, request.Country, user.ID)
+		sql := "UPDATE user SET country = ? where id = ?;"
+		res, err := db.Exec(sql, request.Country, user.ID)
 		if err != nil {
 			logs.WARNING("update info error: ", err)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
@@ -320,6 +333,7 @@ func UpdateInfo(c *gin.Context) {
 		}
 		affected, _ := res.RowsAffected()
 		if affected == 0 {
+			err := errors.New("0 rows affected")
 			logs.WARNING("update info error: ", err)
 			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
 			return

@@ -120,8 +120,11 @@ func Install(c *gin.Context) {
 		sql_str2 = "INSERT INTO score (username,score) VALUES (?,0);"
 		_, err2 = db.Exec(sql_str2, "test")
 		// --- end ---
-		if err1 != nil || err2 != nil {
-			logs.ERROR("admin insert error", err)
+		if err1 != nil {
+			logs.ERROR("admin insert error", err1)
+		}
+		if err2 != nil {
+			logs.ERROR("admin insert error", err2)
 		}
 		logs.INFO("Administrator account [" + request.Username + "]" + " register success!")
 		//新建sessions文件夹
