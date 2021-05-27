@@ -63,8 +63,6 @@ func SetupAPI() *gin.Engine {
 
 		//用户注册
 		public.POST("/register", u.Register)
-		//判断用户名或邮箱是否存在
-		public.POST("/register/isexisted", u.IsExisted)
 		//用户登录
 		public.POST("/login", u.Login)
 		//用户注销

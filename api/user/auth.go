@@ -345,37 +345,6 @@ func UpdateInfo(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "Update userinfo success!"})
 }
 
-// IsExisted 判断用户名或邮箱是否已存在。
-func IsExisted(c *gin.Context) {
-	var request isExistedRequest
-	var user User
-
-	//用ShouldBindJSON解析绑定传入的Json数据。
-	if err := c.ShouldBindJSON(&request); err != nil {
-		logs.WARNING("bindjson error: ", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Bind json error!"})
-		return
-	}
-	//判断传入的是用户名还是邮箱，字符串中匹配到@字符则为邮箱，匹配到返回true
-	if strings.Contains(request.Username, "@") {
-		//判断邮箱是否已被使用
-		if isEmailExisted(user, request.Username) {
-			c.JSON(200, gin.H{"code": 200, "msg": "Email has already been used!"})
-			return
-		}
-		c.JSON(200, gin.H{"code": 400, "msg": "OK"})
-		return
-	} else {
-		//判断用户名是否已被使用
-		if isNameExisted(user, request.Username) {
-			c.JSON(200, gin.H{"code": 200, "msg": "Username has already been used!"})
-			return
-		}
-		c.JSON(200, gin.H{"code": 400, "msg": "OK"})
-		return
-	}
-}
-
 // checkEmail 验证是否符合邮箱格式，返回true或false
 func checkEmail(email string) bool {
 	pattern := `^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$`
