@@ -20,7 +20,7 @@ import (
 //Captcha 返回captcha图片的base64值。
 func Captcha(c *gin.Context) {
 	id := captcha.New()
-	b64 := captcha_base64(id)
+	b64 := captchaBase64(id)
 	if b64 == "" {
 		c.JSON(400, gin.H{"code": 400, "msg": "Cannot get captcha!"})
 		return
@@ -37,21 +37,21 @@ func captchaVerify(id string, solution string) bool {
 	}
 }
 
-// captcha_base64 返回验证码图片的base64值。
-func captcha_base64(id string) string {
+// captchaBase64 返回验证码图片的base64值。
+func captchaBase64(id string) string {
 	imgurl := "http://127.0.0.1:8081/v1/captcha/" + id + ".png"
 	response, err := http.Get(imgurl)
 	if err != nil || response.StatusCode != 200 {
 		logs.WARNING("get captcha image error", err)
 		return ""
 	}
-	img, err := ioutil.ReadAll(response.Body)
+	img, _ := ioutil.ReadAll(response.Body)
 	imgb64 := base64.StdEncoding.EncodeToString([]byte(img))
 	return imgb64
 }
 
-// Captcha_server 提供验证码图片.
-func Captcha_server(c *gin.Context) {
+// CaptchaServer 提供验证码图片.
+func CaptchaServer(c *gin.Context) {
 	ServeHTTP(c.Writer, c.Request)
 }
 

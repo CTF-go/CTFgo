@@ -10,11 +10,11 @@ type User struct {
 	Username    string `json:"username"`    //用户名，唯一
 	Password    string `json:"password"`    //用户密码md5值，md5(原密码）
 	Email       string `json:"email"`       //邮箱，唯一
-	Affiliation string `json:"affiliation"` //组织、战队或机构等，非必需
-	Country     string `json:"country"`     //国家，非必需
+	Affiliation string `json:"affiliation"` //组织、战队或机构等，非必需，默认为0
+	Country     string `json:"country"`     //国家，非必需，默认为0
 	Hidden      int    `json:"hidden"`      //1：隐藏，0：显示，默认为0
 	Banned      int    `json:"banned"`      //1：禁止，0：正常，默认为1，邮箱激活后为0
-	TeamID      int    `json:"team_id"`     //队伍id，在团队模式下必须，个人模式非必需
+	TeamID      int    `json:"team_id"`     //队伍id，在团队模式下必须，个人模式非必需，默认为0
 	Created     int    `json:"created"`     //用户注册时间，10位数时间戳
 	Role        int    `json:"role"`        //0：普通用户，默认为0，1：普通管理员，2：所有者（最高权限）
 }
@@ -28,7 +28,6 @@ type loginRequest struct {
 
 // registerRequest 定义接收注册数据的结构体。
 type registerRequest struct {
-	// binding:"required"修饰的字段，若接收为空值，则报错，是必须字段
 	Username  string `form:"username" json:"username" binding:"required"`
 	Password  string `form:"password" json:"password" binding:"required"`
 	Email     string `form:"email" json:"email" binding:"required"`
@@ -43,13 +42,6 @@ type infoRequest struct {
 	Email       string `form:"email" json:"email"`
 	Affiliation string `form:"affiliation" json:"affiliation"`
 	Country     string `form:"country" json:"country"`
-}
-
-// scores 定义返回得分情况结构体。
-type Score struct {
-	ID       int
-	Username string
-	Score    int
 }
 
 // installRequest 定义接收installRequest数据的结构体。
@@ -78,4 +70,19 @@ type getSolvesByUidRequest struct {
 
 type getSolvesByCidRequest struct {
 	Cid int `form:"cid" json:"cid" binding:"required"`
+}
+
+// scoreResponse 定义返回得分情况结构体。
+type scoreResponse struct {
+	ID       int    `json:"id"`
+	Username string `json:"username"`
+	Score    int    `json:"score"`
+}
+
+// publicInfoResponse 定义返回用户公开信息结构体。
+type publicInfoResponse struct {
+	Username    string `json:"username"`
+	Affiliation string `json:"affiliation"`
+	Country     string `json:"country"`
+	TeamID      int    `json:"team_id"`
 }

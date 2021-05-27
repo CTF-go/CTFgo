@@ -345,6 +345,28 @@ func UpdateInfo(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "Update userinfo success!"})
 }
 
+// GetInfoByUserID 获取指定ID用户的可公开信息。
+func GetInfoByUserID(c *gin.Context) {
+	var info publicInfoResponse
+	id := c.Params.ByName("id")
+	if id == "" {
+		c.JSON(400, gin.H{"code": 400, "msg": "Need id!"})
+		return
+	}
+	if !cfg.CheckID(id) {
+		c.JSON(400, gin.H{"code": 400, "msg": "Format error!"})
+		return
+	}
+	sql := "SELECT username,affiliation,country,team_id FROM user WHERE id = ? LIMIT 1;"
+	row := db.QueryRow(sql, id)
+	err := row.Scan(&info.Username, &info.Affiliation, &info.Country, &info.TeamID)
+	if err != nil {
+		c.JSON(400, gin.H{"code": 400, "msg": "ID error!"})
+		return
+	}
+	c.JSON(200, gin.H{"code": 200, "data": info})
+}
+
 // checkEmail 验证是否符合邮箱格式，返回true或false
 func checkEmail(email string) bool {
 	pattern := `^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$`

@@ -26,7 +26,6 @@ func init() {
 	Log_dir = Work_dir + "/logs"
 	Current_log_path = Log_dir + "/run.log"
 	Save_log_path = Log_dir + "/" + log_times() + ".log"
-	//Key_file = Work_dir + "/security.key"
 	DB_dir = Work_dir + "/databases"
 	DB_file = DB_dir + "/ctfgo.db"
 	Static_path = Work_dir + "/themes/default"
@@ -55,7 +54,7 @@ func log_times() string {
 	return t
 }
 
-//Times用于获取当前时间，格式如2006/01/02 15:04:05。
+// Times 用于获取当前时间，格式如2006/01/02 15:04:05。
 func Times() string {
 	// 东八区，先默认这个，后面再改成动态配置的
 	time_zone := time.FixedZone("CST", 8*3600)
@@ -65,7 +64,7 @@ func Times() string {
 	return t
 }
 
-//Timestamp用于获取当前10位数时间戳。
+// Timestamp 用于获取当前10位数时间戳。
 func Timestamp() int32 {
 	// 东八区，先默认这个，后面再改成动态配置的
 	time_zone := time.FixedZone("CST", 8*3600)
@@ -73,7 +72,7 @@ func Timestamp() int32 {
 	return int32(t)
 }
 
-//MD5进行md5加密。
+// MD5 进行md5加密。
 func MD5(str string) string {
 	data := []byte(str)
 	has := md5.Sum(data)
@@ -82,7 +81,7 @@ func MD5(str string) string {
 	return md5_str
 }
 
-//Random生成随机数。
+// Random 生成随机数。
 func Random() []byte {
 	b := make([]byte, 32)
 	//ReadFull从rand.Reader精确地读取len(b)字节数据填充进b
@@ -93,21 +92,25 @@ func Random() []byte {
 	return b
 }
 
-//Token生成随机token。
+// Token 生成随机token。
 func Token() string {
 	b := Random()[:16]
 	return fmt.Sprintf("%x", b)
 }
 
-//ID_verify 验证id是否为非负正整数。
-func ID_verify(id string) bool {
+// CheckID 验证id是否为非负正整数。
+func CheckID(id string) bool {
+	if id == "1" {
+		return false
+	}
 	pattern := `^[1-9]\d*$`
 	reg := regexp.MustCompile(pattern)
 	return reg.MatchString(id)
 }
 
-//num_compare 判断s1是否小于等于s2，小于等于返回true，大于返回false。
-func Num_compare(s1, s2 string) bool {
+/*
+// NumCompare 判断s1是否小于等于s2，小于等于返回true，大于返回false。
+func NumCompare(s1, s2 string) bool {
 	if len(s1) == len(s2) {
 		if s1 <= s2 {
 			return true
@@ -119,3 +122,4 @@ func Num_compare(s1, s2 string) bool {
 	}
 	return false
 }
+*/
