@@ -128,18 +128,24 @@ func Register(c *gin.Context) {
 		return
 	}
 	//向数据库插入用户
-	sql_str := "INSERT INTO user (token,username,password,email,created) VALUES (?,?,?,?,?);"
-	res, err := db.Exec(sql_str, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, cfg.Timestamp())
-	sql_str2 := "INSERT INTO score (username,score) VALUES (?,0);"
-	_, err2 := db.Exec(sql_str2, request.Username)
-	if err != nil || err2 != nil {
-		logs.WARNING("register insert error: ", err)
+	sql1 := "INSERT INTO user (token,username,password,email,created) VALUES (?,?,?,?,?);"
+	res1, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, cfg.Timestamp())
+	sql2 := "INSERT INTO score (username) VALUES (?);"
+	res2, err2 := db.Exec(sql2, request.Username)
+	if err1 != nil {
+		logs.WARNING("register insert error: ", err1)
 		c.JSON(400, gin.H{"code": 400, "msg": "Register error!"})
 		return
 	}
-	//id, _ := res.LastInsertId()
-	affected, _ := res.RowsAffected()
-	if affected == 0 {
+	if err2 != nil {
+		logs.WARNING("register insert error: ", err2)
+		c.JSON(400, gin.H{"code": 400, "msg": "Register error!"})
+		return
+	}
+	affected1, _ := res1.RowsAffected()
+	affected2, _ := res2.RowsAffected()
+	if affected1 == 0 || affected2 == 0 {
+		err := errors.New("0 rows affected")
 		logs.WARNING("register insert error: ", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Register error!"})
 		return
