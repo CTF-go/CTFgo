@@ -357,6 +357,32 @@ func UpdateInfo(c *gin.Context) {
 		user.Country = request.Country
 	}
 
+	if request.Website != "" && request.Website != user.Website {
+		// 限制传入参数为链接格式
+		if !checkWebsite(request.Website) {
+			c.JSON(400, gin.H{"code": 400, "msg": "Website format error!"})
+			return
+		}
+		//修改Website
+		sql := "UPDATE user SET website = ? where id = ?;"
+		res, err := db.Exec(sql, request.Website, user.ID)
+		if err != nil {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		affected, _ := res.RowsAffected()
+		if affected == 0 {
+			err := errors.New("0 rows affected")
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+
+		logs.INFO(fmt.Sprintf("[%s] change website from [%s] to [%s]", user.Username, user.Website, request.Website))
+		user.Website = request.Website
+	}
+
 	// 更新session
 	session.Values["user"] = user
 	err := session.Save(c.Request, c.Writer)
@@ -418,6 +444,13 @@ func checkPassword(password string) bool {
 		return false
 	}
 	return true
+}
+
+// checkWebsite 验证Website是否满足链接格式，返回true或false
+func checkWebsite(website string) bool {
+	pattern := `^(https?)://[-A-Za-z0-9+&#/%?=~:_.]+$`
+	reg := regexp.MustCompile(pattern)
+	return reg.MatchString(website)
 }
 
 // isNameExisted 判断用户名是否已经被占用，被占用返回true，未被占用则返回false

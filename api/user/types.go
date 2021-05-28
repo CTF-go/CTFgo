@@ -12,6 +12,7 @@ type User struct {
 	Email       string `json:"email"`       //邮箱，唯一
 	Affiliation string `json:"affiliation"` //组织、战队或机构等，非必需，默认为0
 	Country     string `json:"country"`     //国家，非必需，默认为0
+	Website     string `json:"website"`     //个人链接，默认为0
 	Hidden      int    `json:"hidden"`      //1：隐藏，0：显示，默认为0
 	Banned      int    `json:"banned"`      //1：禁止，0：正常，默认为1，邮箱激活后为0
 	TeamID      int    `json:"team_id"`     //队伍id，在团队模式下必须，个人模式非必需，默认为0
@@ -36,13 +37,14 @@ type registerRequest struct {
 	Solution  string `form:"solution" json:"solution" binding:"required"`
 }
 
-// infoRequest 定义接收用户信息的结构体。
+// infoRequest 定义接收用户修改信息的结构体。
 type infoRequest struct {
 	Username    string `form:"username" json:"username"`
 	Password    string `form:"password" json:"password"`
 	Email       string `form:"email" json:"email"`
 	Affiliation string `form:"affiliation" json:"affiliation"`
 	Country     string `form:"country" json:"country"`
+	Website     string `form:"website" json:"website"`
 }
 
 // installRequest 定义接收installRequest数据的结构体。
