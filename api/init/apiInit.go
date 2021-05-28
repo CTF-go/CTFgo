@@ -97,16 +97,16 @@ func SetupAPI() *gin.Engine {
 		// 获取所有题目信息
 		personal.GET("/challenges/all", admin.GetAllChallenges)
 		// 获取指定类别的题目信息
-		personal.GET("/challenges", admin.GetChallengesByCategory)
+		personal.GET("/challenges/:category", admin.GetChallengesByCategory)
 
 		// 提交flag
 		personal.POST("/flag", u.SubmitFlag)
 		// 获取所有正确的flag提交记录
-		personal.GET("solves/all", u.GetAllSolves)
+		personal.GET("/solves/all", u.GetAllSolves)
 		// 获取指定用户正确的flag提交记录
-		personal.GET("solves/uid", u.GetSolvesByUid)
+		personal.GET("/solves/uid/:uid", u.GetSolvesByUid)
 		// 获取指定题目正确的flag提交记录
-		personal.GET("solves/cid", u.GetSolvesByCid)
+		personal.GET("/solves/cid/:cid", u.GetSolvesByCid)
 	}
 
 	// 管理者api，需要用户登陆且Role=1才能访问
@@ -114,25 +114,23 @@ func SetupAPI() *gin.Engine {
 	manager.Use(admin.AuthRequired())
 	{
 		// 创建新题目
-		manager.POST("challenge", admin.NewChallenge)
+		manager.POST("/challenge", admin.NewChallenge)
 		// 更改题目
-		manager.PATCH("challenge", admin.EditChallenge)
+		manager.PUT("/challenge/:id", admin.EditChallenge)
 		// 删除题目
-		manager.DELETE("challenge", admin.DeleteChallenge)
+		manager.DELETE("/challenge/:id", admin.DeleteChallenge)
 
 		// 创建新公告
-		manager.POST("notice", admin.NewNotice)
-		// 更改公告
-		manager.PATCH("notice", admin.EditNotice)
+		manager.POST("/notice", admin.NewNotice)
 		// 删除公告
-		manager.DELETE("notice", admin.DeleteNotice)
+		manager.DELETE("/notice/:id", admin.DeleteNotice)
 
 		// 获取所有提交记录
-		manager.GET("submissions/all", u.GetAllSubmissions)
+		manager.GET("/submissions/all", u.GetAllSubmissions)
 		// 获取指定用户的提交记录
-		manager.GET("submissions/uid", u.GetSubmissionsByUid)
+		manager.GET("/submissions/uid/:uid", u.GetSubmissionsByUid)
 		// 获取指定题目的提交记录
-		manager.GET("submissions/cid", u.GetSubmissionsByCid)
+		manager.GET("/submissions/cid/:cid", u.GetSubmissionsByCid)
 	}
 
 	return r

@@ -7,24 +7,25 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"strconv"
 	"time"
 )
 
 // Submission 表示一次flag提交记录
 type Submission struct {
-	ID          int
-	UserID      int
-	ChallengeID int
-	Flag        string
-	Time        int64
+	ID          int    `json:"id"`
+	UserID      int    `json:"uid"`
+	ChallengeID int    `json:"cid"`
+	Flag        string `json:"flag"`
+	Time        int64  `json:"submitted_at"`
 }
 
 // Solve 表示一次正确的flag提交记录
 type Solve struct {
-	ID          int
-	UserID      int
-	ChallengeID int
-	Time        int64
+	ID          int   `json:"id"`
+	UserID      int   `json:"uid"`
+	ChallengeID int   `json:"cid"`
+	Time        int64 `json:"solved_at"`
 }
 
 // SubmitFlag 提交一个flag
@@ -123,15 +124,15 @@ func GetAllSubmissions(c *gin.Context) {
 
 // GetSubmissionsByUid 根据用户id获取flag提交记录
 func GetSubmissionsByUid(c *gin.Context) {
-	var request getSubmissionsByUidRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		logs.WARNING("bindjson error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Request format wrong!"})
+	uid, err := strconv.ParseInt(c.Param("uid"), 10, 64)
+	if err != nil {
+		logs.WARNING("wrong uid error", err)
+		c.JSON(400, gin.H{"code": 400, "msg": "Wrong uid!"})
 		return
 	}
 
 	var submissions []Submission
-	if err := getSubmissionsByUid(&submissions, request.Uid); err != nil {
+	if err := getSubmissionsByUid(&submissions, int(uid)); err != nil {
 		logs.WARNING("get specified submissions error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified submissions failure!"})
 		return
@@ -142,15 +143,15 @@ func GetSubmissionsByUid(c *gin.Context) {
 
 // GetSubmissionsByCid 根据题目id获取flag提交记录
 func GetSubmissionsByCid(c *gin.Context) {
-	var request getSubmissionsByCidRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		logs.WARNING("bindjson error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Request format wrong!"})
+	cid, err := strconv.ParseInt(c.Param("cid"), 10, 64)
+	if err != nil {
+		logs.WARNING("wrong cid error", err)
+		c.JSON(400, gin.H{"code": 400, "msg": "Wrong cid!"})
 		return
 	}
 
 	var submissions []Submission
-	if err := getSubmissionsByCid(&submissions, request.Cid); err != nil {
+	if err := getSubmissionsByCid(&submissions, int(cid)); err != nil {
 		logs.WARNING("get specified submissions error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified submissions failure!"})
 		return
@@ -174,20 +175,20 @@ func GetAllSolves(c *gin.Context) {
 
 // GetSolvesByUid 根据用户id获取正确的flag提交记录
 func GetSolvesByUid(c *gin.Context) {
-	var request getSolvesByUidRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		logs.WARNING("bindjson error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Request format wrong!"})
+	uid, err := strconv.ParseInt(c.Param("uid"), 10, 64)
+	if err != nil {
+		logs.WARNING("wrong uid error", err)
+		c.JSON(400, gin.H{"code": 400, "msg": "Wrong uid!"})
 		return
 	}
 
-	if request.Uid == 1 {
+	if uid == 1 {
 		c.JSON(400, gin.H{"code": 400, "msg": "Not allowed!"})
 		return
 	}
 
 	var solves []Solve
-	if err := getSolvesByUid(&solves, request.Uid); err != nil {
+	if err := getSolvesByUid(&solves, int(uid)); err != nil {
 		logs.WARNING("get specified solves error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified solves failure!"})
 		return
@@ -198,15 +199,15 @@ func GetSolvesByUid(c *gin.Context) {
 
 // GetSolvesByCid 根据题目id获取正确的flag提交记录
 func GetSolvesByCid(c *gin.Context) {
-	var request getSolvesByCidRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		logs.WARNING("bindjson error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Request format wrong!"})
+	cid, err := strconv.ParseInt(c.Param("cid"), 10, 64)
+	if err != nil {
+		logs.WARNING("wrong cid error", err)
+		c.JSON(400, gin.H{"code": 400, "msg": "Wrong cid!"})
 		return
 	}
 
 	var solves []Solve
-	if err := getSolvesByCid(&solves, request.Cid); err != nil {
+	if err := getSolvesByCid(&solves, int(cid)); err != nil {
 		logs.WARNING("get specified solves error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified solves failure!"})
 		return

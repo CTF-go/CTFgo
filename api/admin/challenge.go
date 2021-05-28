@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 // Challenge 定义一个题目
@@ -23,7 +24,7 @@ type Challenge struct {
 
 // NewChallenge 新增一个题目
 func NewChallenge(c *gin.Context) {
-	var request newChallengeRequest
+	var request challengeRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error", err)
@@ -58,16 +59,22 @@ func NewChallenge(c *gin.Context) {
 
 // EditChallenge 修改一个题目
 func EditChallenge(c *gin.Context) {
-	var request editChallengeRequest
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		logs.WARNING("wrong id error", err)
+		c.JSON(400, gin.H{"code": 400, "msg": "Wrong id!"})
+		return
+	}
 
+	var request challengeRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Request format wrong!"})
 		return
 	}
 
-	if !isChallengeExisted(request.ID) {
-		c.JSON(400, gin.H{"code": 400, "msg": "challenge does not exist"})
+	if !isChallengeExisted(int(id)) {
+		c.JSON(400, gin.H{"code": 400, "msg": "Challenge does not exist"})
 		return
 	}
 
@@ -77,9 +84,10 @@ func EditChallenge(c *gin.Context) {
 	}
 
 	challenge := &Challenge{
-		ID:          request.ID,
+		ID:          int(id),
 		Name:        request.Name,
 		Score:       request.Score,
+		Flag:        request.Flag,
 		Description: request.Description,
 		Category:    request.Category,
 		Tags:        request.Tags,
@@ -92,32 +100,31 @@ func EditChallenge(c *gin.Context) {
 		return
 	}
 
-	logs.INFO(fmt.Sprintf("update challenge [%d] success!", request.ID))
+	logs.INFO(fmt.Sprintf("update challenge [%d] success!", id))
 	c.JSON(200, gin.H{"code": 200, "msg": "Update challenge success!"})
 }
 
 // DeleteChallenge 删除一个题目
 func DeleteChallenge(c *gin.Context) {
-	var request deleteChallengeRequest
-
-	if err := c.ShouldBindJSON(&request); err != nil {
-		logs.WARNING("bindjson error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Request format wrong!"})
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		logs.WARNING("wrong id error", err)
+		c.JSON(400, gin.H{"code": 400, "msg": "Wrong id!"})
 		return
 	}
 
-	if !isChallengeExisted(request.ID) {
-		c.JSON(400, gin.H{"code": 400, "msg": "challenge does not exist"})
+	if !isChallengeExisted(int(id)) {
+		c.JSON(400, gin.H{"code": 400, "msg": "Challenge does not exist"})
 		return
 	}
 
-	if err := deleteChallenge(request.ID); err != nil {
+	if err := deleteChallenge(int(id)); err != nil {
 		logs.WARNING("delete challenge error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Delete challenge failure!"})
 		return
 	}
 
-	logs.INFO(fmt.Sprintf("delete challenge [id=%d] success!", request.ID))
+	logs.INFO(fmt.Sprintf("delete challenge [id=%d] success!", id))
 	c.JSON(200, gin.H{"code": 200, "msg": "Delete challenge success!"})
 }
 
@@ -136,21 +143,14 @@ func GetAllChallenges(c *gin.Context) {
 
 // GetChallengesByCategory 获取指定类别的题目
 func GetChallengesByCategory(c *gin.Context) {
-	var request getChallengeByCategoryRequest
-
-	if err := c.ShouldBindJSON(&request); err != nil {
-		logs.WARNING("bindjson error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Request format wrong!"})
-		return
-	}
-
-	if matched := checkCategory(request.Category); matched == false {
+	category := c.Param("category")
+	if matched := checkCategory(category); matched == false {
 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong category!"})
 		return
 	}
 
 	var challenges []challengeResponse
-	if err := getChallengesByCategory(&challenges, request.Category); err != nil {
+	if err := getChallengesByCategory(&challenges, category); err != nil {
 		logs.WARNING("get challenges error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Get challenges failure!"})
 		return
