@@ -40,7 +40,7 @@ func Login(c *gin.Context) {
 		//查询数据
 		sql_str := "SELECT * FROM user WHERE email = ? LIMIT 1;"
 		row := db.QueryRow(sql_str, request.Username)
-		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Hidden, &user.Banned, &user.TeamID, &user.Created, &user.Role)
+		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Website, &user.Hidden, &user.Banned, &user.TeamID, &user.Created, &user.Role)
 	} else {
 		//判断为用户名，验证用户名格式
 		if !checkUsername(request.Username) {
@@ -50,7 +50,7 @@ func Login(c *gin.Context) {
 		//查询数据
 		sql_str := "SELECT * FROM user WHERE username = ? LIMIT 1;"
 		row := db.QueryRow(sql_str, request.Username)
-		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Hidden, &user.Banned, &user.TeamID, &user.Created, &user.Role)
+		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Website, &user.Hidden, &user.Banned, &user.TeamID, &user.Created, &user.Role)
 	}
 
 	//password进行md5加密
@@ -392,7 +392,7 @@ func UpdateInfo(c *gin.Context) {
 		return
 	}
 
-	if request.Username == "" && request.Password == "" && request.Email == "" && request.Affiliation == "" && request.Country == "" {
+	if request.Username == "" && request.Password == "" && request.Email == "" && request.Affiliation == "" && request.Country == "" && request.Website == "" {
 		c.JSON(400, gin.H{"code": 400, "msg": "Nothing to be update!"})
 		return
 	}
