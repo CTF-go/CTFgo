@@ -66,6 +66,14 @@ func Login(c *gin.Context) {
 	// 设置session
 	session, _ := Store.Get(c.Request, cfg.SessionID)
 	user.Password = ""
+
+	// 根据remember值设置session有效期
+	if request.Remember {
+		session.Options.MaxAge = 7 * 24 * 60 * 60 // 7 days
+	} else {
+		session.Options.MaxAge = 24 * 60 * 60 // 1 day
+	}
+
 	session.Values["user"] = user
 
 	err := session.Save(c.Request, c.Writer)
