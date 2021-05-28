@@ -56,6 +56,7 @@ func Install(c *gin.Context) {
 				"email"	TEXT NOT NULL UNIQUE,
 				"affiliation"	TEXT DEFAULT 0,
 				"country"	TEXT DEFAULT 0,
+				"website"	TEXT DEFAULT 0,
 				"hidden"	INTEGER NOT NULL DEFAULT 0,
 				"banned"	INTEGER NOT NULL DEFAULT 1,
 				"team_id"	INTEGER DEFAULT 0,

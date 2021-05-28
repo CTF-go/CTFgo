@@ -128,18 +128,24 @@ func Register(c *gin.Context) {
 		return
 	}
 	//向数据库插入用户
-	sql_str := "INSERT INTO user (token,username,password,email,created) VALUES (?,?,?,?,?);"
-	res, err := db.Exec(sql_str, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, cfg.Timestamp())
-	sql_str2 := "INSERT INTO score (username,score) VALUES (?,0);"
-	_, err2 := db.Exec(sql_str2, request.Username)
-	if err != nil || err2 != nil {
-		logs.WARNING("register insert error: ", err)
+	sql1 := "INSERT INTO user (token,username,password,email,created) VALUES (?,?,?,?,?);"
+	res1, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, cfg.Timestamp())
+	sql2 := "INSERT INTO score (username) VALUES (?);"
+	res2, err2 := db.Exec(sql2, request.Username)
+	if err1 != nil {
+		logs.WARNING("register insert error: ", err1)
 		c.JSON(400, gin.H{"code": 400, "msg": "Register error!"})
 		return
 	}
-	//id, _ := res.LastInsertId()
-	affected, _ := res.RowsAffected()
-	if affected == 0 {
+	if err2 != nil {
+		logs.WARNING("register insert error: ", err2)
+		c.JSON(400, gin.H{"code": 400, "msg": "Register error!"})
+		return
+	}
+	affected1, _ := res1.RowsAffected()
+	affected2, _ := res2.RowsAffected()
+	if affected1 == 0 || affected2 == 0 {
+		err := errors.New("0 rows affected")
 		logs.WARNING("register insert error: ", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Register error!"})
 		return
@@ -351,6 +357,32 @@ func UpdateInfo(c *gin.Context) {
 		user.Country = request.Country
 	}
 
+	if request.Website != "" && request.Website != user.Website {
+		// 限制传入参数为链接格式
+		if !checkWebsite(request.Website) {
+			c.JSON(400, gin.H{"code": 400, "msg": "Website format error!"})
+			return
+		}
+		//修改Website
+		sql := "UPDATE user SET website = ? where id = ?;"
+		res, err := db.Exec(sql, request.Website, user.ID)
+		if err != nil {
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+		affected, _ := res.RowsAffected()
+		if affected == 0 {
+			err := errors.New("0 rows affected")
+			logs.WARNING("update info error: ", err)
+			c.JSON(400, gin.H{"code": 400, "msg": "Update info error!"})
+			return
+		}
+
+		logs.INFO(fmt.Sprintf("[%s] change website from [%s] to [%s]", user.Username, user.Website, request.Website))
+		user.Website = request.Website
+	}
+
 	// 更新session
 	session.Values["user"] = user
 	err := session.Save(c.Request, c.Writer)
@@ -412,6 +444,13 @@ func checkPassword(password string) bool {
 		return false
 	}
 	return true
+}
+
+// checkWebsite 验证Website是否满足链接格式，返回true或false
+func checkWebsite(website string) bool {
+	pattern := `^(https?)://[-A-Za-z0-9+&#/%?=~:_.]+$`
+	reg := regexp.MustCompile(pattern)
+	return reg.MatchString(website)
 }
 
 // isNameExisted 判断用户名是否已经被占用，被占用返回true，未被占用则返回false
