@@ -40,7 +40,10 @@ func Login(c *gin.Context) {
 		//查询数据
 		sql_str := "SELECT * FROM user WHERE email = ? LIMIT 1;"
 		row := db.QueryRow(sql_str, request.Username)
-		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Website, &user.Hidden, &user.Banned, &user.TeamID, &user.Created, &user.Role)
+		err := row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Website, &user.Hidden, &user.Banned, &user.TeamID, &user.Created, &user.Role)
+		if err != nil {
+			logs.WARNING("scan error", err)
+		}
 	} else {
 		//判断为用户名，验证用户名格式
 		if !checkUsername(request.Username) {
@@ -50,7 +53,10 @@ func Login(c *gin.Context) {
 		//查询数据
 		sql_str := "SELECT * FROM user WHERE username = ? LIMIT 1;"
 		row := db.QueryRow(sql_str, request.Username)
-		row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Website, &user.Hidden, &user.Banned, &user.TeamID, &user.Created, &user.Role)
+		err := row.Scan(&user.ID, &user.Token, &user.Username, &user.Password, &user.Email, &user.Affiliation, &user.Country, &user.Website, &user.Hidden, &user.Banned, &user.TeamID, &user.Created, &user.Role)
+		if err != nil {
+			logs.WARNING("scan error", err)
+		}
 	}
 
 	//password进行md5加密
@@ -128,8 +134,8 @@ func Register(c *gin.Context) {
 		return
 	}
 	//向数据库插入用户
-	sql1 := "INSERT INTO user (token,username,password,email,created) VALUES (?,?,?,?,?);"
-	res1, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, cfg.Timestamp())
+	sql1 := "INSERT INTO user (token,username,password,email,affiliation,country,website,created) VALUES (?,?,?,?,?,?,?,?);"
+	res1, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, "", "", "", cfg.Timestamp())
 	sql2 := "INSERT INTO score (username) VALUES (?);"
 	res2, err2 := db.Exec(sql2, request.Username)
 	if err1 != nil {

@@ -40,7 +40,7 @@ func Install(c *gin.Context) {
 	//判断是否存在CTFgo/databases/ctfgo.db，不存在则执行初始化，存在则不执行
 	if _, err := os.Stat(cfg.DB_file); os.IsNotExist(err) {
 		logs.INFO("ctfgo.db does not exist!")
-		err := os.MkdirAll(cfg.DB_dir, 0777)
+		_ = os.MkdirAll(cfg.DB_dir, 0777)
 		db, err := sql.Open("sqlite3", cfg.DB_file)
 		if err != nil {
 			logs.ERROR("sqlite connect error: ", err)
@@ -54,9 +54,9 @@ func Install(c *gin.Context) {
 				"username"	TEXT NOT NULL UNIQUE,
 				"password"	TEXT NOT NULL,
 				"email"	TEXT NOT NULL UNIQUE,
-				"affiliation"	TEXT DEFAULT 0,
-				"country"	TEXT DEFAULT 0,
-				"website"	TEXT DEFAULT 0,
+				"affiliation"	TEXT,
+				"country"	TEXT,
+				"website"	TEXT,
 				"hidden"	INTEGER NOT NULL DEFAULT 0,
 				"banned"	INTEGER NOT NULL DEFAULT 1,
 				"team_id"	INTEGER DEFAULT 0,
@@ -107,18 +107,18 @@ func Install(c *gin.Context) {
 			`
 		_, err = db.Exec(table_sql)
 		if err != nil {
-			logs.ERROR("create user table error:", err)
+			logs.ERROR("db init error:", err)
 		}
-		logs.INFO("create user table success!")
-		sql_str := "INSERT INTO user (token,username,password,email,hidden,banned,created,role) VALUES (?,?,?,?,?,?,?,?);"
-		_, err1 := db.Exec(sql_str, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, 1, 0, cfg.Timestamp(), 1)
-		sql_str2 := "INSERT INTO score (username,score) VALUES (?,0);"
-		_, err2 := db.Exec(sql_str2, request.Username)
+		logs.INFO("db init success!")
+		sql1 := "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
+		_, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, "", "", "", 1, 0, 0, cfg.Timestamp(), 1)
+		sql2 := "INSERT INTO score (username,score) VALUES (?,0);"
+		_, err2 := db.Exec(sql2, request.Username)
 		// --- for test purposes ---
-		sql_str = "INSERT INTO user (token,username,password,email,hidden,banned,created,role) VALUES (?,?,?,?,?,?,?,?);"
-		_, err1 = db.Exec(sql_str, cfg.Token(), "test", cfg.MD5("123456"), "test@gmail.com", 0, 0, cfg.Timestamp(), 0)
-		sql_str2 = "INSERT INTO score (username,score) VALUES (?,0);"
-		_, err2 = db.Exec(sql_str2, "test")
+		sql1 = "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
+		_, err1 = db.Exec(sql1, cfg.Token(), "test", cfg.MD5("123456"), "test@gmail.com", "", "", "", 0, 0, 0, cfg.Timestamp(), 0)
+		sql2 = "INSERT INTO score (username,score) VALUES (?,0);"
+		_, err2 = db.Exec(sql2, "test")
 		// --- end ---
 		if err1 != nil {
 			logs.ERROR("admin insert error", err1)

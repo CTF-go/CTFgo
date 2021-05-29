@@ -5,8 +5,9 @@ import (
 	"CTFgo/logs"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Challenge 定义一个题目
