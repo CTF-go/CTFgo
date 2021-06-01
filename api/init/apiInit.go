@@ -70,8 +70,6 @@ func SetupAPI() *gin.Engine {
 
 		//获取验证码图片base64
 		public.GET("/captcha", u.Captcha)
-		//输出验证码图片
-		public.GET("/captcha/:img", u.CaptchaServer)
 
 		//获取指定id用户可公开信息
 		public.GET("/info/:id", u.GetInfoByUserID)
