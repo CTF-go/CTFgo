@@ -19,6 +19,23 @@ import (
 
 var db *sql.DB = i.DB
 
+//user定义用户结构体。
+type User struct {
+	ID          int    `json:"id"`          //用户id，唯一，自增
+	Token       string `json:"token"`       //用户token，唯一
+	Username    string `json:"username"`    //用户名，唯一
+	Password    string `json:"password"`    //用户密码md5值，md5(原密码）
+	Email       string `json:"email"`       //邮箱，唯一
+	Affiliation string `json:"affiliation"` //组织、战队或机构等，非必需，默认为0
+	Country     string `json:"country"`     //国家，非必需，默认为0
+	Website     string `json:"website"`     //个人链接，默认为0
+	Hidden      int    `json:"hidden"`      //1：隐藏，0：显示，默认为0
+	Banned      int    `json:"banned"`      //1：禁止，0：正常，默认为1，邮箱激活后为0
+	TeamID      int    `json:"team_id"`     //队伍id，在团队模式下必须，个人模式非必需，默认为0
+	Created     int    `json:"created"`     //用户注册时间，10位数时间戳
+	Role        int    `json:"role"`        //0：普通用户，默认为0，1：普通管理员，2：所有者（最高权限）
+}
+
 // Login 实现用户名或邮箱登录
 func Login(c *gin.Context) {
 	var request loginRequest
