@@ -81,6 +81,7 @@ func SetupAPI() *gin.Engine {
 
 		// 获取所有公告
 		public.GET("/notice/all", admin.GetAllNotices)
+
 	}
 
 	// 普通用户api，需要用户登陆且Role=0才能访问
@@ -91,6 +92,9 @@ func SetupAPI() *gin.Engine {
 		personal.GET("/session", u.Session)
 		// 修改用户信息
 		personal.POST("/updateinfo", u.UpdateInfo)
+
+		// 获取题目分类
+		personal.GET("/category", u.GetCategories)
 
 		// 获取所有题目信息
 		personal.GET("/challenges/all", admin.GetAllChallenges)
