@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"math"
 	"strconv"
 	"time"
 )
@@ -101,10 +102,20 @@ func SubmitFlag(c *gin.Context) {
 			return
 		}
 		// 加分数
-		err = addScore(user.Username, request.Cid)
+		err = addUserScore(user.Username, request.Cid)
 		if err != nil {
-			c.JSON(400, gin.H{"code": 400, "msg": "Add Score failure!"})
+			c.JSON(400, gin.H{"code": 400, "msg": "Add user score failure!"})
 			return
+		}
+		// 题目动态分数
+		reducedScore, err := editChallengeScore(request.Cid)
+		if err != nil {
+			c.JSON(400, gin.H{"code": 400, "msg": "Edit challenge score failure!"})
+			return
+		}
+		err = updateUserScores(reducedScore, request.Cid)
+		if err != nil {
+			c.JSON(400, gin.H{"code": 400, "msg": "Update user scores failure!"})
 		}
 
 		logs.INFO(fmt.Sprintf("[%s] user solved [%d].", user.Username, request.Cid))
@@ -165,7 +176,7 @@ func GetSubmissionsByCid(c *gin.Context) {
 
 // GetAllSolves 获取所有正确的flag提交记录
 func GetAllSolves(c *gin.Context) {
-	var solves []Solve
+	var solves []solveResponse
 
 	if err := getAllSolves(&solves); err != nil {
 		logs.WARNING("get solves error", err)
@@ -190,7 +201,7 @@ func GetSolvesByUid(c *gin.Context) {
 		return
 	}
 
-	var solves []Solve
+	var solves []solveResponse
 	if err := getSolvesByUid(&solves, int(uid)); err != nil {
 		logs.WARNING("get specified solves error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified solves failure!"})
@@ -209,7 +220,7 @@ func GetSolvesByCid(c *gin.Context) {
 		return
 	}
 
-	var solves []Solve
+	var solves []solveResponse
 	if err := getSolvesByCid(&solves, int(cid)); err != nil {
 		logs.WARNING("get specified solves error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified solves failure!"})
@@ -244,8 +255,8 @@ func addSolve(s *Solve) error {
 	return nil
 }
 
-// addScore 操作数据库为指定用户增加某题的分数
-func addScore(username string, cid int) error {
+// addUserScore 操作数据库为指定用户增加某题的分数
+func addUserScore(username string, cid int) error {
 	var newScore int
 	command := "SELECT score FROM challenge WHERE id=?"
 	err := db.QueryRow(command, cid).Scan(&newScore)
@@ -266,9 +277,58 @@ func addScore(username string, cid int) error {
 	return nil
 }
 
+// updateUserScores 操作数据库更新解出用户的分数
+func updateUserScores(reducedScore, cid int) error {
+	command := "UPDATE score SET score=score-? WHERE EXISTS(SELECT 1 FROM user,solve WHERE user.id=solve.uid AND score.username=user.username AND solve.cid=?);"
+	_, err := db.Exec(command, reducedScore, cid)
+	return err
+}
+
+// editChallengeScore 操作数据库修改指定题目增的动态分数
+func editChallengeScore(cid int) (reducedScore int, err error) {
+	var currentScore int
+	command := "SELECT score FROM challenge WHERE id=?;"
+	if err := db.QueryRow(command, cid).Scan(&currentScore); err != nil {
+		logs.WARNING("query challenge score error", err)
+		return 0, err
+	}
+
+	solverCount, err := getSolverCount(cid)
+	if err != nil {
+		logs.WARNING("get solverCount error", err)
+		return 0, err
+	}
+	// According to https://github.com/o-o-overflow/scoring-playground
+	newScore := int(100 + (1000-100)/(1.0+float64(solverCount)*0.08*math.Log(float64(solverCount))))
+	reducedScore = currentScore - newScore
+
+	command = "UPDATE challenge SET score=? WHERE id=?;"
+	res, err := db.Exec(command, newScore, cid)
+	if err != nil {
+		return 0, err
+	}
+	affected, _ := res.RowsAffected()
+	if affected == 0 {
+		err = errors.New("0 rows affected")
+		return 0, err
+	}
+
+	return reducedScore, nil
+}
+
+// getSolverCount 操作数据库获取指定id题目的解出人数
+func getSolverCount(id int) (count int, err error) {
+	command := "SELECT COUNT(*) FROM solve WHERE cid = ?;"
+	if err := db.QueryRow(command, id).Scan(&count); err != nil {
+		logs.WARNING("query or scan error", err)
+		return 0, err
+	}
+	return count, nil
+}
+
 // addSubmission 操作数据库加入一条flag提交记录
 func addSubmission(s *Submission) error {
-	command := "INSERT INTO submission (uid, cid, flag, ip, submitted_at) VALUES (?,?,?,?,?);"
+	command := "INSERT INTO submission (uid, cid, ip, flag, submitted_at) VALUES (?,?,?,?,?);"
 	res, err := db.Exec(command, s.UserID, s.ChallengeID, s.IP, s.Flag, s.Time)
 	if err != nil {
 		return err
@@ -358,16 +418,16 @@ func getSubmissionsByCid(submissions *[]Submission, cid int) error {
 }
 
 // getAllSolves 操作数据库获取所有正确的提交记录
-func getAllSolves(solves *[]Solve) error {
-	command := "SELECT id, uid, cid, submitted_at FROM solve WHERE uid != 1;"
+func getAllSolves(solves *[]solveResponse) error {
+	command := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.id != 1 AND s.uid=u.id AND s.cid=c.id;"
 	rows, err := db.Query(command)
 	if err != nil {
 		return err
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var s Solve
-		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.Time)
+		var s solveResponse
+		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
 		if err != nil {
 			return err
 		}
@@ -377,16 +437,16 @@ func getAllSolves(solves *[]Solve) error {
 }
 
 // getSolvesByUid 操作数据库根据用户id获取正确的flag提交记录
-func getSolvesByUid(solves *[]Solve, uid int) error {
-	command := "SELECT id, uid, cid, submitted_at FROM solve WHERE uid=?;"
+func getSolvesByUid(solves *[]solveResponse, uid int) error {
+	command := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE s.uid=? AND u.id=s.uid AND c.id=s.cid;"
 	rows, err := db.Query(command, uid)
 	if err != nil {
 		return err
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var s Solve
-		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.Time)
+		var s solveResponse
+		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
 		if err != nil {
 			return err
 		}
@@ -396,16 +456,16 @@ func getSolvesByUid(solves *[]Solve, uid int) error {
 }
 
 // getSolvesByCid 操作数据库根据题目id获取正确的提交记录
-func getSolvesByCid(solves *[]Solve, cid int) error {
-	command := "SELECT id, uid, cid, submitted_at FROM solve WHERE cid=?;"
+func getSolvesByCid(solves *[]solveResponse, cid int) error {
+	command := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE s.cid=? AND u.id=s.uid AND c.id=s.cid;"
 	rows, err := db.Query(command, cid)
 	if err != nil {
 		return err
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var s Solve
-		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.Time)
+		var s solveResponse
+		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
 		if err != nil {
 			return err
 		}

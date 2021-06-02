@@ -49,6 +49,15 @@ type scoreResponse struct {
 	Score    int    `json:"score"`
 }
 
+type solveResponse struct {
+	ID            int    `json:"id"`
+	Uid           int    `json:"uid"`
+	Cid           int    `json:"cid"`
+	Username      string `json:"username"`
+	ChallengeName string `json:"challenge_name"`
+	SubmittedAt   int    `json:"submitted_at"`
+}
+
 // publicInfoResponse 定义返回用户公开信息结构体。
 type publicInfoResponse struct {
 	Username    string `json:"username"`
