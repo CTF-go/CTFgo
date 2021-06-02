@@ -57,11 +57,6 @@ func SubmitFlag(c *gin.Context) {
 		return
 	}
 
-	if hasAlreadySolved(user.ID, request.Cid) {
-		c.JSON(400, gin.H{"code": 400, "msg": "Already solved!"})
-		return
-	}
-
 	// Submission记录
 	solvedTime := time.Now().Unix()
 	submission := &Submission{
@@ -73,6 +68,12 @@ func SubmitFlag(c *gin.Context) {
 	err = addSubmission(submission)
 	if err != nil {
 		c.JSON(400, gin.H{"code": 400, "msg": "Record submission failure!"})
+		return
+	}
+
+	// 是否已经解出该题
+	if hasAlreadySolved(user.ID, request.Cid) {
+		c.JSON(400, gin.H{"code": 400, "msg": "Already solved!"})
 		return
 	}
 

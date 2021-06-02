@@ -21,6 +21,7 @@ type challengeResponse struct {
 	Category    string `form:"category" json:"category" binding:"required"`
 	Tags        string `form:"tags" json:"tags"`
 	Hints       string `form:"hints" json:"hints"`
+	SolverCount int    `form:"solver_count" json:"solver_count"`
 }
 
 // noticeRequest 定义新增公告的一个请求

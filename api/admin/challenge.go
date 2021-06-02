@@ -229,12 +229,17 @@ func getAllChallenges(challenges *[]challengeResponse) error {
 		if err != nil {
 			return err
 		}
+		solverCount, err := getSolverCount(c.ID)
+		if err != nil {
+			return err
+		}
+		c.SolverCount = solverCount
 		*challenges = append(*challenges, c)
 	}
 	return rows.Err()
 }
 
-// getAllChallenges 操作数据库获取所有题目
+// getChallengesByCategory 操作数据库获取所有题目
 func getChallengesByCategory(challenges *[]challengeResponse, category string) error {
 	command := "SELECT id, name, score, description, tags, hints FROM challenge WHERE visible=1 AND category=?;"
 	rows, err := db.Query(command, category)
@@ -248,10 +253,25 @@ func getChallengesByCategory(challenges *[]challengeResponse, category string) e
 		if err != nil {
 			return err
 		}
+		solverCount, err := getSolverCount(c.ID)
+		if err != nil {
+			return err
+		}
+		c.SolverCount = solverCount
 		c.Category = category
 		*challenges = append(*challenges, c)
 	}
 	return rows.Err()
+}
+
+// getSolverCount 操作数据库获取指定id题目的解出人数
+func getSolverCount(id int) (count int, err error) {
+	command := "SELECT COUNT(*) FROM solve WHERE cid = ?;"
+	if err := db.QueryRow(command, id).Scan(&count); err != nil {
+		logs.WARNING("query or scan error", err)
+		return 0, err
+	}
+	return count, nil
 }
 
 // checkCategory检查类别是否正确
