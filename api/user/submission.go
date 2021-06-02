@@ -17,6 +17,7 @@ type Submission struct {
 	UserID      int    `json:"uid"`
 	ChallengeID int    `json:"cid"`
 	Flag        string `json:"flag"`
+	IP          string `json:"ip"`
 	Time        int64  `json:"submitted_at"`
 }
 
@@ -63,6 +64,7 @@ func SubmitFlag(c *gin.Context) {
 		UserID:      user.ID,
 		ChallengeID: request.Cid,
 		Flag:        request.Flag,
+		IP:          c.ClientIP(),
 		Time:        solvedTime,
 	}
 	err = addSubmission(submission)
@@ -266,8 +268,8 @@ func addScore(username string, cid int) error {
 
 // addSubmission 操作数据库加入一条flag提交记录
 func addSubmission(s *Submission) error {
-	command := "INSERT INTO submission (uid, cid, flag, submitted_at) VALUES (?,?,?,?);"
-	res, err := db.Exec(command, s.UserID, s.ChallengeID, s.Flag, s.Time)
+	command := "INSERT INTO submission (uid, cid, flag, ip, submitted_at) VALUES (?,?,?,?,?);"
+	res, err := db.Exec(command, s.UserID, s.ChallengeID, s.IP, s.Flag, s.Time)
 	if err != nil {
 		return err
 	}
@@ -300,7 +302,7 @@ func isChallengeExisted(id int) (exists bool) {
 
 // getAllSubmissions 操作数据库获取所有提交记录
 func getAllSubmissions(submissions *[]Submission) error {
-	command := "SELECT id, uid, cid, flag, submitted_at FROM submission;"
+	command := "SELECT id, uid, cid, ip, flag, submitted_at FROM submission;"
 	rows, err := db.Query(command)
 	if err != nil {
 		return err
@@ -308,7 +310,7 @@ func getAllSubmissions(submissions *[]Submission) error {
 	defer rows.Close()
 	for rows.Next() {
 		var s Submission
-		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.Flag, &s.Time)
+		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.IP, &s.Flag, &s.Time)
 		if err != nil {
 			return err
 		}
@@ -319,7 +321,7 @@ func getAllSubmissions(submissions *[]Submission) error {
 
 // getSubmissionsByUid 操作数据库根据uid获取提交记录
 func getSubmissionsByUid(submissions *[]Submission, uid int) error {
-	command := "SELECT id, uid, cid, flag, submitted_at FROM submission WHERE uid=?;"
+	command := "SELECT id, uid, cid, ip, flag, submitted_at FROM submission WHERE uid=?;"
 	rows, err := db.Query(command, uid)
 	if err != nil {
 		return err
@@ -327,7 +329,7 @@ func getSubmissionsByUid(submissions *[]Submission, uid int) error {
 	defer rows.Close()
 	for rows.Next() {
 		var s Submission
-		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.Flag, &s.Time)
+		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.IP, &s.Flag, &s.Time)
 		if err != nil {
 			return err
 		}
@@ -338,7 +340,7 @@ func getSubmissionsByUid(submissions *[]Submission, uid int) error {
 
 // getSubmissionsByCid 操作数据库根据cid获取提交记录
 func getSubmissionsByCid(submissions *[]Submission, cid int) error {
-	command := "SELECT id, uid, cid, flag, submitted_at FROM submission WHERE cid=?;"
+	command := "SELECT id, uid, cid, ip, flag, submitted_at FROM submission WHERE cid=?;"
 	rows, err := db.Query(command, cid)
 	if err != nil {
 		return err
@@ -346,7 +348,7 @@ func getSubmissionsByCid(submissions *[]Submission, cid int) error {
 	defer rows.Close()
 	for rows.Next() {
 		var s Submission
-		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.Flag, &s.Time)
+		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.IP, &s.Flag, &s.Time)
 		if err != nil {
 			return err
 		}

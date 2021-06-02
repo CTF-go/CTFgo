@@ -75,6 +75,7 @@ func Install(c *gin.Context) {
 				"uid"	INTEGER NOT NULL,
 				"cid"	INTEGER NOT NULL,
 				"flag"  TEXT NOT NULL,
+				"ip"	TEXT NOT NULL,
 				"submitted_at" INTEGER NOT NULL,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
