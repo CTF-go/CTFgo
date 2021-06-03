@@ -5,8 +5,10 @@ package apiUser
 
 import (
 	cfg "CTFgo/configs"
+
 	"encoding/gob"
 
+	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 )
 
@@ -14,7 +16,7 @@ import (
 var Store *sessions.FilesystemStore
 
 func init() {
-	Store = sessions.NewFilesystemStore(cfg.Session_dir, []byte(cfg.Token()))
+	Store = sessions.NewFilesystemStore(cfg.Session_dir, securecookie.GenerateRandomKey(32))
 
 	Store.Options = &sessions.Options{
 		MaxAge: 24 * 60 * 60, // 1 day
