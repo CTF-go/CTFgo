@@ -49,6 +49,7 @@ type scoreResponse struct {
 	Score    int    `json:"score"`
 }
 
+// solveResponse 定义返回解题情况结构体。
 type solveResponse struct {
 	ID            int    `json:"id"`
 	Uid           int    `json:"uid"`

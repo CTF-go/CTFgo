@@ -107,7 +107,7 @@ func Login(c *gin.Context) {
 	}
 
 	logs.INFO("[" + request.Username + "]" + " login success!")
-	c.JSON(200, gin.H{"code": 200, "username": user.Username, "msg": "Login success!"})
+	c.JSON(200, gin.H{"code": 200, "username": user.Username, "role": user.Role, "msg": "Login success!"})
 }
 
 // Register 实现用户注册

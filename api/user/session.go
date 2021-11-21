@@ -12,16 +12,18 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-//sessions存储于文件系统
+// sessions 存储于文件系统
 var Store *sessions.FilesystemStore
 
 func init() {
 	Store = sessions.NewFilesystemStore(cfg.Session_dir, securecookie.GenerateRandomKey(32))
 
 	Store.Options = &sessions.Options{
+		Path:   "/",
 		MaxAge: 24 * 60 * 60, // 1 day
-		//Secure: true,
-		//HttpOnly: true,
+		// SameSite: http.SameSiteNoneMode,
+		Secure:   false,
+		HttpOnly: false,
 	}
 
 	gob.Register(User{})

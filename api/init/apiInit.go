@@ -51,7 +51,7 @@ func SetupAPI() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.LoggerWithConfig(c))
 	r.Use(gin.Recovery())
-	r.Use(cors())
+	r.Use(Cors())
 
 	api := r.Group("/v1")
 
@@ -139,17 +139,32 @@ func SetupAPI() *gin.Engine {
 }
 
 //暂时跨域。
-func cors() gin.HandlerFunc {
+func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Headers", "Content-Category, AccessToken, X-CSRF-Token, Authorization, Token, Content-Type")
-		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PATCH, DELETE")
-		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Category")
-		c.Header("Access-Control-Allow-Credentials", "true")
+		// c.Header("Access-Control-Allow-Origin", "http://172.20.10.10:8081")
+		// c.Header("Access-Control-Allow-Headers", "Content-Category, AccessToken, X-CSRF-Token, Authorization, Token, Content-Type")
+		// c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PATCH, DELETE")
+		// c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Category")
+		// c.Header("Access-Control-Allow-Credentials", "true")
+		origin := c.Request.Header.Get("Origin") //请求头部
+		if origin != "" {
+			//接收客户端发送的origin （重要！）
+			// c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+			//服务器支持的所有跨域请求的方法
+			c.Header("Access-Control-Allow-Origin", origin) //"http://172.20.10.10:8081")
+			c.Header("Access-Control-Allow-Headers", "Content-Category, AccessToken, X-CSRF-Token, Authorization, Token, Content-Type")
+			c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PATCH, DELETE")
+			c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Category")
+			c.Header("Access-Control-Max-Age", "172800")
+			c.Header("Access-Control-Allow-Credentials", "true")
+		}
 		//放行所有OPTIONS方法
+		// if method == "OPTIONS" {
+		// 	c.AbortWithStatus(204)
+		// }
 		if method == "OPTIONS" {
-			c.AbortWithStatus(204)
+			c.JSON(200, "ok")
 		}
 		// 处理请求
 		c.Next()

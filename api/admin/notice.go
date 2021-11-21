@@ -8,8 +8,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 var db *sql.DB = i.DB
@@ -125,7 +126,7 @@ func isNoticeExisted(id int) (exists bool) {
 }
 
 func getAllNotices(notices *[]Notice) error {
-	command := "SELECT id, title, content, created_at, FROM notice;"
+	command := "SELECT id, title, content, created_at FROM notice;"
 	rows, err := db.Query(command)
 	if err != nil {
 		return err
