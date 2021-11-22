@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// NewChallenge 新增一个题目
+// NewChallenge 新增一个题目。
 func NewChallenge(c *gin.Context) {
 	var request ChallengeRequest
 
@@ -46,7 +46,7 @@ func NewChallenge(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "Add challenge success!"})
 }
 
-// EditChallenge 修改一个题目
+// EditChallenge 修改一个题目。
 func EditChallenge(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -93,7 +93,7 @@ func EditChallenge(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "Update challenge success!"})
 }
 
-// DeleteChallenge 删除一个题目
+// DeleteChallenge 删除一个题目。
 func DeleteChallenge(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -117,7 +117,7 @@ func DeleteChallenge(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "Delete challenge success!"})
 }
 
-// addChallenge 操作数据库新增一个题目
+// addChallenge 操作数据库新增一个题目。
 func addChallenge(c *Challenge) error {
 	command := "INSERT INTO challenge (name,score,flag,description,category,tags,hints,visible) VALUES (?,?,?,?,?,?,?,?);"
 	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, c.Category, c.Tags, c.Hints, c.Visible)
@@ -132,7 +132,7 @@ func addChallenge(c *Challenge) error {
 	return nil
 }
 
-// updateChallenge 操作数据库更新一个题目
+// updateChallenge 操作数据库更新一个题目。
 func updateChallenge(c *Challenge) error {
 	command := "UPDATE challenge SET name=?, score=?, flag=?, description=?, category=?, tags=?, hints=?, visible=?  WHERE id=?;"
 	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, c.Category, c.Tags, c.Hints, c.Visible, c.ID)
@@ -147,7 +147,7 @@ func updateChallenge(c *Challenge) error {
 	return nil
 }
 
-// deleteChallenge 操作数据库删除一个题目
+// deleteChallenge 操作数据库删除一个题目。
 func deleteChallenge(id int) error {
 	command := "DELETE FROM challenge WHERE id=?;"
 	res, err := db.Exec(command, id)
@@ -162,7 +162,7 @@ func deleteChallenge(id int) error {
 	return nil
 }
 
-// isChallengeExisted 检查数据库中是否存在某个题目
+// isChallengeExisted 检查数据库中是否存在某个题目。
 func isChallengeExisted(id int) (exists bool) {
 	command := "SELECT EXISTS(SELECT 1 FROM challenge WHERE id = ?);"
 	if err := db.QueryRow(command, id).Scan(&exists); err != nil {

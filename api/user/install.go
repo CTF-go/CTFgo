@@ -65,12 +65,24 @@ func Install(c *gin.Context) {
 				"role"	INTEGER NOT NULL DEFAULT 0,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
+			BEGIN;
+			INSERT INTO "user" VALUES (1, '786f498961b033e9e1100685f97411b9', 'admin', 'e10adc3949ba59abbe56e057f20f883e', 'admin@qq.com', '', '', '', 1, 0, 0, 1622256313, 1);
+			INSERT INTO "user" VALUES (2, '9c2143ef0233b7010e764c1d4e4291bc', 'test', 'e10adc3949ba59abbe56e057f20f883e', 'test@gmail.com', '', '', '', 0, 0, 0, 1622256313, 0);
+			INSERT INTO "user" VALUES (3, 'c759ac0df459e302533a0274fea7ae2e', 'test1', 'e10adc3949ba59abbe56e057f20f883e', 'test1@qq.com', '', '', '', 0, 1, 0, 1622256646, 0);
+			INSERT INTO "user" VALUES (4, '49eb2761194833aa7e5a4e3b30ff3819', 'xxx', 'e10adc3949ba59abbe56e057f20f883e', 'xxx@qq.com', '', '', '', 0, 1, 0, 1622546632, 0);
+			COMMIT;
 			CREATE TABLE "score" (
 				"id"	INTEGER NOT NULL UNIQUE,
 				"username"	TEXT NOT NULL UNIQUE,
 				"score"	INTEGER NOT NULL DEFAULT 0,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
+			BEGIN;
+			INSERT INTO "score" VALUES (1, 'admin', 0);
+			INSERT INTO "score" VALUES (2, 'test', 510);
+			INSERT INTO "score" VALUES (3, 'test1', 230);
+			INSERT INTO "score" VALUES (4, 'xxx', 434);
+			COMMIT;
 			CREATE TABLE "submission" (
 				"id"	INTEGER NOT NULL UNIQUE,
 				"uid"	INTEGER NOT NULL,
@@ -81,7 +93,7 @@ func Install(c *gin.Context) {
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
 			CREATE TABLE "solve" (
-			    "id" INTEGER NOT NULL UNIQUE,
+			    "id"  INTEGER NOT NULL UNIQUE,
 			    "uid" INTEGER NOT NULL,
 			    "cid" INTEGER NOT NULL,
 			    "submitted_at" INTEGER NOT NULL,
@@ -100,35 +112,48 @@ func Install(c *gin.Context) {
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
 			CREATE TABLE "notice" (
-			    "id" 	INTEGER NOT NULL UNIQUE,
+			    "id"	INTEGER NOT NULL UNIQUE,
 			    "title" TEXT NOT NULL,
 			    "content" TEXT,
 				"created_at" INTEGER NOT NULL,
 				PRIMARY KEY("id" AUTOINCREMENT)
-			)
+			);
+			CREATE TABLE "category" (
+				"id"	INTEGER NOT NULL UNIQUE,
+				"category"	TEXT NOT NULL UNIQUE,
+				PRIMARY KEY("id" AUTOINCREMENT)
+			);
+			BEGIN;
+			INSERT INTO "category" VALUES (1, 'Web');
+			INSERT INTO "category" VALUES (2, 'Pwn');
+			INSERT INTO "category" VALUES (3, 'Reverse');
+			INSERT INTO "category" VALUES (4, 'Crypto');
+			INSERT INTO "category" VALUES (5, 'Misc');
+			COMMIT;
 			`
 		_, err = db.Exec(table_sql)
 		if err != nil {
 			logs.ERROR("db init error:", err)
 		}
 		logs.INFO("db init success!")
-		sql1 := "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
-		_, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, "", "", "", 1, 0, 0, cfg.Timestamp(), 1)
-		sql2 := "INSERT INTO score (username,score) VALUES (?,0);"
-		_, err2 := db.Exec(sql2, request.Username)
-		// --- for test purposes ---
-		sql1 = "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
-		_, err1 = db.Exec(sql1, cfg.Token(), "test", cfg.MD5("123456"), "test@gmail.com", "", "", "", 0, 0, 0, cfg.Timestamp(), 0)
-		sql2 = "INSERT INTO score (username,score) VALUES (?,0);"
-		_, err2 = db.Exec(sql2, "test")
-		// --- end ---
-		if err1 != nil {
-			logs.ERROR("admin insert error", err1)
-		}
-		if err2 != nil {
-			logs.ERROR("admin insert error", err2)
-		}
-		logs.INFO("Administrator account [" + request.Username + "]" + " register success!")
+		// sql1 := "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
+		// _, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, "", "", "", 1, 0, 0, cfg.Timestamp(), 1)
+		// sql2 := "INSERT INTO score (username,score) VALUES (?,0);"
+		// _, err2 := db.Exec(sql2, request.Username)
+		// // --- for test purposes ---
+		// sql1 = "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
+		// _, err1 = db.Exec(sql1, cfg.Token(), "test", cfg.MD5("123456"), "test@gmail.com", "", "", "", 0, 0, 0, cfg.Timestamp(), 0)
+		// sql2 = "INSERT INTO score (username,score) VALUES (?,0);"
+		// _, err2 = db.Exec(sql2, "test")
+		// // --- end ---
+		// if err1 != nil {
+		// 	logs.ERROR("admin insert error", err1)
+		// }
+		// if err2 != nil {
+		// 	logs.ERROR("admin insert error", err2)
+		// }
+		// logs.INFO("Administrator account [" + request.Username + "]" + " register success!")
+
 		//新建sessions文件夹
 		err = os.MkdirAll(cfg.Session_dir, 0755)
 		if err != nil {
