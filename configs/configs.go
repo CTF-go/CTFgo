@@ -124,12 +124,12 @@ func NumCompare(s1, s2 string) bool {
 }
 */
 
-// CheckCategory 检查类别是否正确
-func CheckCategory(c string) bool {
-	for _, category := range ChallengeCategories {
-		if category == c {
-			return true
-		}
-	}
-	return false
-}
+// // CheckCategory 检查类别是否正确
+// func CheckCategory(c string) bool {
+// 	for _, category := range ChallengeCategories {
+// 		if category == c {
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }

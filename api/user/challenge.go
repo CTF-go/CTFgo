@@ -2,13 +2,12 @@ package apiUser
 
 import (
 	. "CTFgo/api/types"
-	cfg "CTFgo/configs"
 	"CTFgo/logs"
 
 	"github.com/gin-gonic/gin"
 )
 
-// GetAllChallenges 获取所有题目
+// GetAllChallenges 获取所有题目。
 func GetAllChallenges(c *gin.Context) {
 	var challenges []ChallengeResponse
 
@@ -21,10 +20,10 @@ func GetAllChallenges(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "data": challenges})
 }
 
-// GetChallengesByCategory 获取指定类别的题目
+// GetChallengesByCategory 获取指定类别的题目。
 func GetChallengesByCategory(c *gin.Context) {
 	category := c.Param("category")
-	if matched := cfg.CheckCategory(category); !matched {
+	if matched := CheckCategory(category); !matched {
 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong category!"})
 		return
 	}
@@ -39,10 +38,10 @@ func GetChallengesByCategory(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "data": challenges})
 }
 
-// getAllChallenges 操作数据库获取所有题目
+// getAllChallenges 操作数据库获取所有题目。
 func getAllChallenges(challenges *[]ChallengeResponse) error {
-	command := "SELECT id, name, score, description, category, tags, hints FROM challenge WHERE visible=1;"
-	rows, err := db.Query(command)
+	sql := "SELECT id, name, score, description, category, tags, hints FROM challenge WHERE visible=1;"
+	rows, err := db.Query(sql)
 	if err != nil {
 		return err
 	}
@@ -63,10 +62,10 @@ func getAllChallenges(challenges *[]ChallengeResponse) error {
 	return rows.Err()
 }
 
-// getChallengesByCategory 操作数据库获取指定类型题目
+// getChallengesByCategory 操作数据库获取指定类型题目。
 func getChallengesByCategory(challenges *[]ChallengeResponse, category string) error {
-	command := "SELECT id, name, score, description, tags, hints FROM challenge WHERE visible=1 AND category=?;"
-	rows, err := db.Query(command, category)
+	sql := "SELECT id, name, score, description, tags, hints FROM challenge WHERE visible=1 AND category=?;"
+	rows, err := db.Query(sql, category)
 	if err != nil {
 		return err
 	}

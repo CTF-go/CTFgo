@@ -2,7 +2,7 @@ package apiAdmin
 
 import (
 	. "CTFgo/api/types"
-	cfg "CTFgo/configs"
+	u "CTFgo/api/user"
 	"CTFgo/logs"
 	"errors"
 	"fmt"
@@ -21,7 +21,7 @@ func NewChallenge(c *gin.Context) {
 		return
 	}
 
-	if matched := cfg.CheckCategory(request.Category); !matched {
+	if matched := u.CheckCategory(request.Category); !matched {
 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong category!"})
 		return
 	}
@@ -67,7 +67,7 @@ func EditChallenge(c *gin.Context) {
 		return
 	}
 
-	if matched := cfg.CheckCategory(request.Category); !matched {
+	if matched := u.CheckCategory(request.Category); !matched {
 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong category!"})
 		return
 	}
