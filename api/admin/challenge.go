@@ -1,6 +1,7 @@
 package apiAdmin
 
 import (
+	. "CTFgo/api/types"
 	cfg "CTFgo/configs"
 	"CTFgo/logs"
 	"errors"
@@ -10,22 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Challenge 定义一个题目
-type Challenge struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Score       int    `json:"score"`
-	Flag        string `json:"flag"`
-	Description string `json:"description"`
-	Category    string `json:"category"`
-	Tags        string `json:"tags"`
-	Hints       string `json:"hints"`
-	Visible     int    `json:"visible"` // 0表示隐藏，1表示可见
-}
-
 // NewChallenge 新增一个题目
 func NewChallenge(c *gin.Context) {
-	var request challengeRequest
+	var request ChallengeRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error", err)
@@ -67,7 +55,7 @@ func EditChallenge(c *gin.Context) {
 		return
 	}
 
-	var request challengeRequest
+	var request ChallengeRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Request format wrong!"})
@@ -129,37 +117,6 @@ func DeleteChallenge(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "Delete challenge success!"})
 }
 
-// GetAllChallenges 获取所有题目
-func GetAllChallenges(c *gin.Context) {
-	var challenges []challengeResponse
-
-	if err := getAllChallenges(&challenges); err != nil {
-		logs.WARNING("get challenges error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get all challenges failure!"})
-		return
-	}
-
-	c.JSON(200, gin.H{"code": 200, "data": challenges})
-}
-
-// GetChallengesByCategory 获取指定类别的题目
-func GetChallengesByCategory(c *gin.Context) {
-	category := c.Param("category")
-	if matched := checkCategory(category); matched == false {
-		c.JSON(400, gin.H{"code": 400, "msg": "Wrong category!"})
-		return
-	}
-
-	var challenges []challengeResponse
-	if err := getChallengesByCategory(&challenges, category); err != nil {
-		logs.WARNING("get challenges error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get challenges failure!"})
-		return
-	}
-
-	c.JSON(200, gin.H{"code": 200, "data": challenges})
-}
-
 // addChallenge 操作数据库新增一个题目
 func addChallenge(c *Challenge) error {
 	command := "INSERT INTO challenge (name,score,flag,description,category,tags,hints,visible) VALUES (?,?,?,?,?,?,?,?);"
@@ -205,7 +162,7 @@ func deleteChallenge(id int) error {
 	return nil
 }
 
-// isChallengeExisted 检查数据库中是否存在某条公告
+// isChallengeExisted 检查数据库中是否存在某个题目
 func isChallengeExisted(id int) (exists bool) {
 	command := "SELECT EXISTS(SELECT 1 FROM challenge WHERE id = ?);"
 	if err := db.QueryRow(command, id).Scan(&exists); err != nil {
@@ -213,55 +170,6 @@ func isChallengeExisted(id int) (exists bool) {
 		return false
 	}
 	return exists
-}
-
-// getAllChallenges 操作数据库获取所有题目
-func getAllChallenges(challenges *[]challengeResponse) error {
-	command := "SELECT id, name, score, description, category, tags, hints FROM challenge WHERE visible=1;"
-	rows, err := db.Query(command)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var c challengeResponse
-		err = rows.Scan(&c.ID, &c.Name, &c.Score, &c.Description, &c.Category, &c.Tags, &c.Hints)
-		if err != nil {
-			return err
-		}
-		solverCount, err := getSolverCount(c.ID)
-		if err != nil {
-			return err
-		}
-		c.SolverCount = solverCount
-		*challenges = append(*challenges, c)
-	}
-	return rows.Err()
-}
-
-// getChallengesByCategory 操作数据库获取所有题目
-func getChallengesByCategory(challenges *[]challengeResponse, category string) error {
-	command := "SELECT id, name, score, description, tags, hints FROM challenge WHERE visible=1 AND category=?;"
-	rows, err := db.Query(command, category)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var c challengeResponse
-		err = rows.Scan(&c.ID, &c.Name, &c.Score, &c.Description, &c.Tags, &c.Hints)
-		if err != nil {
-			return err
-		}
-		solverCount, err := getSolverCount(c.ID)
-		if err != nil {
-			return err
-		}
-		c.SolverCount = solverCount
-		c.Category = category
-		*challenges = append(*challenges, c)
-	}
-	return rows.Err()
 }
 
 // getSolverCount 操作数据库获取指定id题目的解出人数

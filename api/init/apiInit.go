@@ -80,7 +80,7 @@ func SetupAPI() *gin.Engine {
 		public.GET("/scores/all", u.GetAllScores)
 
 		// 获取所有公告
-		public.GET("/notice/all", admin.GetAllNotices)
+		public.GET("/notice/all", u.GetAllNotices)
 
 	}
 
@@ -97,9 +97,9 @@ func SetupAPI() *gin.Engine {
 		personal.GET("/category", u.GetCategories)
 
 		// 获取所有题目信息
-		personal.GET("/challenges/all", admin.GetAllChallenges)
+		personal.GET("/challenges/all", u.GetAllChallenges)
 		// 获取指定类别的题目信息
-		personal.GET("/challenges/:category", admin.GetChallengesByCategory)
+		personal.GET("/challenges/:category", u.GetChallengesByCategory)
 
 		// 提交flag
 		personal.POST("/flag", u.SubmitFlag)
@@ -111,7 +111,7 @@ func SetupAPI() *gin.Engine {
 		personal.GET("/solves/cid/:cid", u.GetSolvesByCid)
 	}
 
-	// 管理者api，需要用户登陆且Role=1才能访问
+	// 管理员api，需要用户登陆且Role=1才能访问
 	manager := api.Group("/admin")
 	manager.Use(admin.AuthRequired())
 	{
@@ -128,30 +128,22 @@ func SetupAPI() *gin.Engine {
 		manager.DELETE("/notice/:id", admin.DeleteNotice)
 
 		// 获取所有提交记录
-		manager.GET("/submissions/all", u.GetAllSubmissions)
+		manager.GET("/submissions/all", admin.GetAllSubmissions)
 		// 获取指定用户的提交记录
-		manager.GET("/submissions/uid/:uid", u.GetSubmissionsByUid)
+		manager.GET("/submissions/uid/:uid", admin.GetSubmissionsByUid)
 		// 获取指定题目的提交记录
-		manager.GET("/submissions/cid/:cid", u.GetSubmissionsByCid)
+		manager.GET("/submissions/cid/:cid", admin.GetSubmissionsByCid)
 	}
 
 	return r
 }
 
-//暂时跨域。
+// 跨域
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
-		// c.Header("Access-Control-Allow-Origin", "http://172.20.10.10:8081")
-		// c.Header("Access-Control-Allow-Headers", "Content-Category, AccessToken, X-CSRF-Token, Authorization, Token, Content-Type")
-		// c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PATCH, DELETE")
-		// c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Category")
-		// c.Header("Access-Control-Allow-Credentials", "true")
 		origin := c.Request.Header.Get("Origin") //请求头部
 		if origin != "" {
-			//接收客户端发送的origin （重要！）
-			// c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
-			//服务器支持的所有跨域请求的方法
 			c.Header("Access-Control-Allow-Origin", origin) //"http://172.20.10.10:8081")
 			c.Header("Access-Control-Allow-Headers", "Content-Category, AccessToken, X-CSRF-Token, Authorization, Token, Content-Type")
 			c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PATCH, DELETE")
@@ -159,10 +151,6 @@ func Cors() gin.HandlerFunc {
 			c.Header("Access-Control-Max-Age", "172800")
 			c.Header("Access-Control-Allow-Credentials", "true")
 		}
-		//放行所有OPTIONS方法
-		// if method == "OPTIONS" {
-		// 	c.AbortWithStatus(204)
-		// }
 		if method == "OPTIONS" {
 			c.JSON(200, "ok")
 		}

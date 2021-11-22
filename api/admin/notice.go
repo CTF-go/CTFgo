@@ -1,6 +1,7 @@
 package apiAdmin
 
 import (
+	. "CTFgo/api/types"
 	cfg "CTFgo/configs"
 	i "CTFgo/databases/init"
 	"CTFgo/logs"
@@ -15,17 +16,9 @@ import (
 
 var db *sql.DB = i.DB
 
-// Notice 定义一个公告
-type Notice struct {
-	ID        int    `json:"id"`
-	Title     string `json:"title"`
-	Content   string `json:"content"`
-	CreatedAt int32  `json:"created_at"`
-}
-
 // NewNotice 新增一个公告
 func NewNotice(c *gin.Context) {
-	var request noticeRequest
+	var request NoticeRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error", err)
@@ -72,19 +65,6 @@ func DeleteNotice(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "msg": "Delete notice success!"})
 }
 
-// GetAllNotices 获取所有的公告
-func GetAllNotices(c *gin.Context) {
-	var notices []Notice
-
-	if err := getAllNotices(&notices); err != nil {
-		logs.WARNING("get notices error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get all notices failure!"})
-		return
-	}
-
-	c.JSON(200, gin.H{"code": 200, "data": notices})
-}
-
 // addNotice 操作数据库新增一个公告
 func addNotice(b *Notice) error {
 	command := "INSERT INTO notice (title,content,created_at) VALUES (?,?,?);"
@@ -123,22 +103,4 @@ func isNoticeExisted(id int) (exists bool) {
 		return false
 	}
 	return exists
-}
-
-func getAllNotices(notices *[]Notice) error {
-	command := "SELECT id, title, content, created_at FROM notice;"
-	rows, err := db.Query(command)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var b Notice
-		err = rows.Scan(&b.ID, &b.Title, &b.Content, &b.CreatedAt)
-		if err != nil {
-			return err
-		}
-		*notices = append(*notices, b)
-	}
-	return rows.Err()
 }

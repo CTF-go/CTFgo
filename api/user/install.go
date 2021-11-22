@@ -4,6 +4,7 @@ Package apiUser实现用户和其他普通API接口功能。
 package apiUser
 
 import (
+	. "CTFgo/api/types"
 	cfg "CTFgo/configs"
 	"CTFgo/logs"
 	"database/sql"
@@ -15,7 +16,7 @@ import (
 
 //Install实现初始化数据库等功能。
 func Install(c *gin.Context) {
-	var request installRequest
+	var request InstallRequest
 	//用ShouldBindJSON解析绑定传入的Json数据。
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error: ", err)

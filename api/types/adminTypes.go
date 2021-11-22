@@ -1,7 +1,7 @@
-package apiAdmin
+package types
 
-// challengeRequest 定义新增/修改题目的一个请求
-type challengeRequest struct {
+// ChallengeRequest 定义新增/修改题目的一个请求
+type ChallengeRequest struct {
 	Name        string `form:"name" json:"name" binding:"required"`
 	Score       int    `form:"score" json:"score" binding:"required"`
 	Flag        string `form:"flag" json:"flag"`
@@ -12,8 +12,8 @@ type challengeRequest struct {
 	Visible     int    `form:"visible" json:"visible"`
 }
 
-// challengeResponse 定义获取题目的一个响应
-type challengeResponse struct {
+// ChallengeResponse 定义获取题目的一个响应
+type ChallengeResponse struct {
 	ID          int    `form:"id" json:"id" binding:"required"`
 	Name        string `form:"name" json:"name" binding:"required"`
 	Score       int    `form:"score" json:"score" binding:"required"`
@@ -24,8 +24,8 @@ type challengeResponse struct {
 	SolverCount int    `form:"solver_count" json:"solver_count"`
 }
 
-// noticeRequest 定义新增公告的一个请求
-type noticeRequest struct {
+// NoticeRequest 定义新增公告的一个请求
+type NoticeRequest struct {
 	Title   string `form:"title" json:"title" binding:"required"`
 	Content string `form:"content" json:"content" binding:"required"`
 }

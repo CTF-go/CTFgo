@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//exitfunc用于执行CTFgo退出前释放资源等一些操作。
+// exitfunc用于执行CTFgo退出前释放资源等一些操作。
 func exitfunc() {
 	logs.Save_log()
 	fmt.Println("[EXIT] CTFgo has stopped")

@@ -4,6 +4,7 @@ Package apiUser实现用户和其他普通API接口功能。
 package apiUser
 
 import (
+	. "CTFgo/api/types"
 	cfg "CTFgo/configs"
 	"CTFgo/logs"
 
@@ -34,8 +35,8 @@ func GetScoreByUserID(c *gin.Context) {
 
 // GetAllScores 按降序排列返回所有当前得分及对应用户和用户ID。
 func GetAllScores(c *gin.Context) {
-	var s scoreResponse
-	var scores []scoreResponse
+	var s ScoreResponse
+	var scores []ScoreResponse
 	sql := "SELECT * FROM score WHERE id != 1;"
 	rows, err := db.Query(sql)
 	if err != nil {

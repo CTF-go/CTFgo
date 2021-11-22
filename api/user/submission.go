@@ -2,37 +2,20 @@ package apiUser
 
 import (
 	//admin "CTFgo/api/admin"
+	. "CTFgo/api/types"
 	cfg "CTFgo/configs"
 	"CTFgo/logs"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"math"
-	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
-
-// Submission 表示一次flag提交记录
-type Submission struct {
-	ID          int    `json:"id"`
-	UserID      int    `json:"uid"`
-	ChallengeID int    `json:"cid"`
-	Flag        string `json:"flag"`
-	IP          string `json:"ip"`
-	Time        int64  `json:"submitted_at"`
-}
-
-// Solve 表示一次正确的flag提交记录
-type Solve struct {
-	ID          int   `json:"id"`
-	UserID      int   `json:"uid"`
-	ChallengeID int   `json:"cid"`
-	Time        int64 `json:"solved_at"`
-}
 
 // SubmitFlag 提交一个flag
 func SubmitFlag(c *gin.Context) {
-	var request submissionRequest
+	var request SubmissionRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		logs.WARNING("bindjson error", err)
@@ -123,112 +106,112 @@ func SubmitFlag(c *gin.Context) {
 	}
 }
 
-// GetAllSubmissions 获取所有flag提交记录
-func GetAllSubmissions(c *gin.Context) {
-	var submissions []Submission
+// // GetAllSubmissions 获取所有flag提交记录
+// func GetAllSubmissions(c *gin.Context) {
+// 	var submissions []Submission
 
-	if err := getAllSubmissions(&submissions); err != nil {
-		logs.WARNING("get submissions error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get all submissions failure!"})
-		return
-	}
+// 	if err := getAllSubmissions(&submissions); err != nil {
+// 		logs.WARNING("get submissions error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Get all submissions failure!"})
+// 		return
+// 	}
 
-	c.JSON(200, gin.H{"code": 200, "data": submissions})
-}
+// 	c.JSON(200, gin.H{"code": 200, "data": submissions})
+// }
 
-// GetSubmissionsByUid 根据用户id获取flag提交记录
-func GetSubmissionsByUid(c *gin.Context) {
-	uid, err := strconv.ParseInt(c.Param("uid"), 10, 64)
-	if err != nil {
-		logs.WARNING("wrong uid error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Wrong uid!"})
-		return
-	}
+// // GetSubmissionsByUid 根据用户id获取flag提交记录
+// func GetSubmissionsByUid(c *gin.Context) {
+// 	uid, err := strconv.ParseInt(c.Param("uid"), 10, 64)
+// 	if err != nil {
+// 		logs.WARNING("wrong uid error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong uid!"})
+// 		return
+// 	}
 
-	var submissions []Submission
-	if err := getSubmissionsByUid(&submissions, int(uid)); err != nil {
-		logs.WARNING("get specified submissions error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get specified submissions failure!"})
-		return
-	}
+// 	var submissions []Submission
+// 	if err := getSubmissionsByUid(&submissions, int(uid)); err != nil {
+// 		logs.WARNING("get specified submissions error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified submissions failure!"})
+// 		return
+// 	}
 
-	c.JSON(200, gin.H{"code": 200, "data": submissions})
-}
+// 	c.JSON(200, gin.H{"code": 200, "data": submissions})
+// }
 
-// GetSubmissionsByCid 根据题目id获取flag提交记录
-func GetSubmissionsByCid(c *gin.Context) {
-	cid, err := strconv.ParseInt(c.Param("cid"), 10, 64)
-	if err != nil {
-		logs.WARNING("wrong cid error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Wrong cid!"})
-		return
-	}
+// // GetSubmissionsByCid 根据题目id获取flag提交记录
+// func GetSubmissionsByCid(c *gin.Context) {
+// 	cid, err := strconv.ParseInt(c.Param("cid"), 10, 64)
+// 	if err != nil {
+// 		logs.WARNING("wrong cid error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong cid!"})
+// 		return
+// 	}
 
-	var submissions []Submission
-	if err := getSubmissionsByCid(&submissions, int(cid)); err != nil {
-		logs.WARNING("get specified submissions error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get specified submissions failure!"})
-		return
-	}
+// 	var submissions []Submission
+// 	if err := getSubmissionsByCid(&submissions, int(cid)); err != nil {
+// 		logs.WARNING("get specified submissions error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified submissions failure!"})
+// 		return
+// 	}
 
-	c.JSON(200, gin.H{"code": 200, "data": submissions})
-}
+// 	c.JSON(200, gin.H{"code": 200, "data": submissions})
+// }
 
-// GetAllSolves 获取所有正确的flag提交记录
-func GetAllSolves(c *gin.Context) {
-	var solves []solveResponse
+// // GetAllSolves 获取所有正确的flag提交记录
+// func GetAllSolves(c *gin.Context) {
+// 	var solves []SolveResponse
 
-	if err := getAllSolves(&solves); err != nil {
-		logs.WARNING("get solves error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get all solves failure!"})
-		return
-	}
+// 	if err := getAllSolves(&solves); err != nil {
+// 		logs.WARNING("get solves error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Get all solves failure!"})
+// 		return
+// 	}
 
-	c.JSON(200, gin.H{"code": 200, "data": solves})
-}
+// 	c.JSON(200, gin.H{"code": 200, "data": solves})
+// }
 
-// GetSolvesByUid 根据用户id获取正确的flag提交记录
-func GetSolvesByUid(c *gin.Context) {
-	uid, err := strconv.ParseInt(c.Param("uid"), 10, 64)
-	if err != nil {
-		logs.WARNING("wrong uid error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Wrong uid!"})
-		return
-	}
+// // GetSolvesByUid 根据用户id获取正确的flag提交记录
+// func GetSolvesByUid(c *gin.Context) {
+// 	uid, err := strconv.ParseInt(c.Param("uid"), 10, 64)
+// 	if err != nil {
+// 		logs.WARNING("wrong uid error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong uid!"})
+// 		return
+// 	}
 
-	if uid == 1 {
-		c.JSON(400, gin.H{"code": 400, "msg": "Not allowed!"})
-		return
-	}
+// 	if uid == 1 {
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Not allowed!"})
+// 		return
+// 	}
 
-	var solves []solveResponse
-	if err := getSolvesByUid(&solves, int(uid)); err != nil {
-		logs.WARNING("get specified solves error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get specified solves failure!"})
-		return
-	}
+// 	var solves []SolveResponse
+// 	if err := getSolvesByUid(&solves, int(uid)); err != nil {
+// 		logs.WARNING("get specified solves error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified solves failure!"})
+// 		return
+// 	}
 
-	c.JSON(200, gin.H{"code": 200, "data": solves})
-}
+// 	c.JSON(200, gin.H{"code": 200, "data": solves})
+// }
 
-// GetSolvesByCid 根据题目id获取正确的flag提交记录
-func GetSolvesByCid(c *gin.Context) {
-	cid, err := strconv.ParseInt(c.Param("cid"), 10, 64)
-	if err != nil {
-		logs.WARNING("wrong cid error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Wrong cid!"})
-		return
-	}
+// // GetSolvesByCid 根据题目id获取正确的flag提交记录
+// func GetSolvesByCid(c *gin.Context) {
+// 	cid, err := strconv.ParseInt(c.Param("cid"), 10, 64)
+// 	if err != nil {
+// 		logs.WARNING("wrong cid error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong cid!"})
+// 		return
+// 	}
 
-	var solves []solveResponse
-	if err := getSolvesByCid(&solves, int(cid)); err != nil {
-		logs.WARNING("get specified solves error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get specified solves failure!"})
-		return
-	}
+// 	var solves []SolveResponse
+// 	if err := getSolvesByCid(&solves, int(cid)); err != nil {
+// 		logs.WARNING("get specified solves error", err)
+// 		c.JSON(400, gin.H{"code": 400, "msg": "Get specified solves failure!"})
+// 		return
+// 	}
 
-	c.JSON(200, gin.H{"code": 200, "data": solves})
-}
+// 	c.JSON(200, gin.H{"code": 200, "data": solves})
+// }
 
 // hasAlreadySolved 检查某道题是否已经被某用户解出
 func hasAlreadySolved(uid int, cid int) (exists bool) {
@@ -360,116 +343,116 @@ func isChallengeExisted(id int) (exists bool) {
 	return exists
 }
 
-// getAllSubmissions 操作数据库获取所有提交记录
-func getAllSubmissions(submissions *[]Submission) error {
-	command := "SELECT id, uid, cid, ip, flag, submitted_at FROM submission;"
-	rows, err := db.Query(command)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var s Submission
-		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.IP, &s.Flag, &s.Time)
-		if err != nil {
-			return err
-		}
-		*submissions = append(*submissions, s)
-	}
-	return rows.Err()
-}
+// // getAllSubmissions 操作数据库获取所有提交记录
+// func getAllSubmissions(submissions *[]Submission) error {
+// 	command := "SELECT id, uid, cid, ip, flag, submitted_at FROM submission;"
+// 	rows, err := db.Query(command)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer rows.Close()
+// 	for rows.Next() {
+// 		var s Submission
+// 		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.IP, &s.Flag, &s.Time)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		*submissions = append(*submissions, s)
+// 	}
+// 	return rows.Err()
+// }
 
-// getSubmissionsByUid 操作数据库根据uid获取提交记录
-func getSubmissionsByUid(submissions *[]Submission, uid int) error {
-	command := "SELECT id, uid, cid, ip, flag, submitted_at FROM submission WHERE uid=?;"
-	rows, err := db.Query(command, uid)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var s Submission
-		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.IP, &s.Flag, &s.Time)
-		if err != nil {
-			return err
-		}
-		*submissions = append(*submissions, s)
-	}
-	return rows.Err()
-}
+// // getSubmissionsByUid 操作数据库根据uid获取提交记录
+// func getSubmissionsByUid(submissions *[]Submission, uid int) error {
+// 	command := "SELECT id, uid, cid, ip, flag, submitted_at FROM submission WHERE uid=?;"
+// 	rows, err := db.Query(command, uid)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer rows.Close()
+// 	for rows.Next() {
+// 		var s Submission
+// 		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.IP, &s.Flag, &s.Time)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		*submissions = append(*submissions, s)
+// 	}
+// 	return rows.Err()
+// }
 
-// getSubmissionsByCid 操作数据库根据cid获取提交记录
-func getSubmissionsByCid(submissions *[]Submission, cid int) error {
-	command := "SELECT id, uid, cid, ip, flag, submitted_at FROM submission WHERE cid=?;"
-	rows, err := db.Query(command, cid)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var s Submission
-		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.IP, &s.Flag, &s.Time)
-		if err != nil {
-			return err
-		}
-		*submissions = append(*submissions, s)
-	}
-	return rows.Err()
-}
+// // getSubmissionsByCid 操作数据库根据cid获取提交记录
+// func getSubmissionsByCid(submissions *[]Submission, cid int) error {
+// 	command := "SELECT id, uid, cid, ip, flag, submitted_at FROM submission WHERE cid=?;"
+// 	rows, err := db.Query(command, cid)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer rows.Close()
+// 	for rows.Next() {
+// 		var s Submission
+// 		err = rows.Scan(&s.ID, &s.UserID, &s.ChallengeID, &s.IP, &s.Flag, &s.Time)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		*submissions = append(*submissions, s)
+// 	}
+// 	return rows.Err()
+// }
 
-// getAllSolves 操作数据库获取所有正确的提交记录
-func getAllSolves(solves *[]solveResponse) error {
-	command := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.id != 1 AND s.uid=u.id AND s.cid=c.id;"
-	rows, err := db.Query(command)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var s solveResponse
-		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
-		if err != nil {
-			return err
-		}
-		*solves = append(*solves, s)
-	}
-	return rows.Err()
-}
+// // getAllSolves 操作数据库获取所有正确的提交记录
+// func getAllSolves(solves *[]SolveResponse) error {
+// 	command := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.id != 1 AND s.uid=u.id AND s.cid=c.id;"
+// 	rows, err := db.Query(command)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer rows.Close()
+// 	for rows.Next() {
+// 		var s SolveResponse
+// 		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		*solves = append(*solves, s)
+// 	}
+// 	return rows.Err()
+// }
 
-// getSolvesByUid 操作数据库根据用户id获取正确的flag提交记录
-func getSolvesByUid(solves *[]solveResponse, uid int) error {
-	command := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE s.uid=? AND u.id=s.uid AND c.id=s.cid;"
-	rows, err := db.Query(command, uid)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var s solveResponse
-		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
-		if err != nil {
-			return err
-		}
-		*solves = append(*solves, s)
-	}
-	return rows.Err()
-}
+// // getSolvesByUid 操作数据库根据用户id获取正确的flag提交记录
+// func getSolvesByUid(solves *[]SolveResponse, uid int) error {
+// 	command := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE s.uid=? AND u.id=s.uid AND c.id=s.cid;"
+// 	rows, err := db.Query(command, uid)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer rows.Close()
+// 	for rows.Next() {
+// 		var s SolveResponse
+// 		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		*solves = append(*solves, s)
+// 	}
+// 	return rows.Err()
+// }
 
-// getSolvesByCid 操作数据库根据题目id获取正确的提交记录
-func getSolvesByCid(solves *[]solveResponse, cid int) error {
-	command := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE s.cid=? AND u.id=s.uid AND c.id=s.cid;"
-	rows, err := db.Query(command, cid)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var s solveResponse
-		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
-		if err != nil {
-			return err
-		}
-		*solves = append(*solves, s)
-	}
-	return rows.Err()
-}
+// // getSolvesByCid 操作数据库根据题目id获取正确的提交记录
+// func getSolvesByCid(solves *[]SolveResponse, cid int) error {
+// 	command := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE s.cid=? AND u.id=s.uid AND c.id=s.cid;"
+// 	rows, err := db.Query(command, cid)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer rows.Close()
+// 	for rows.Next() {
+// 		var s SolveResponse
+// 		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		*solves = append(*solves, s)
+// 	}
+// 	return rows.Err()
+// }
