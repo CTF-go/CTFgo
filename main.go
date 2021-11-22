@@ -22,51 +22,6 @@ func exitfunc() {
 	os.Exit(0)
 }
 
-// TODO: 使用 embed 嵌入静态资源。
-//
-//setup_frontend实现初始化前端路由。
-// func setup_frontend() *gin.Engine {
-// 	// 禁用控制台颜色，将日志写入文件时不需要控制台颜色。
-// 	gin.DisableConsoleColor()
-// 	c := gin.LoggerConfig{
-// 		Output: gin.DefaultWriter,
-// 		// 需要跳过记录log的API
-// 		SkipPaths: []string{"/test"},
-// 		// log格式
-// 		Formatter: func(params gin.LogFormatterParams) string {
-// 			return fmt.Sprintf("[GIN] [%s] %s - \"%s %s %s %3d %s \"%s\" %s\"\n",
-// 				params.TimeStamp.Format("2006/01/02 15:04:05"),
-// 				params.ClientIP,
-// 				params.Method,
-// 				params.Path,
-// 				params.Request.Proto,
-// 				params.StatusCode,
-// 				params.Latency,
-// 				params.Request.UserAgent(),
-// 				params.ErrorMessage,
-// 			)
-// 		},
-// 	}
-// 	r := gin.New()
-// 	r.Use(gin.LoggerWithConfig(c))
-// 	r.Use(gin.Recovery())
-// 	r.Static("/css", cfg.Static_path+"/css")
-// 	r.Static("/js", cfg.Static_path+"/js")
-// 	r.Static("/img", cfg.Static_path+"/img")
-// 	r.Static("/fonts", cfg.Static_path+"/fonts")
-
-// 	r.StaticFile("/home", cfg.Static_path+"/index.html")
-// 	r.StaticFile("/users", cfg.Static_path+"/index.html")
-// 	r.StaticFile("/scoreboard", cfg.Static_path+"/index.html")
-// 	r.StaticFile("/challenges", cfg.Static_path+"/index.html")
-
-// 	r.GET("/", func(c *gin.Context) {
-// 		c.Request.URL.Path = "/home"
-// 		r.HandleContext(c)
-// 	})
-// 	return r
-// }
-
 //go:embed themes
 var themesFS embed.FS
 
@@ -79,15 +34,7 @@ type StaticResource struct {
 
 // 静态资源被访问逻辑
 func (_this_ *StaticResource) Open(name string) (fs.File, error) {
-	var fullName string
-	// fmt.Println(name)
-	// if strings.Contains(name, `/`) {
-	// 	fullName = path.Join(_this_.path, "static", name)
-	// 	fmt.Println(1, fullName)
-	// } else {
-	fullName = path.Join(_this_.path, name)
-	// fmt.Println(2, fullName)
-	// }
+	fullName := path.Join(_this_.path, name)
 	file, err := _this_.staticFS.Open(fullName)
 	return file, err
 }
@@ -127,6 +74,7 @@ func main() {
 	r.StaticFS("/fonts/", http.FS(staticFonts))
 	r.StaticFS("/img/", http.FS(staticImg))
 	r.StaticFile("/favicon.ico", staticIcon.path)
+
 	// 首页
 	r.GET("/", func(c *gin.Context) {
 		c.Writer.WriteHeader(http.StatusOK)
@@ -136,14 +84,24 @@ func main() {
 		c.Writer.Flush()
 	})
 
-	// r.Any("/themes/*filepath", func(c *gin.Context) {
-	// 	staticServer := http.FileServer(http.FS(themesFS))
-	// 	staticServer.ServeHTTP(c.Writer, c.Request)
-	// })
+	// 刷新后展示相同页面
+	r.StaticFile("/home", staticIndex.path)
+	r.StaticFile("/users", staticIndex.path)
+	r.StaticFile("/notices", staticIndex.path)
+	r.StaticFile("/scoreboard", staticIndex.path)
 
-	//创建监听退出chan
+	// challenges子路由动态获取
+	r.GET("/challenges/*type", func(c *gin.Context) {
+		c.Writer.WriteHeader(http.StatusOK)
+		indexHTML, _ := staticIndex.staticFS.ReadFile(staticIndex.path)
+		c.Writer.Write(indexHTML)
+		c.Writer.Header().Add("Accept", "text/html")
+		c.Writer.Flush()
+	})
+
+	// 创建监听退出chan
 	c := make(chan os.Signal)
-	//监听指定信号 ctrl+c kill，实现优雅退出
+	// 监听指定信号 ctrl+c kill，实现优雅退出
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go func() {
 		for s := range c {
@@ -159,6 +117,6 @@ func main() {
 	if err := r.Run(); err != nil {
 		fmt.Printf("startup service failed, err:%v\n", err)
 	}
-	//Listen and Server in 0.0.0.0:8081
-	r.Run(":8081")
+	// Listen and Server in 0.0.0.0:8080
+	r.Run(":8080")
 }

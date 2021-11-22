@@ -32,16 +32,16 @@ func SetupAPI() *gin.Engine {
 	c := gin.LoggerConfig{
 		Output: gin.DefaultWriter,
 		// 需要跳过记录log的API
-		SkipPaths: []string{"/test"},
+		SkipPaths: []string{"/js/app.f2e52bbc.js", "/js/app.f2e52bbc.js.map"},
 		// log格式
 		Formatter: func(params gin.LogFormatterParams) string {
-			return fmt.Sprintf("[GIN] [%s] %s - \"%s %s %s %3d %s \"%s\" %s\"\n",
+			return fmt.Sprintf("[GIN] [%s] [%s] - [%s] [%3d] %s %s %s \"%s\" %s\n",
 				params.TimeStamp.Format("2006/01/02 15:04:05"),
 				params.ClientIP,
 				params.Method,
+				params.StatusCode,
 				params.Path,
 				params.Request.Proto,
-				params.StatusCode,
 				params.Latency,
 				params.Request.UserAgent(),
 				params.ErrorMessage,
