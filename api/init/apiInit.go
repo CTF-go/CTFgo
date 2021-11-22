@@ -94,7 +94,7 @@ func SetupAPI() *gin.Engine {
 		personal.POST("/updateinfo", u.UpdateInfo)
 
 		// 获取题目分类
-		personal.GET("/category", u.GetCategories)
+		personal.GET("/categories", u.GetCategories)
 
 		// 获取所有题目信息
 		personal.GET("/challenges/all", u.GetAllChallenges)

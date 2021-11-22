@@ -64,3 +64,15 @@ type PublicInfoResponse struct {
 	Country     string `json:"country"`
 	TeamID      int    `json:"team_id"`
 }
+
+// ChallengeResponse 定义获取题目的一个响应。
+type ChallengeResponse struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Score       int    `json:"score"`
+	Description string `json:"description"`
+	Category    string `json:"category"`
+	Tags        string `json:"tags"`
+	Hints       string `json:"hints"`
+	SolverCount int    `json:"solver_count"`
+}
