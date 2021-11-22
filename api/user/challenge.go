@@ -24,7 +24,7 @@ func GetAllChallenges(c *gin.Context) {
 // GetChallengesByCategory 获取指定类别的题目
 func GetChallengesByCategory(c *gin.Context) {
 	category := c.Param("category")
-	if matched := checkCategory(category); !matched {
+	if matched := cfg.CheckCategory(category); !matched {
 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong category!"})
 		return
 	}
@@ -86,14 +86,4 @@ func getChallengesByCategory(challenges *[]ChallengeResponse, category string) e
 		*challenges = append(*challenges, c)
 	}
 	return rows.Err()
-}
-
-// checkCategory检查类别是否正确
-func checkCategory(c string) bool {
-	for _, category := range cfg.ChallengeCategories {
-		if category == c {
-			return true
-		}
-	}
-	return false
 }

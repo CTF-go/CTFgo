@@ -120,3 +120,13 @@ func getSolvesByCid(solves *[]SolveResponse, cid int) error {
 	}
 	return rows.Err()
 }
+
+// getSolverCount 操作数据库获取指定id题目的解出人数
+func getSolverCount(id int) (count int, err error) {
+	command := "SELECT COUNT(*) FROM solve WHERE cid = ?;"
+	if err := db.QueryRow(command, id).Scan(&count); err != nil {
+		logs.WARNING("query or scan error", err)
+		return 0, err
+	}
+	return count, nil
+}

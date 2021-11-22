@@ -21,7 +21,7 @@ func NewChallenge(c *gin.Context) {
 		return
 	}
 
-	if matched := checkCategory(request.Category); matched == false {
+	if matched := cfg.CheckCategory(request.Category); !matched {
 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong category!"})
 		return
 	}
@@ -67,7 +67,7 @@ func EditChallenge(c *gin.Context) {
 		return
 	}
 
-	if matched := checkCategory(request.Category); matched == false {
+	if matched := cfg.CheckCategory(request.Category); !matched {
 		c.JSON(400, gin.H{"code": 400, "msg": "Wrong category!"})
 		return
 	}
@@ -170,24 +170,4 @@ func isChallengeExisted(id int) (exists bool) {
 		return false
 	}
 	return exists
-}
-
-// getSolverCount 操作数据库获取指定id题目的解出人数
-func getSolverCount(id int) (count int, err error) {
-	command := "SELECT COUNT(*) FROM solve WHERE cid = ?;"
-	if err := db.QueryRow(command, id).Scan(&count); err != nil {
-		logs.WARNING("query or scan error", err)
-		return 0, err
-	}
-	return count, nil
-}
-
-// checkCategory检查类别是否正确
-func checkCategory(c string) bool {
-	for _, category := range cfg.ChallengeCategories {
-		if category == c {
-			return true
-		}
-	}
-	return false
 }
