@@ -11,11 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var params gin.LogFormatterParams
-
 //Save_log在CTFgo退出时将run.log重命名为当前时间.log，保存在CTFgo/logs文件夹。
 func Save_log() {
-	err := os.Rename(c.Current_log_path, c.Save_log_path)
+	err := os.Rename(c.CURRENT_LOG_PATH, c.SAVE_LOG_PATH)
 	if err != nil {
 		fmt.Printf("the rename operation failed %q\n", err)
 	} else {
@@ -29,7 +27,6 @@ func info_output(msg string) {
 		c.Times(),
 		msg,
 	)
-	return
 }
 
 //warning_output输出warning和错误信息到控制台和日志文件。
@@ -39,7 +36,6 @@ func warning_output(msg string, err error) {
 		msg,
 		err,
 	)
-	return
 }
 
 //error_output输出error和错误信息到控制台和日志文件，然后停止CTFgo程序。
@@ -50,8 +46,9 @@ func error_output(msg string, err error) {
 		err,
 	)
 	os.Exit(1)
-	return
 }
+
+// var params gin.LogFormatterParams
 
 /*恶意攻击日志后面再实现，单独存日志文件
 func attack_output(params gin.LogFormatterParams, msg string, err error) {
@@ -73,19 +70,16 @@ func attack_output(params gin.LogFormatterParams, msg string, err error) {
 //INFO函数传参(msg string)，无err，仅输出提示信息。
 func INFO(msg string) {
 	info_output(msg)
-	return
 }
 
 //WARNING函数传参(msg string, err error)，输出报错信息但不退出。
 func WARNING(msg string, err error) {
 	warning_output(msg, err)
-	return
 }
 
 //ERROR函数传参(msg string, err error)，输出报错信息并退出程序。
 func ERROR(msg string, err error) {
 	error_output(msg, err)
-	return
 }
 
 /*

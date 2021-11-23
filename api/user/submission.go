@@ -23,12 +23,11 @@ func SubmitFlag(c *gin.Context) {
 	}
 
 	// 获取UserID
-	session, err := Store.Get(c.Request, cfg.SessionID)
+	session, err := Store.Get(c.Request, cfg.SESSION_ID)
 	if err != nil {
 		c.JSON(200, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
 		return
 	}
-	var user User
 	user, ok := session.Values["user"].(User)
 	if !ok {
 		c.JSON(200, gin.H{"code": 400, "msg": "No session"})

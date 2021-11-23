@@ -14,22 +14,19 @@ import (
 )
 
 var (
-	Work_dir, Log_dir, Current_log_path, Save_log_path, DB_dir, DB_file, Static_path, Session_dir, SessionID string
-	ChallengeCategories                                                                                      []string
+	WORK_DIR, LOG_DIR, CURRENT_LOG_PATH, SAVE_LOG_PATH, DB_DIR, DB_FILE, SESSION_DIR, SESSION_ID string
 )
 
 //init初始化常量。
 func init() {
-	Work_dir, _ = os.Getwd()
-	Session_dir = Work_dir + "/sessions"
-	SessionID = "CTFGOSESSID"
-	Log_dir = Work_dir + "/logs"
-	Current_log_path = Log_dir + "/run.log"
-	Save_log_path = Log_dir + "/" + log_times() + ".log"
-	DB_dir = Work_dir + "/databases"
-	DB_file = DB_dir + "/ctfgo.db"
-	Static_path = Work_dir + "/themes/default"
-	ChallengeCategories = []string{"Web", "Re", "Pwn", "Crypto", "Misc"}
+	WORK_DIR, _ = os.Getwd()
+	SESSION_DIR = WORK_DIR + "/sessions"
+	SESSION_ID = "CTFGOSESSID"
+	LOG_DIR = WORK_DIR + "/logs"
+	CURRENT_LOG_PATH = LOG_DIR + "/run.log"
+	SAVE_LOG_PATH = LOG_DIR + "/" + log_times() + ".log"
+	DB_DIR = WORK_DIR + "/databases"
+	DB_FILE = DB_DIR + "/ctfgo.db"
 }
 
 //log_times设置日志文件名，格式如2021-4-15-14_55。

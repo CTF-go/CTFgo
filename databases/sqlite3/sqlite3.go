@@ -13,7 +13,7 @@ import (
 
 //Sqlite_conn实现连接sqlite3数据库，返回(*sql.DB)。
 func Sqlite_conn() *sql.DB {
-	db, err := sql.Open("sqlite3", c.DB_file)
+	db, err := sql.Open("sqlite3", c.DB_FILE)
 	if err != nil {
 		logs.ERROR("sqlite connect error: ", err)
 	}

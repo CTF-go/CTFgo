@@ -39,10 +39,10 @@ func Install(c *gin.Context) {
 		return
 	}
 	//判断是否存在CTFgo/databases/ctfgo.db，不存在则执行初始化，存在则不执行
-	if _, err := os.Stat(cfg.DB_file); os.IsNotExist(err) {
+	if _, err := os.Stat(cfg.DB_FILE); os.IsNotExist(err) {
 		logs.INFO("ctfgo.db does not exist!")
-		_ = os.MkdirAll(cfg.DB_dir, 0777)
-		db, err := sql.Open("sqlite3", cfg.DB_file)
+		_ = os.MkdirAll(cfg.DB_DIR, 0777)
+		db, err := sql.Open("sqlite3", cfg.DB_FILE)
 		if err != nil {
 			logs.ERROR("sqlite connect error: ", err)
 		}
@@ -155,7 +155,7 @@ func Install(c *gin.Context) {
 		// logs.INFO("Administrator account [" + request.Username + "]" + " register success!")
 
 		//新建sessions文件夹
-		err = os.MkdirAll(cfg.Session_dir, 0755)
+		err = os.MkdirAll(cfg.SESSION_DIR, 0755)
 		if err != nil {
 			logs.ERROR("create sessions dir error:", err)
 		}

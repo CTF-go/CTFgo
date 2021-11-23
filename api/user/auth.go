@@ -71,7 +71,7 @@ func Login(c *gin.Context) {
 	// 至此，身份认证完成
 
 	// 设置session
-	session, _ := Store.Get(c.Request, cfg.SessionID)
+	session, _ := Store.Get(c.Request, cfg.SESSION_ID)
 	user.Password = ""
 
 	// 根据remember值设置session有效期
@@ -165,7 +165,7 @@ func Register(c *gin.Context) {
 func Logout(c *gin.Context) {
 	var user User
 
-	session, err := Store.Get(c.Request, cfg.SessionID)
+	session, err := Store.Get(c.Request, cfg.SESSION_ID)
 	if err != nil {
 		c.JSON(400, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
 		return
@@ -193,7 +193,7 @@ func Session(c *gin.Context) {
 	var user User
 
 	// 默认在此之前已经通过了中间件的session权限验证
-	session, _ := Store.Get(c.Request, cfg.SessionID)
+	session, _ := Store.Get(c.Request, cfg.SESSION_ID)
 	user = session.Values["user"].(User)
 
 	c.JSON(200, gin.H{"code": 200, "data": user})
@@ -212,7 +212,7 @@ func UpdateInfo(c *gin.Context) {
 	}
 
 	// 默认在此之前已经通过了中间件的session权限验证
-	session, _ := Store.Get(c.Request, cfg.SessionID)
+	session, _ := Store.Get(c.Request, cfg.SESSION_ID)
 	user = session.Values["user"].(User)
 
 	if request.Username != "" && request.Username != user.Username {
@@ -497,7 +497,7 @@ func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// var user User
 
-		session, err := Store.Get(c.Request, cfg.SessionID)
+		session, err := Store.Get(c.Request, cfg.SESSION_ID)
 		if err != nil {
 			c.JSON(200, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
 			c.Abort()

@@ -18,12 +18,12 @@ import (
 func SetupAPI() *gin.Engine {
 	// 禁用控制台颜色，将日志写入文件时不需要控制台颜色。
 	gin.DisableConsoleColor()
-	err := os.MkdirAll(cfg.Log_dir, 0777)
+	err := os.MkdirAll(cfg.LOG_DIR, 0777)
 	if err != nil {
 		fmt.Printf("create logs dir error, err:%v\n", err)
 	}
 	// 创建run.log
-	log_path, err := os.Create(cfg.Current_log_path)
+	log_path, err := os.Create(cfg.CURRENT_LOG_PATH)
 	if err != nil {
 		fmt.Printf("create logs file error, err:%v\n", err)
 	}
@@ -102,7 +102,7 @@ func SetupAPI() *gin.Engine {
 		personal.GET("/challenges/:category", u.GetChallengesByCategory)
 
 		// 提交flag
-		personal.POST("/flag", u.SubmitFlag)
+		personal.POST("/submitflag", u.SubmitFlag)
 		// 获取所有正确的flag提交记录
 		personal.GET("/solves/all", u.GetAllSolves)
 		// 获取指定用户正确的flag提交记录

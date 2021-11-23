@@ -13,7 +13,7 @@ func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// var user User
 
-		session, err := u.Store.Get(c.Request, cfg.SessionID)
+		session, err := u.Store.Get(c.Request, cfg.SESSION_ID)
 		if err != nil {
 			c.JSON(200, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
 			c.Abort()

@@ -4,6 +4,7 @@ import (
 	. "CTFgo/api/types"
 	cfg "CTFgo/configs"
 	"CTFgo/logs"
+	"errors"
 
 	"github.com/gin-gonic/gin"
 )
@@ -83,8 +84,16 @@ func getChallengesByCategory(c *gin.Context, challenges *[]ChallengeResponse, ca
 		}
 		challenge.SolverCount = solverCount
 		challenge.Category = category
-		session, _ := Store.Get(c.Request, cfg.SessionID)
-		user, _ := session.Values["user"].(User)
+		session, err := Store.Get(c.Request, cfg.SESSION_ID)
+		if err != nil {
+			c.JSON(200, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
+			return err
+		}
+		user, ok := session.Values["user"].(User)
+		if !ok {
+			c.JSON(200, gin.H{"code": 400, "msg": "No session"})
+			return errors.New("no session")
+		}
 		challenge.IsSolved = getSolveByCidAndUid(user.ID, challenge.ID)
 		*challenges = append(*challenges, challenge)
 	}

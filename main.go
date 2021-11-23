@@ -89,6 +89,8 @@ func main() {
 	r.StaticFile("/users", staticIndex.path)
 	r.StaticFile("/notices", staticIndex.path)
 	r.StaticFile("/scoreboard", staticIndex.path)
+	r.StaticFile("/profile", staticIndex.path)
+	r.StaticFile("/dashboard", staticIndex.path)
 
 	// challenges子路由动态获取
 	r.GET("/challenges/*type", func(c *gin.Context) {

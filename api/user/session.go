@@ -17,7 +17,7 @@ import (
 var Store *sessions.FilesystemStore
 
 func init() {
-	Store = sessions.NewFilesystemStore(cfg.Session_dir, securecookie.GenerateRandomKey(32))
+	Store = sessions.NewFilesystemStore(cfg.SESSION_DIR, securecookie.GenerateRandomKey(32))
 
 	Store.Options = &sessions.Options{
 		Domain: "",
