@@ -495,7 +495,7 @@ func isEmailExisted(user User, email string) bool {
 // AuthRequired 用于普通用户权限控制的中间件
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var user User
+		// var user User
 
 		session, err := Store.Get(c.Request, cfg.SessionID)
 		if err != nil {

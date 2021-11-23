@@ -2,6 +2,7 @@ package apiUser
 
 import (
 	. "CTFgo/api/types"
+	cfg "CTFgo/configs"
 	"CTFgo/logs"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +30,7 @@ func GetChallengesByCategory(c *gin.Context) {
 	}
 
 	var challenges []ChallengeResponse
-	if err := getChallengesByCategory(&challenges, category); err != nil {
+	if err := getChallengesByCategory(c, &challenges, category); err != nil {
 		logs.WARNING("get challenges error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Get challenges failure!"})
 		return
@@ -63,7 +64,7 @@ func getAllChallenges(challenges *[]ChallengeResponse) error {
 }
 
 // getChallengesByCategory 操作数据库获取指定类型题目。
-func getChallengesByCategory(challenges *[]ChallengeResponse, category string) error {
+func getChallengesByCategory(c *gin.Context, challenges *[]ChallengeResponse, category string) error {
 	sql := "SELECT id, name, score, description, tags, hints FROM challenge WHERE visible=1 AND category=?;"
 	rows, err := db.Query(sql, category)
 	if err != nil {
@@ -71,18 +72,21 @@ func getChallengesByCategory(challenges *[]ChallengeResponse, category string) e
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var c ChallengeResponse
-		err = rows.Scan(&c.ID, &c.Name, &c.Score, &c.Description, &c.Tags, &c.Hints)
+		var challenge ChallengeResponse
+		err = rows.Scan(&challenge.ID, &challenge.Name, &challenge.Score, &challenge.Description, &challenge.Tags, &challenge.Hints)
 		if err != nil {
 			return err
 		}
-		solverCount, err := getSolverCount(c.ID)
+		solverCount, err := getSolverCount(challenge.ID)
 		if err != nil {
 			return err
 		}
-		c.SolverCount = solverCount
-		c.Category = category
-		*challenges = append(*challenges, c)
+		challenge.SolverCount = solverCount
+		challenge.Category = category
+		session, _ := Store.Get(c.Request, cfg.SessionID)
+		user, _ := session.Values["user"].(User)
+		challenge.IsSolved = getSolveByCidAndUid(user.ID, challenge.ID)
+		*challenges = append(*challenges, challenge)
 	}
 	return rows.Err()
 }

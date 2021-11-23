@@ -11,7 +11,7 @@ import (
 // AuthRequired 用于管理员权限控制的中间件
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var user User
+		// var user User
 
 		session, err := u.Store.Get(c.Request, cfg.SessionID)
 		if err != nil {

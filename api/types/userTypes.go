@@ -75,5 +75,5 @@ type ChallengeResponse struct {
 	Tags        string `json:"tags"`
 	Hints       string `json:"hints"`
 	SolverCount int    `json:"solver_count"`
-	IsSolved    int    `json:"issolved"` // 1：已解决，0：未解决
+	IsSolved    int    `json:"is_solved"` // 1：已解决，0：未解决
 }
