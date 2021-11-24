@@ -5,6 +5,7 @@ import (
 	cfg "CTFgo/configs"
 	"CTFgo/logs"
 	"errors"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,7 +14,7 @@ import (
 func GetAllChallenges(c *gin.Context) {
 	var challenges []ChallengeResponse
 
-	if err := getAllChallenges(&challenges); err != nil {
+	if err := getAllChallenges(c, &challenges); err != nil {
 		logs.WARNING("get challenges error", err)
 		c.JSON(400, gin.H{"code": 400, "msg": "Get all challenges failure!"})
 		return
@@ -41,32 +42,47 @@ func GetChallengesByCategory(c *gin.Context) {
 }
 
 // getAllChallenges 操作数据库获取所有题目。
-func getAllChallenges(challenges *[]ChallengeResponse) error {
-	sql := "SELECT id, name, score, description, category, tags, hints FROM challenge WHERE visible=1;"
+func getAllChallenges(c *gin.Context, challenges *[]ChallengeResponse) error {
+	var attachmentString string
+	sql := "SELECT id, name, score, description, attachment, category, tags, hints FROM challenge WHERE visible=1;"
 	rows, err := db.Query(sql)
 	if err != nil {
 		return err
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var c ChallengeResponse
-		err = rows.Scan(&c.ID, &c.Name, &c.Score, &c.Description, &c.Category, &c.Tags, &c.Hints)
+		var challenge ChallengeResponse
+		err = rows.Scan(&challenge.ID, &challenge.Name, &challenge.Score, &challenge.Description, &attachmentString, &challenge.Category, &challenge.Tags, &challenge.Hints)
 		if err != nil {
 			return err
 		}
-		solverCount, err := getSolverCount(c.ID)
+		// 解析为切片
+		challenge.Attachment = strings.Split(attachmentString, ",")
+		solverCount, err := getSolverCount(challenge.ID)
 		if err != nil {
 			return err
 		}
-		c.SolverCount = solverCount
-		*challenges = append(*challenges, c)
+		challenge.SolverCount = solverCount
+		session, err := Store.Get(c.Request, cfg.SESSION_ID)
+		if err != nil {
+			c.JSON(200, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
+			return err
+		}
+		user, ok := session.Values["user"].(User)
+		if !ok {
+			c.JSON(200, gin.H{"code": 400, "msg": "No session"})
+			return errors.New("no session")
+		}
+		challenge.IsSolved = getSolveByCidAndUid(user.ID, challenge.ID)
+		*challenges = append(*challenges, challenge)
 	}
 	return rows.Err()
 }
 
 // getChallengesByCategory 操作数据库获取指定类型题目。
 func getChallengesByCategory(c *gin.Context, challenges *[]ChallengeResponse, category string) error {
-	sql := "SELECT id, name, score, description, tags, hints FROM challenge WHERE visible=1 AND category=?;"
+	var attachmentString string
+	sql := "SELECT id, name, score, description, attachment, tags, hints FROM challenge WHERE visible=1 AND category=?;"
 	rows, err := db.Query(sql, category)
 	if err != nil {
 		return err
@@ -74,10 +90,12 @@ func getChallengesByCategory(c *gin.Context, challenges *[]ChallengeResponse, ca
 	defer rows.Close()
 	for rows.Next() {
 		var challenge ChallengeResponse
-		err = rows.Scan(&challenge.ID, &challenge.Name, &challenge.Score, &challenge.Description, &challenge.Tags, &challenge.Hints)
+		err = rows.Scan(&challenge.ID, &challenge.Name, &challenge.Score, &challenge.Description, &attachmentString, &challenge.Tags, &challenge.Hints)
 		if err != nil {
 			return err
 		}
+		// 解析为切片
+		challenge.Attachment = strings.Split(attachmentString, ",")
 		solverCount, err := getSolverCount(challenge.ID)
 		if err != nil {
 			return err

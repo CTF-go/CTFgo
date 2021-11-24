@@ -27,15 +27,16 @@ type Notice struct {
 
 // Challenge 定义一个题目
 type Challenge struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Score       int    `json:"score"`
-	Flag        string `json:"flag"`
-	Description string `json:"description"`
-	Category    string `json:"category"`
-	Tags        string `json:"tags"`
-	Hints       string `json:"hints"`
-	Visible     int    `json:"visible"` // 0表示隐藏，1表示可见
+	ID          int      `json:"id"`
+	Name        string   `json:"name"`
+	Score       int      `json:"score"`
+	Flag        string   `json:"flag"`
+	Description string   `json:"description"`
+	Attachment  []string `json:"attachment"`
+	Category    string   `json:"category"`
+	Tags        string   `json:"tags"`
+	Hints       string   `json:"hints"`
+	Visible     int      `json:"visible"` // 0表示隐藏，1表示可见
 }
 
 // Submission 表示一次flag提交记录

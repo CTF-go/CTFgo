@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,6 +32,7 @@ func NewChallenge(c *gin.Context) {
 		Score:       request.Score,
 		Flag:        request.Flag,
 		Description: request.Description,
+		Attachment:  request.Attachment,
 		Category:    request.Category,
 		Tags:        request.Tags,
 		Hints:       request.Hints,
@@ -47,6 +49,7 @@ func NewChallenge(c *gin.Context) {
 }
 
 // EditChallenge 修改一个题目。
+// TODO: 判断修改哪个值才修改，其他值为空则不变。
 func EditChallenge(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -119,8 +122,10 @@ func DeleteChallenge(c *gin.Context) {
 
 // addChallenge 操作数据库新增一个题目。
 func addChallenge(c *Challenge) error {
-	command := "INSERT INTO challenge (name,score,flag,description,category,tags,hints,visible) VALUES (?,?,?,?,?,?,?,?);"
-	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, c.Category, c.Tags, c.Hints, c.Visible)
+	// 使用逗号分隔字符串
+	attachmentString := strings.Join(c.Attachment, ",")
+	command := "INSERT INTO challenge (name,score,flag,description,attachment,category,tags,hints,visible) VALUES (?,?,?,?,?,?,?,?,?);"
+	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, attachmentString, c.Category, c.Tags, c.Hints, c.Visible)
 	if err != nil {
 		return err
 	}
@@ -134,8 +139,9 @@ func addChallenge(c *Challenge) error {
 
 // updateChallenge 操作数据库更新一个题目。
 func updateChallenge(c *Challenge) error {
-	command := "UPDATE challenge SET name=?, score=?, flag=?, description=?, category=?, tags=?, hints=?, visible=?  WHERE id=?;"
-	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, c.Category, c.Tags, c.Hints, c.Visible, c.ID)
+	attachmentString := strings.Join(c.Attachment, ",")
+	command := "UPDATE challenge SET name=?, score=?, flag=?, description=?, attachment=?, category=?, tags=?, hints=?, visible=? WHERE id=?;"
+	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, attachmentString, c.Category, c.Tags, c.Hints, c.Visible, c.ID)
 	if err != nil {
 		return err
 	}

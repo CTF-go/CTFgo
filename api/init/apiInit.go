@@ -58,25 +58,25 @@ func SetupAPI() *gin.Engine {
 	// 公共api，无需登陆即可访问
 	public := api.Group("")
 	{
-		//CTFgo初始化
+		// CTFgo初始化
 		public.POST("/install", u.Install)
 
-		//用户注册
+		// 用户注册
 		public.POST("/register", u.Register)
-		//用户登录
+		// 用户登录
 		public.POST("/login", u.Login)
-		//用户注销
+		// 用户注销
 		public.GET("/logout", u.Logout)
 
-		//获取验证码图片base64
+		// 获取验证码图片base64
 		public.GET("/captcha", u.Captcha)
 
-		//获取指定id用户可公开信息
+		// 获取指定id用户可公开信息
 		public.GET("/info/:id", u.GetInfoByUserID)
 
-		//获取指定id用户分数
+		// 获取指定id用户分数
 		public.GET("/score/:id", u.GetScoreByUserID)
-		//获取所有用户分数，降序排列。
+		// 获取所有用户分数，降序排列
 		public.GET("/scores/all", u.GetAllScores)
 
 		// 获取所有公告
@@ -109,6 +109,11 @@ func SetupAPI() *gin.Engine {
 		personal.GET("/solves/uid/:uid", u.GetSolvesByUid)
 		// 获取指定题目正确的flag提交记录
 		personal.GET("/solves/cid/:cid", u.GetSolvesByCid)
+		// 获取当前用户正确flag提交记录（即解题记录）按时间从早到晚排序
+		// personal.GET("/solves/self", u.GetSelfSolves)
+
+		// 获取当前用户分数
+		// personal.GET("/score/self", u.GetSelfScore)
 	}
 
 	// 管理员api，需要用户登陆且Role=1才能访问

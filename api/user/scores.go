@@ -37,7 +37,7 @@ func GetScoreByUserID(c *gin.Context) {
 func GetAllScores(c *gin.Context) {
 	var s ScoreResponse
 	var scores []ScoreResponse
-	sql := "SELECT * FROM score WHERE id != 1;"
+	sql := "SELECT * FROM score WHERE id != 1 ORDER BY score.score DESC;"
 	rows, err := db.Query(sql)
 	if err != nil {
 		logs.WARNING("get all scores error", err)
