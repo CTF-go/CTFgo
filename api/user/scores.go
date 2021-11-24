@@ -23,7 +23,7 @@ func GetScoreByUserID(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "msg": "Format error!"})
 		return
 	}
-	sql := "SELECT score FROM score WHERE id = ? LIMIT 1;"
+	sql := "SELECT s.score FROM score AS s, user AS u WHERE u.id = 3 AND u.hidden = 0 AND u.username = s.username LIMIT 1;"
 	row := db.QueryRow(sql, id)
 	err := row.Scan(&score)
 	if err != nil {
@@ -37,7 +37,7 @@ func GetScoreByUserID(c *gin.Context) {
 func GetAllScores(c *gin.Context) {
 	var s ScoreResponse
 	var scores []ScoreResponse
-	sql := "SELECT * FROM score WHERE id != 1 ORDER BY score.score DESC;"
+	sql := "SELECT s.id, s.username, s.score FROM score AS s, user AS u WHERE u.hidden = 0 AND s.username = u.username ORDER BY s.score DESC;"
 	rows, err := db.Query(sql)
 	if err != nil {
 		logs.WARNING("get all scores error", err)
