@@ -2,6 +2,7 @@ package apiUser
 
 import (
 	. "CTFgo/api/types"
+	cfg "CTFgo/configs"
 	"CTFgo/logs"
 	"strconv"
 
@@ -64,9 +65,33 @@ func GetSolvesByCid(c *gin.Context) {
 	c.JSON(200, gin.H{"code": 200, "data": solves})
 }
 
-// getAllSolves 操作数据库获取所有正确的提交记录。
+// GetSelfSolves 获取当前用户正确flag提交记录（即解题记录）按时间从早到晚排序。
+func GetSelfSolves(c *gin.Context) {
+	var solves []SolveResponse
+
+	session, err := Store.Get(c.Request, cfg.SESSION_ID)
+	if err != nil {
+		c.JSON(200, gin.H{"code": 400, "msg": "Get CTFGOSESSID error"})
+		return
+	}
+	user, ok := session.Values["user"].(User)
+	if !ok {
+		c.JSON(200, gin.H{"code": 400, "msg": "No session"})
+		return
+	}
+
+	if err := getSolvesByUid(&solves, user.ID); err != nil {
+		logs.WARNING("get self solves error", err)
+		c.JSON(400, gin.H{"code": 400, "msg": "Get self solves failure!"})
+		return
+	}
+
+	c.JSON(200, gin.H{"code": 200, "data": solves})
+}
+
+// getAllSolves 操作数据库获取所有正确的提交记录，按提交时间从早到晚排序。
 func getAllSolves(solves *[]SolveResponse) error {
-	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.id != 1 AND s.uid=u.id AND s.cid=c.id;"
+	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.hidden=0 AND s.uid=u.id AND s.cid=c.id ORDER BY s.submitted_at ASC;"
 	rows, err := db.Query(sql)
 	if err != nil {
 		return err
@@ -83,9 +108,9 @@ func getAllSolves(solves *[]SolveResponse) error {
 	return rows.Err()
 }
 
-// getSolvesByUid 操作数据库根据用户id获取正确的flag提交记录。
+// getSolvesByUid 操作数据库根据用户id获取正确的flag提交记录，按提交时间从早到晚排序。
 func getSolvesByUid(solves *[]SolveResponse, uid int) error {
-	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE s.uid=? AND u.id=s.uid AND c.id=s.cid;"
+	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.hidden=0 AND s.uid=? AND u.id=s.uid AND c.id=s.cid ORDER BY s.submitted_at ASC;"
 	rows, err := db.Query(sql, uid)
 	if err != nil {
 		return err
@@ -102,9 +127,9 @@ func getSolvesByUid(solves *[]SolveResponse, uid int) error {
 	return rows.Err()
 }
 
-// getSolvesByCid 操作数据库根据题目id获取正确的提交记录。
+// getSolvesByCid 操作数据库根据题目id获取正确的提交记录，按提交时间从早到晚排序。
 func getSolvesByCid(solves *[]SolveResponse, cid int) error {
-	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE s.cid=? AND u.id=s.uid AND c.id=s.cid;"
+	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.hidden=0 AND s.cid=? AND u.id=s.uid AND c.id=s.cid ORDER BY s.submitted_at ASC;"
 	rows, err := db.Query(sql, cid)
 	if err != nil {
 		return err

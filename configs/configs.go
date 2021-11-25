@@ -17,7 +17,7 @@ var (
 	WORK_DIR, LOG_DIR, CURRENT_LOG_PATH, SAVE_LOG_PATH, DB_DIR, DB_FILE, SESSION_DIR, SESSION_ID string
 )
 
-//init初始化常量。
+// init初始化常量。
 func init() {
 	WORK_DIR, _ = os.Getwd()
 	SESSION_DIR = WORK_DIR + "/sessions"
@@ -29,7 +29,7 @@ func init() {
 	DB_FILE = DB_DIR + "/ctfgo.db"
 }
 
-//log_times设置日志文件名，格式如2021-4-15-14_55。
+// log_times设置日志文件名，格式如2021-4-15-14_55。
 func log_times() string {
 	// 东八区，先默认这个，后面再改成动态配置的
 	time_zone := time.FixedZone("CST", 8*3600)
@@ -54,7 +54,7 @@ func log_times() string {
 // Times 用于获取当前时间，格式如2006/01/02 15:04:05。
 func Times() string {
 	// 东八区，先默认这个，后面再改成动态配置的
-	time_zone := time.FixedZone("CST", 8*3600)
+	time_zone := time.FixedZone("CST", 8*3600) // 8*3600 = 8h
 	n := time.Now().In(time_zone)
 	// 获取时间，格式如2006/01/02 15:04:05
 	t := n.Format("2006/01/02 15:04:05")
@@ -63,8 +63,7 @@ func Times() string {
 
 // Timestamp 用于获取当前10位数时间戳。
 func Timestamp() int32 {
-	// 东八区，先默认这个，后面再改成动态配置的
-	time_zone := time.FixedZone("CST", 8*3600)
+	time_zone := time.FixedZone("CST", 0)
 	t := time.Now().In(time_zone).Unix()
 	return int32(t)
 }

@@ -21,7 +21,7 @@ func GetAllNotices(c *gin.Context) {
 }
 
 func getAllNotices(notices *[]Notice) error {
-	command := "SELECT id, title, content, created_at FROM notice;"
+	command := "SELECT id, title, content, created_at FROM notice ORDER BY created_at ASC;"
 	rows, err := db.Query(command)
 	if err != nil {
 		return err

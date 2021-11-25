@@ -110,10 +110,10 @@ func SetupAPI() *gin.Engine {
 		// 获取指定题目正确的flag提交记录
 		personal.GET("/solves/cid/:cid", u.GetSolvesByCid)
 		// 获取当前用户正确flag提交记录（即解题记录）按时间从早到晚排序
-		// personal.GET("/solves/self", u.GetSelfSolves)
+		personal.GET("/solves/self", u.GetSelfSolves)
 
-		// 获取当前用户分数
-		// personal.GET("/score/self", u.GetSelfScore)
+		// 获取当前用户分数和排名
+		personal.GET("/score/self", u.GetSelfScoreAndRank)
 	}
 
 	// 管理员api，需要用户登陆且Role=1才能访问

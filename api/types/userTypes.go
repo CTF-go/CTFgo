@@ -78,3 +78,9 @@ type ChallengeResponse struct {
 	SolverCount int      `json:"solver_count"`
 	IsSolved    int      `json:"is_solved"` // 1：已解决，0：未解决
 }
+
+// ScoreRankResponse 定义获取当前用户分数和排名的一个响应。
+type ScoreRankResponse struct {
+	Score int `json:"score"`
+	Rank  int `json:"rank"`
+}
