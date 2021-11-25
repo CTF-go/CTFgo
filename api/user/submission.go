@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -70,6 +71,10 @@ func SubmitFlag(c *gin.Context) {
 	if request.Flag != flag {
 		c.JSON(200, gin.H{"code": 400, "msg": "Wrong flag!"})
 	} else {
+		// 限制比赛结束时间后不能提交flag
+		if time.Now().Unix() > cfg.END_TIME {
+			c.JSON(200, gin.H{"code": 3000, "msg": "Flag is true, but the game has ended!"})
+		}
 		// Solve记录
 		solve := &Solve{
 			UserID:      user.ID,

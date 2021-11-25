@@ -15,7 +15,7 @@ import (
 
 var (
 	WORK_DIR, LOG_DIR, CURRENT_LOG_PATH, SAVE_LOG_PATH, DB_DIR, DB_FILE, SESSION_DIR, SESSION_ID string
-	START_TIME, END_TIME                                                                         int
+	START_TIME, END_TIME                                                                         int64
 )
 
 // init初始化常量。
