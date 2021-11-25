@@ -35,7 +35,7 @@ type Challenge struct {
 	Attachment  []string `json:"attachment"`
 	Category    string   `json:"category"`
 	Tags        string   `json:"tags"`
-	Hints       string   `json:"hints"`
+	Hints       []string `json:"hints"`
 	Visible     int      `json:"visible"` // 0表示隐藏，1表示可见
 }
 

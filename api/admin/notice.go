@@ -3,9 +3,7 @@ package apiAdmin
 import (
 	. "CTFgo/api/types"
 	cfg "CTFgo/configs"
-	i "CTFgo/databases/init"
 	"CTFgo/logs"
-	"database/sql"
 	"errors"
 	"fmt"
 
@@ -13,8 +11,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-var db *sql.DB = i.DB
 
 // NewNotice 新增一个公告
 func NewNotice(c *gin.Context) {

@@ -20,6 +20,7 @@ var (
 // init初始化常量。
 func init() {
 	WORK_DIR, _ = os.Getwd()
+	fmt.Println("CTFgo Work dir is:", WORK_DIR)
 	SESSION_DIR = WORK_DIR + "/sessions"
 	SESSION_ID = "CTFGOSESSID"
 	LOG_DIR = WORK_DIR + "/logs"

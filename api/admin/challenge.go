@@ -124,8 +124,9 @@ func DeleteChallenge(c *gin.Context) {
 func addChallenge(c *Challenge) error {
 	// 使用逗号分隔字符串
 	attachmentString := strings.Join(c.Attachment, ",")
+	hintString := strings.Join(c.Hints, ",")
 	command := "INSERT INTO challenge (name,score,flag,description,attachment,category,tags,hints,visible) VALUES (?,?,?,?,?,?,?,?,?);"
-	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, attachmentString, c.Category, c.Tags, c.Hints, c.Visible)
+	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, attachmentString, c.Category, c.Tags, hintString, c.Visible)
 	if err != nil {
 		return err
 	}
@@ -140,8 +141,9 @@ func addChallenge(c *Challenge) error {
 // updateChallenge 操作数据库更新一个题目。
 func updateChallenge(c *Challenge) error {
 	attachmentString := strings.Join(c.Attachment, ",")
+	hintString := strings.Join(c.Hints, ",")
 	command := "UPDATE challenge SET name=?, score=?, flag=?, description=?, attachment=?, category=?, tags=?, hints=?, visible=? WHERE id=?;"
-	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, attachmentString, c.Category, c.Tags, c.Hints, c.Visible, c.ID)
+	res, err := db.Exec(command, c.Name, c.Score, c.Flag, c.Description, attachmentString, c.Category, c.Tags, hintString, c.Visible, c.ID)
 	if err != nil {
 		return err
 	}

@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// SubmitFlag 提交一个flag
+// SubmitFlag 提交一个flag。
 func SubmitFlag(c *gin.Context) {
 	var request SubmissionRequest
 
@@ -69,7 +69,7 @@ func SubmitFlag(c *gin.Context) {
 	}
 	// 对比flag
 	if request.Flag != flag {
-		c.JSON(400, gin.H{"code": 400, "msg": "Wrong flag!"})
+		c.JSON(200, gin.H{"code": 400, "msg": "Wrong flag!"})
 	} else {
 		// Solve记录
 		solve := &Solve{
@@ -104,7 +104,7 @@ func SubmitFlag(c *gin.Context) {
 	}
 }
 
-// hasAlreadySolved 检查某道题是否已经被某用户解出
+// hasAlreadySolved 检查某道题是否已经被某用户解出。
 func hasAlreadySolved(uid int, cid int) (exists bool) {
 	command := "SELECT EXISTS(SELECT 1 FROM solve WHERE uid=? AND cid=?);"
 	if err := db.QueryRow(command, uid, cid).Scan(&exists); err != nil {
@@ -114,7 +114,7 @@ func hasAlreadySolved(uid int, cid int) (exists bool) {
 	return exists
 }
 
-// addSolve 操作数据库加入一条正确的flag提交记录
+// addSolve 操作数据库加入一条正确的flag提交记录。
 func addSolve(s *Solve) error {
 	command := "INSERT INTO solve (uid, cid, submitted_at) VALUES (?,?,?);"
 	res, err := db.Exec(command, s.UserID, s.ChallengeID, s.Time)
@@ -129,7 +129,7 @@ func addSolve(s *Solve) error {
 	return nil
 }
 
-// addUserScore 操作数据库为指定用户增加某题的分数
+// addUserScore 操作数据库为指定用户增加某题的分数。
 func addUserScore(username string, cid int) error {
 	var newScore int
 	command := "SELECT score FROM challenge WHERE id=?"
@@ -151,14 +151,14 @@ func addUserScore(username string, cid int) error {
 	return nil
 }
 
-// updateUserScores 操作数据库更新解出用户的分数
+// updateUserScores 操作数据库更新解出用户的分数。
 func updateUserScores(reducedScore, cid int) error {
 	command := "UPDATE score SET score=score-? WHERE EXISTS(SELECT 1 FROM user,solve WHERE user.id=solve.uid AND score.username=user.username AND solve.cid=?);"
 	_, err := db.Exec(command, reducedScore, cid)
 	return err
 }
 
-// editChallengeScore 操作数据库修改指定题目增的动态分数
+// editChallengeScore 操作数据库修改指定题目增的动态分数。
 func editChallengeScore(cid int) (reducedScore int, err error) {
 	var currentScore int
 	command := "SELECT score FROM challenge WHERE id=?;"
@@ -190,7 +190,7 @@ func editChallengeScore(cid int) (reducedScore int, err error) {
 	return reducedScore, nil
 }
 
-// addSubmission 操作数据库加入一条flag提交记录
+// addSubmission 操作数据库加入一条flag提交记录。
 func addSubmission(s *Submission) error {
 	command := "INSERT INTO submission (uid, cid, ip, flag, submitted_at) VALUES (?,?,?,?,?);"
 	res, err := db.Exec(command, s.UserID, s.ChallengeID, s.IP, s.Flag, s.Time)
@@ -214,7 +214,7 @@ func getFlag(id int) (flag string, err error) {
 	return flag, nil
 }
 
-// isChallengeExisted 检查数据库中是否存在某条公告
+// isChallengeExisted 检查数据库中是否存在某个题目。
 func isChallengeExisted(id int) (exists bool) {
 	command := "SELECT EXISTS(SELECT 1 FROM challenge WHERE id = ?);"
 	if err := db.QueryRow(command, id).Scan(&exists); err != nil {

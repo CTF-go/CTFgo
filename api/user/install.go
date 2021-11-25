@@ -112,6 +112,18 @@ func Install(c *gin.Context) {
 				"visible" INTEGER,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
+			BEGIN;
+			INSERT INTO "challenge" VALUES (1, 'baby unserialize v&', 1000, 'flag{v2webwessssvvssssbwebssww}', 'sdsdssd<br>dsss', 'https://baidu.com,nc 123.2.2.2 80', 'Web', '', '', 1);
+			INSERT INTO "challenge" VALUES (2, 'baby unserialize v1', 1000, 'flag{v2wesdbwessssvvssssbwebssww}', 'daskd&*^&^$%#%$^&*(){}<br>sdsdssd<br>dsss', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Web', '', '', 1);
+			INSERT INTO "challenge" VALUES (3, 'xxxxxpwn', 1000, 'flag{pwnwwww}', 'daskd&*^&^$%#%$^&*(){}<br>sdsdssd<br>dsss', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Pwn', '', '', 1);
+			INSERT INTO "challenge" VALUES (4, 'easy web!#%@&+_', 1000, 'flag{pwssnwwww}', 'daskd&*^&^$将是的%#%$^&*(){}<br>sdsds*&上课……sd<br>dsss', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Web', '', '', 1);
+			INSERT INTO "challenge" VALUES (5, 'eddsd当时的', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的okk', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Reverse', '', '', 1);
+			INSERT INTO "challenge" VALUES (6, 'ed当时的 v222', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的okk', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Crypto', '', '', 1);
+			INSERT INTO "challenge" VALUES (7, 'ed当时的 v33322', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的okk', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Misc', '', '', 1);
+			INSERT INTO "challenge" VALUES (8, 'ed当时的 v334442', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的okk', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Web', '', '', 1);
+			INSERT INTO "challenge" VALUES (9, 'edccc442', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的o\//??><<><>kk<br>sdskjkjshdjsa', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Web', '', '', 1);
+			INSERT INTO "challenge" VALUES (10, 'web442', 1000, 'flag{pwssssssnwwsdssww}', 'OK坎<br>sdss<br>skjkjshdjsa', 'https://baidu.com,http://file.com', 'Web', '', '四四岁四岁,sdsdksjsjdjsdsdssds', 1);
+			COMMIT;
 			CREATE TABLE "notice" (
 			    "id"	INTEGER NOT NULL UNIQUE,
 			    "title" TEXT NOT NULL,
@@ -119,6 +131,27 @@ func Install(c *gin.Context) {
 				"created_at" INTEGER NOT NULL,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
+			BEGIN;
+			INSERT INTO "notice" VALUES (1, 'Hello World!', 'test
+			tesss*&^*^%$#@@!)(ssssst
+			tes<CYCYCYCYnbnbnbnbnb!!>t
+			', 1637765128);
+			INSERT INTO "notice" VALUES (2, 'Hello_World2222*&^%%事实上成绩', 'test
+			tesss*&山东省地矿局的tes<CYCYCYCYnbnbnbnbnb!!>t
+			', 1637765298);
+			INSERT INTO "notice" VALUES (3, 'Hello_World2222*&^%%成绩', 'test
+			tesss*&山东局的tes<CYCYCYCYnbnbnbnbnb!!>t
+			', 1637765307);
+			INSERT INTO "notice" VALUES (4, 'Hello_World2222*&^%%成绩', 'test
+			tesss*&山东局的tes<CYYCYnbnbnbnbnb!!>t
+			', 1637765313);
+			INSERT INTO "notice" VALUES (5, 'Hello_World2222*&^%%成绩', 'test
+			tesss*&山东局的tes<CYYCYnbnbnbnbnb!!>t
+			', 1637765314);
+			INSERT INTO "notice" VALUES (6, 'Hello HTML', 'test<br>tes试试大家都s<CYYCYnbnbnbnbnb!!>t<br>sssssssss', 1637765367);
+			INSERT INTO "notice" VALUES (7, 'Hello是攻防个vHTML', 'test<br>tes试试大家都s<CYYCYnbnbnbnbnb!!>t<br>sssssssss', 1637765373);
+			INSERT INTO "notice" VALUES (8, 'HellohttpvHTML', '<a href="http://map.baidu.com" target="_blank">地图</a>', 1637765454);
+			COMMIT;
 			CREATE TABLE "category" (
 				"id"	INTEGER NOT NULL UNIQUE,
 				"category"	TEXT NOT NULL UNIQUE,
@@ -131,6 +164,18 @@ func Install(c *gin.Context) {
 			INSERT INTO "category" VALUES (4, 'Crypto');
 			INSERT INTO "category" VALUES (5, 'Misc');
 			COMMIT;
+			CREATE TABLE "studentinfo" (
+				"team_id"     INTEGER NOT NULL,
+				"username"    TEXT    NOT NULL,
+				"student_id"  TEXT    NOT NULL UNIQUE,
+				"qq" TEXT NOT NULL UNIQUE
+			);
+			CREATE TABLE "othersinfo" (
+				"team_id"  INTEGER NOT NULL,
+				"username" TEXT    NOT NULL,
+				"email"    TEXT NOT NULL UNIQUE,
+				"qq" TEXT NOT NULL UNIQUE
+			);
 			`
 		_, err = db.Exec(table_sql)
 		if err != nil {

@@ -4,9 +4,13 @@ import (
 	. "CTFgo/api/types"
 	u "CTFgo/api/user"
 	cfg "CTFgo/configs"
+	i "CTFgo/databases/init"
+	"database/sql"
 
 	"github.com/gin-gonic/gin"
 )
+
+var db *sql.DB = i.DB
 
 // AuthRequired 用于管理员权限控制的中间件
 func AuthRequired() gin.HandlerFunc {

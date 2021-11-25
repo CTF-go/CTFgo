@@ -9,7 +9,7 @@ type ChallengeRequest struct {
 	Attachment  []string `json:"attachment"`
 	Category    string   `json:"category" binding:"required"`
 	Tags        string   `json:"tags"`
-	Hints       string   `json:"hints"`
+	Hints       []string `json:"hints"`
 	Visible     int      `json:"visible" binding:"required"`
 }
 

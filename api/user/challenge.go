@@ -43,7 +43,7 @@ func GetChallengesByCategory(c *gin.Context) {
 
 // getAllChallenges 操作数据库获取所有题目。
 func getAllChallenges(c *gin.Context, challenges *[]ChallengeResponse) error {
-	var attachmentString string
+	var attachmentString, hints string
 	sql := "SELECT id, name, score, description, attachment, category, tags, hints FROM challenge WHERE visible=1;"
 	rows, err := db.Query(sql)
 	if err != nil {
@@ -52,12 +52,14 @@ func getAllChallenges(c *gin.Context, challenges *[]ChallengeResponse) error {
 	defer rows.Close()
 	for rows.Next() {
 		var challenge ChallengeResponse
-		err = rows.Scan(&challenge.ID, &challenge.Name, &challenge.Score, &challenge.Description, &attachmentString, &challenge.Category, &challenge.Tags, &challenge.Hints)
+		err = rows.Scan(&challenge.ID, &challenge.Name, &challenge.Score, &challenge.Description, &attachmentString, &challenge.Category, &challenge.Tags, &hints)
 		if err != nil {
 			return err
 		}
 		// 解析为切片
 		challenge.Attachment = strings.Split(attachmentString, ",")
+		challenge.Hints = strings.Split(hints, ",")
+
 		solverCount, err := getSolverCount(challenge.ID)
 		if err != nil {
 			return err
@@ -81,7 +83,7 @@ func getAllChallenges(c *gin.Context, challenges *[]ChallengeResponse) error {
 
 // getChallengesByCategory 操作数据库获取指定类型题目。
 func getChallengesByCategory(c *gin.Context, challenges *[]ChallengeResponse, category string) error {
-	var attachmentString string
+	var attachmentString, hints string
 	sql := "SELECT id, name, score, description, attachment, tags, hints FROM challenge WHERE visible=1 AND category=?;"
 	rows, err := db.Query(sql, category)
 	if err != nil {
@@ -90,12 +92,14 @@ func getChallengesByCategory(c *gin.Context, challenges *[]ChallengeResponse, ca
 	defer rows.Close()
 	for rows.Next() {
 		var challenge ChallengeResponse
-		err = rows.Scan(&challenge.ID, &challenge.Name, &challenge.Score, &challenge.Description, &attachmentString, &challenge.Tags, &challenge.Hints)
+		err = rows.Scan(&challenge.ID, &challenge.Name, &challenge.Score, &challenge.Description, &attachmentString, &challenge.Tags, &hints)
 		if err != nil {
 			return err
 		}
 		// 解析为切片
 		challenge.Attachment = strings.Split(attachmentString, ",")
+		challenge.Hints = strings.Split(hints, ",")
+
 		solverCount, err := getSolverCount(challenge.ID)
 		if err != nil {
 			return err
