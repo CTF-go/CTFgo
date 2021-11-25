@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,7 +40,7 @@ func SubmitFlag(c *gin.Context) {
 	}
 
 	// Submission记录
-	solvedTime := time.Now().Unix()
+	solvedTime := cfg.Timestamp()
 	submission := &Submission{
 		UserID:      user.ID,
 		ChallengeID: request.Cid,
@@ -132,7 +131,7 @@ func addSolve(s *Solve) error {
 // addUserScore 操作数据库为指定用户增加某题的分数。
 func addUserScore(username string, cid int) error {
 	var newScore int
-	command := "SELECT score FROM challenge WHERE id=?"
+	command := "SELECT score FROM challenge WHERE id=? LIMIT 1"
 	err := db.QueryRow(command, cid).Scan(&newScore)
 	if err != nil {
 		return err
@@ -161,7 +160,7 @@ func updateUserScores(reducedScore, cid int) error {
 // editChallengeScore 操作数据库修改指定题目增的动态分数。
 func editChallengeScore(cid int) (reducedScore int, err error) {
 	var currentScore int
-	command := "SELECT score FROM challenge WHERE id=?;"
+	command := "SELECT score FROM challenge WHERE id=? LIMIT 1;"
 	if err := db.QueryRow(command, cid).Scan(&currentScore); err != nil {
 		logs.WARNING("query challenge score error", err)
 		return 0, err

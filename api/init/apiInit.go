@@ -112,7 +112,7 @@ func SetupAPI() *gin.Engine {
 		// 获取当前用户正确flag提交记录（即解题记录）按时间从早到晚排序
 		personal.GET("/solves/self", u.GetSelfSolves)
 
-		// 获取当前用户分数、排名和提交过的用户信息
+		// 获取当前用户分数、排名
 		personal.GET("/score/self", u.GetSelfScoreAndRank)
 
 		// 校内提交学号等信息接口

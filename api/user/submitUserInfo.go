@@ -107,6 +107,11 @@ func SubmitStudentInfo(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "msg": "submit insert error!"})
 		return
 	}
+	err = disableHiddenStatus(user.ID)
+	if err != nil {
+		logs.WARNING("update hidden status error: ", err)
+		c.JSON(400, gin.H{"code": 400, "msg": "update hidden status error!"})
+	}
 	logs.INFO(fmt.Sprintf("[%d] submit %d students info success!", user.ID, count))
 	c.JSON(200, gin.H{"code": 200, "msg": "Submit student info success!"})
 }
@@ -257,6 +262,11 @@ func SubmitOthersInfo(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "msg": "submit insert error!"})
 		return
 	}
+	err = disableHiddenStatus(user.ID)
+	if err != nil {
+		logs.WARNING("update hidden status error: ", err)
+		c.JSON(400, gin.H{"code": 400, "msg": "update hidden status error!"})
+	}
 	logs.INFO(fmt.Sprintf("[%d] submit %d others info success!", user.ID, count))
 	c.JSON(200, gin.H{"code": 200, "msg": "Submit others info success!"})
 }
@@ -330,4 +340,18 @@ func getStudentsAndOthersInfo(userinfoSlice *[]StudentsOrOthersInfoResponse, uid
 		*userinfoSlice = append(*userinfoSlice, userinfo)
 	}
 	return rows.Err()
+}
+
+func disableHiddenStatus(uid int) error {
+	command := "UPDATE user SET hidden = 0 where id = ?;"
+	res, err := db.Exec(command, uid)
+	if err != nil {
+		return err
+	}
+	affected, _ := res.RowsAffected()
+	if affected == 0 {
+		err := errors.New("0 rows affected")
+		return err
+	}
+	return nil
 }

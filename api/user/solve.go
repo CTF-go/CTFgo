@@ -91,7 +91,7 @@ func GetSelfSolves(c *gin.Context) {
 
 // getAllSolves 操作数据库获取所有正确的提交记录，按提交时间从早到晚排序。
 func getAllSolves(solves *[]SolveResponse) error {
-	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.hidden=0 AND s.uid=u.id AND s.cid=c.id ORDER BY s.submitted_at ASC;"
+	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at, c.score FROM solve AS s, user AS u, challenge AS c WHERE u.hidden=0 AND s.uid=u.id AND s.cid=c.id ORDER BY s.submitted_at ASC;"
 	rows, err := db.Query(sql)
 	if err != nil {
 		return err
@@ -99,7 +99,7 @@ func getAllSolves(solves *[]SolveResponse) error {
 	defer rows.Close()
 	for rows.Next() {
 		var s SolveResponse
-		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
+		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt, &s.Score)
 		if err != nil {
 			return err
 		}
@@ -110,7 +110,7 @@ func getAllSolves(solves *[]SolveResponse) error {
 
 // getSolvesByUid 操作数据库根据用户id获取正确的flag提交记录，按提交时间从早到晚排序。
 func getSolvesByUid(solves *[]SolveResponse, uid int) error {
-	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.hidden=0 AND s.uid=? AND u.id=s.uid AND c.id=s.cid ORDER BY s.submitted_at ASC;"
+	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at, c.score FROM solve AS s, user AS u, challenge AS c WHERE u.hidden=0 AND s.uid=? AND u.id=s.uid AND c.id=s.cid ORDER BY s.submitted_at ASC;"
 	rows, err := db.Query(sql, uid)
 	if err != nil {
 		return err
@@ -118,7 +118,7 @@ func getSolvesByUid(solves *[]SolveResponse, uid int) error {
 	defer rows.Close()
 	for rows.Next() {
 		var s SolveResponse
-		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
+		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt, &s.Score)
 		if err != nil {
 			return err
 		}
@@ -129,7 +129,7 @@ func getSolvesByUid(solves *[]SolveResponse, uid int) error {
 
 // getSolvesByCid 操作数据库根据题目id获取正确的提交记录，按提交时间从早到晚排序。
 func getSolvesByCid(solves *[]SolveResponse, cid int) error {
-	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at FROM solve AS s, user AS u, challenge AS c WHERE u.hidden=0 AND s.cid=? AND u.id=s.uid AND c.id=s.cid ORDER BY s.submitted_at ASC;"
+	sql := "SELECT s.id, s.uid, s.cid, u.username, c.name, s.submitted_at, c.score FROM solve AS s, user AS u, challenge AS c WHERE u.hidden=0 AND s.cid=? AND u.id=s.uid AND c.id=s.cid ORDER BY s.submitted_at ASC;"
 	rows, err := db.Query(sql, cid)
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ func getSolvesByCid(solves *[]SolveResponse, cid int) error {
 	defer rows.Close()
 	for rows.Next() {
 		var s SolveResponse
-		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt)
+		err = rows.Scan(&s.ID, &s.Uid, &s.Cid, &s.Username, &s.ChallengeName, &s.SubmittedAt, &s.Score)
 		if err != nil {
 			return err
 		}
@@ -154,14 +154,4 @@ func getSolverCount(id int) (count int, err error) {
 		return 0, err
 	}
 	return count, nil
-}
-
-// getSolveByCidAndUid 操作数据库获取指定用户的指定题目是否有解出记录。
-func getSolveByCidAndUid(uid int, cid int) (isSolved int) {
-	sql := "SELECT EXISTS(SELECT 1 FROM solve WHERE uid=? AND cid=?);"
-	if err := db.QueryRow(sql, uid, cid).Scan(&isSolved); err != nil {
-		logs.WARNING("query or scan error", err)
-		return 0
-	}
-	return isSolved
 }

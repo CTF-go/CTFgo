@@ -15,6 +15,7 @@ import (
 
 var (
 	WORK_DIR, LOG_DIR, CURRENT_LOG_PATH, SAVE_LOG_PATH, DB_DIR, DB_FILE, SESSION_DIR, SESSION_ID string
+	START_TIME, END_TIME                                                                         int
 )
 
 // init初始化常量。
@@ -28,6 +29,8 @@ func init() {
 	SAVE_LOG_PATH = LOG_DIR + "/" + log_times() + ".log"
 	DB_DIR = WORK_DIR + "/databases"
 	DB_FILE = DB_DIR + "/ctfgo.db"
+	START_TIME = 1637974800
+	END_TIME = 1638104400
 }
 
 // log_times设置日志文件名，格式如2021-4-15-14_55。
@@ -63,10 +66,11 @@ func Times() string {
 }
 
 // Timestamp 用于获取当前10位数时间戳。
-func Timestamp() int32 {
-	time_zone := time.FixedZone("CST", 0)
-	t := time.Now().In(time_zone).Unix()
-	return int32(t)
+func Timestamp() int {
+	// time_zone := time.FixedZone("UTC", 0)
+	// t := time.Now().In(time_zone).Unix()
+	t := time.Now().Unix()
+	return int(t)
 }
 
 // MD5 进行md5加密。

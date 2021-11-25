@@ -22,7 +22,7 @@ type Notice struct {
 	ID        int    `json:"id"`
 	Title     string `json:"title"`
 	Content   string `json:"content"`
-	CreatedAt int32  `json:"created_at"`
+	CreatedAt int    `json:"created_at"`
 }
 
 // Challenge 定义一个题目
@@ -46,13 +46,13 @@ type Submission struct {
 	ChallengeID int    `json:"cid"`
 	Flag        string `json:"flag"`
 	IP          string `json:"ip"`
-	Time        int64  `json:"submitted_at"`
+	Time        int    `json:"submitted_at"`
 }
 
 // Solve 表示一次正确的flag提交记录
 type Solve struct {
-	ID          int   `json:"id"`
-	UserID      int   `json:"uid"`
-	ChallengeID int   `json:"cid"`
-	Time        int64 `json:"solved_at"`
+	ID          int `json:"id"`
+	UserID      int `json:"uid"`
+	ChallengeID int `json:"cid"`
+	Time        int `json:"solved_at"`
 }

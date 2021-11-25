@@ -85,6 +85,7 @@ type SolveResponse struct {
 	Username      string `json:"username"`
 	ChallengeName string `json:"challenge_name"`
 	SubmittedAt   int    `json:"submitted_at"`
+	Score         int    `json:"score"`
 }
 
 // PublicInfoResponse 定义返回用户公开信息结构体。
@@ -106,7 +107,7 @@ type ChallengeResponse struct {
 	Tags        string   `json:"tags"`
 	Hints       []string `json:"hints"`
 	SolverCount int      `json:"solver_count"`
-	IsSolved    int      `json:"is_solved"` // 1：已解决，0：未解决
+	IsSolved    bool     `json:"is_solved"` // true：已解决，false：未解决
 }
 
 // ScoreRankResponse 定义获取当前用户分数和排名的一个响应。

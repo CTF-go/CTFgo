@@ -58,8 +58,8 @@ func Install(c *gin.Context) {
 				"affiliation"	TEXT,
 				"country"	TEXT,
 				"website"	TEXT,
-				"hidden"	INTEGER NOT NULL DEFAULT 0,
-				"banned"	INTEGER NOT NULL DEFAULT 1,
+				"hidden"	INTEGER NOT NULL DEFAULT 1,
+				"banned"	INTEGER NOT NULL DEFAULT 0,
 				"team_id"	INTEGER DEFAULT 0,
 				"created"	INTEGER NOT NULL,
 				"role"	INTEGER NOT NULL DEFAULT 0,
@@ -79,9 +79,9 @@ func Install(c *gin.Context) {
 			);
 			BEGIN;
 			INSERT INTO "score" VALUES (1, 'admin', 0);
-			INSERT INTO "score" VALUES (2, 'test', 510);
-			INSERT INTO "score" VALUES (3, 'test1', 230);
-			INSERT INTO "score" VALUES (4, 'xxx', 434);
+			INSERT INTO "score" VALUES (2, 'test', 0);
+			INSERT INTO "score" VALUES (3, 'test1', 0);
+			INSERT INTO "score" VALUES (4, 'xxx', 0);
 			COMMIT;
 			CREATE TABLE "submission" (
 				"id"	INTEGER NOT NULL UNIQUE,

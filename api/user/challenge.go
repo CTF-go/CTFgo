@@ -75,7 +75,7 @@ func getAllChallenges(c *gin.Context, challenges *[]ChallengeResponse) error {
 			c.JSON(200, gin.H{"code": 400, "msg": "No session"})
 			return errors.New("no session")
 		}
-		challenge.IsSolved = getSolveByCidAndUid(user.ID, challenge.ID)
+		challenge.IsSolved = hasAlreadySolved(user.ID, challenge.ID)
 		*challenges = append(*challenges, challenge)
 	}
 	return rows.Err()
@@ -116,7 +116,7 @@ func getChallengesByCategory(c *gin.Context, challenges *[]ChallengeResponse, ca
 			c.JSON(200, gin.H{"code": 400, "msg": "No session"})
 			return errors.New("no session")
 		}
-		challenge.IsSolved = getSolveByCidAndUid(user.ID, challenge.ID)
+		challenge.IsSolved = hasAlreadySolved(user.ID, challenge.ID)
 		*challenges = append(*challenges, challenge)
 	}
 	return rows.Err()
