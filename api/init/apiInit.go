@@ -134,6 +134,10 @@ func SetupAPI() *gin.Engine {
 		manager.PUT("/challenge/:id", admin.EditChallenge)
 		// 删除题目
 		manager.DELETE("/challenge/:id", admin.DeleteChallenge)
+		// 修改某个id的题目为可见
+		manager.PUT("/challenge/visible/:id", admin.MakeChallengeVisibleByID)
+		// 批量修改所有题目可见
+		manager.PUT("/challenge/visible/all", admin.MakeAllChallengeVisible)
 
 		// 创建新公告
 		manager.POST("/notice", admin.NewNotice)
