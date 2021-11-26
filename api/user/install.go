@@ -139,8 +139,8 @@ func Install(c *gin.Context) {
 		logs.INFO("db init success!")
 		sql1 := "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
 		_, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, "", "", "", 1, 0, 0, cfg.Timestamp(), 1)
-		// sql2 := "INSERT INTO score (username,score) VALUES (?,0);"
-		// _, err2 := db.Exec(sql2, request.Username)
+		sql2 := "INSERT INTO score (username,score) VALUES (?,0);"
+		_, err2 := db.Exec(sql2, request.Username)
 		// // --- for test purposes ---
 		// sql1 = "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
 		// _, err1 = db.Exec(sql1, cfg.Token(), "test", cfg.MD5("123456"), "test@gmail.com", "", "", "", 0, 0, 0, cfg.Timestamp(), 0)
@@ -150,9 +150,9 @@ func Install(c *gin.Context) {
 		if err1 != nil {
 			logs.ERROR("admin insert error", err1)
 		}
-		// if err2 != nil {
-		// 	logs.ERROR("admin insert error", err2)
-		// }
+		if err2 != nil {
+			logs.ERROR("admin insert error", err2)
+		}
 		logs.INFO("Administrator account [" + request.Username + "]" + " register success!")
 
 		//新建sessions文件夹

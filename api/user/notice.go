@@ -13,7 +13,7 @@ func GetAllNotices(c *gin.Context) {
 
 	if err := getAllNotices(&notices); err != nil {
 		logs.WARNING("get notices error", err)
-		c.JSON(400, gin.H{"code": 400, "msg": "Get all notices failure!"})
+		c.JSON(200, gin.H{"code": 400, "msg": "Get all notices failure!"})
 		return
 	}
 
