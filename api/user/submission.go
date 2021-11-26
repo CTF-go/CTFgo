@@ -112,7 +112,7 @@ func SubmitFlag(c *gin.Context) {
 
 		if solvedCount <= 3 {
 			var hexBot HexBotMsgRequest
-			hexBot.QQNum = 637555458 //qq群
+			hexBot.QQNum = 884196088 //qq群
 			var serverChanTitle, serverChanDesp string
 
 			cname, ccategory, err := getChallengeNameByID(request.Cid)
