@@ -97,7 +97,7 @@ func Install(c *gin.Context) {
 				"category"	TEXT NOT NULL,
 				"tags"	TEXT,
 				"hints"	TEXT,
-				"visible" INTEGER,
+				"visible" INTEGER DEFAULT 0,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
 			CREATE TABLE "notice" (

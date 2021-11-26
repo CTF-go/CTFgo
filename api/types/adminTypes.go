@@ -10,7 +10,7 @@ type ChallengeRequest struct {
 	Category    string   `json:"category" binding:"required"`
 	Tags        string   `json:"tags"`
 	Hints       []string `json:"hints"`
-	Visible     int      `json:"visible" binding:"required"`
+	Visible     int      `json:"visible"`
 }
 
 // NoticeRequest 定义新增公告的一个请求

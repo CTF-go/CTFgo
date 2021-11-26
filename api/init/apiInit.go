@@ -91,7 +91,7 @@ func SetupAPI() *gin.Engine {
 		// 获取当前用户信息
 		personal.GET("/session", u.Session)
 		// 修改用户信息
-		personal.POST("/updateinfo", u.UpdateInfo)
+		// personal.POST("/updateinfo", u.UpdateInfo)
 
 		// 获取题目分类
 		personal.GET("/categories", u.GetCategories)
