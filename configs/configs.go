@@ -55,6 +55,27 @@ func log_times() string {
 	return t
 }
 
+// HexBotSayTime。
+func HexBotSayTime() string {
+	time_zone := time.FixedZone("CST", 8*3600)
+	n := time.Now().In(time_zone)
+	// 年
+	year := n.Year()
+	// 月
+	month := n.Month()
+	// 日
+	day := n.Day()
+	// 时
+	hour := n.Hour()
+	// 分
+	minute := n.Minute()
+	// 秒
+	second := n.Second()
+	// 获取时间，格式如2021/4/15 14:55:22
+	t := fmt.Sprintf("%d/%d/%d %d:%d:%d", year, month, day, hour, minute, second)
+	return t
+}
+
 // Times 用于获取当前时间，格式如2006/01/02 15:04:05。
 func Times() string {
 	// 东八区，先默认这个，后面再改成动态配置的

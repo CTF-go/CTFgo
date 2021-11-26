@@ -101,6 +101,43 @@ func SubmitFlag(c *gin.Context) {
 		err = updateUserScores(reducedScore, request.Cid)
 		if err != nil {
 			c.JSON(400, gin.H{"code": 400, "msg": "Update user scores failure!"})
+			return
+		}
+
+		// 判断是否前三血，发送消息
+		solvedCount, err := getSolverCount(request.Cid)
+		if err != nil {
+			logs.WARNING(fmt.Sprintf("get cid [%d] solved count error:", request.Cid), err)
+		}
+
+		if solvedCount <= 3 {
+			var hexBot HexBotMsgRequest
+			hexBot.QQNum = 637555458 //qq群
+			var serverChanTitle, serverChanDesp string
+
+			cname, ccategory, err := getChallengeNameByID(request.Cid)
+			if err != nil {
+				logs.WARNING("get challenge name and category error:", err)
+			}
+
+			switch solvedCount {
+			case 0:
+				serverChanTitle = "challenge has solved but have not record"
+				serverChanDesp = "1111"
+				go GetServerChan(serverChanTitle, serverChanDesp)
+			case 1:
+				hexBot.Msg = fmt.Sprintf("[%s]\nFirst Blood!!!\nCongratulations to team %s for getting the first blood of the challenge %s in the %s category!", cfg.HexBotSayTime(), user.Username, cname, ccategory)
+				go PostHexBot(&hexBot)
+				logs.INFO(hexBot.Msg)
+			case 2:
+				hexBot.Msg = fmt.Sprintf("[%s]\nSecond Blood!!!\nCongratulations to team %s for getting the second blood of the challenge %s in the %s category!", cfg.HexBotSayTime(), user.Username, cname, ccategory)
+				go PostHexBot(&hexBot)
+				logs.INFO(hexBot.Msg)
+			case 3:
+				hexBot.Msg = fmt.Sprintf("[%s]\nThird Blood!!!\nCongratulations to team %s for getting the third blood of the challenge %s in the %s category!", cfg.HexBotSayTime(), user.Username, cname, ccategory)
+				go PostHexBot(&hexBot)
+				logs.INFO(hexBot.Msg)
+			}
 		}
 
 		logs.INFO(fmt.Sprintf("[%s] user solved [%d].", user.Username, request.Cid))
@@ -226,4 +263,13 @@ func isChallengeExisted(id int) (exists bool) {
 		return false
 	}
 	return exists
+}
+
+// getChallengeNameByID 根据题目id获取该题的名称和方向
+func getChallengeNameByID(cid int) (name string, category string, err error) {
+	command := "SELECT name, category FROM challenge WHERE id=?"
+	if err := db.QueryRow(command, cid).Scan(&name, &category); err != nil {
+		return "", "", err
+	}
+	return name, category, nil
 }
