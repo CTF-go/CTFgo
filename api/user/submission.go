@@ -214,7 +214,7 @@ func editChallengeScore(cid int) (reducedScore int, err error) {
 		return 0, err
 	}
 	// According to https://github.com/o-o-overflow/scoring-playground
-	newScore := int(100 + (1000-100)/(1.0+float64(solverCount)*0.02*math.Log(float64(solverCount))))
+	newScore := int(100 + (1000-100)/(1.0+float64(solverCount)*0.04*math.Log(float64(solverCount))))
 	reducedScore = currentScore - newScore
 
 	command = "UPDATE challenge SET score=? WHERE id=?;"
