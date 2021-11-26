@@ -65,24 +65,12 @@ func Install(c *gin.Context) {
 				"role"	INTEGER NOT NULL DEFAULT 0,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
-			BEGIN;
-			INSERT INTO "user" VALUES (1, '786f498961b033e9e1100685f97411b9', 'admin', 'e10adc3949ba59abbe56e057f20f883e', 'admin@qq.com', '', '', '', 1, 0, 0, 1622256313, 1);
-			INSERT INTO "user" VALUES (2, '9c2143ef0233b7010e764c1d4e4291bc', 'test', 'e10adc3949ba59abbe56e057f20f883e', 'test@gmail.com', '', '', '', 0, 0, 0, 1622256313, 0);
-			INSERT INTO "user" VALUES (3, 'c759ac0df459e302533a0274fea7ae2e', 'test1', 'e10adc3949ba59abbe56e057f20f883e', 'test1@qq.com', '', '', '', 0, 1, 0, 1622256646, 0);
-			INSERT INTO "user" VALUES (4, '49eb2761194833aa7e5a4e3b30ff3819', 'xxx', 'e10adc3949ba59abbe56e057f20f883e', 'xxx@qq.com', '', '', '', 0, 1, 0, 1622546632, 0);
-			COMMIT;
 			CREATE TABLE "score" (
 				"id"	INTEGER NOT NULL UNIQUE,
 				"username"	TEXT NOT NULL UNIQUE,
 				"score"	INTEGER NOT NULL DEFAULT 0,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
-			BEGIN;
-			INSERT INTO "score" VALUES (1, 'admin', 0);
-			INSERT INTO "score" VALUES (2, 'test', 0);
-			INSERT INTO "score" VALUES (3, 'test1', 0);
-			INSERT INTO "score" VALUES (4, 'xxx', 0);
-			COMMIT;
 			CREATE TABLE "submission" (
 				"id"	INTEGER NOT NULL UNIQUE,
 				"uid"	INTEGER NOT NULL,
@@ -112,18 +100,6 @@ func Install(c *gin.Context) {
 				"visible" INTEGER,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
-			BEGIN;
-			INSERT INTO "challenge" VALUES (1, 'baby unserialize v&', 1000, 'flag{v2webwessssvvssssbwebssww}', 'sdsdssd<br>dsss', 'https://baidu.com,nc 123.2.2.2 80', 'Web', '', '', 1);
-			INSERT INTO "challenge" VALUES (2, 'baby unserialize v1', 1000, 'flag{v2wesdbwessssvvssssbwebssww}', 'daskd&*^&^$%#%$^&*(){}<br>sdsdssd<br>dsss', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Web', '', '', 1);
-			INSERT INTO "challenge" VALUES (3, 'xxxxxpwn', 1000, 'flag{pwnwwww}', 'daskd&*^&^$%#%$^&*(){}<br>sdsdssd<br>dsss', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Pwn', '', '', 1);
-			INSERT INTO "challenge" VALUES (4, 'easy web!#%@&+_', 1000, 'flag{pwssnwwww}', 'daskd&*^&^$将是的%#%$^&*(){}<br>sdsds*&上课……sd<br>dsss', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Web', '', '', 1);
-			INSERT INTO "challenge" VALUES (5, 'eddsd当时的', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的okk', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Reverse', '', '', 1);
-			INSERT INTO "challenge" VALUES (6, 'ed当时的 v222', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的okk', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Crypto', '', '', 1);
-			INSERT INTO "challenge" VALUES (7, 'ed当时的 v33322', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的okk', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Misc', '', '', 1);
-			INSERT INTO "challenge" VALUES (8, 'ed当时的 v334442', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的okk', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Web', '', '', 1);
-			INSERT INTO "challenge" VALUES (9, 'edccc442', 1000, 'flag{pwssnwwsdssww}', 'OK坎坎坷坷的o\//??><<><>kk<br>sdskjkjshdjsa', 'https://baidu.com,http://file.com,nc 123.2.2.2 80', 'Web', '', '', 1);
-			INSERT INTO "challenge" VALUES (10, 'web442', 1000, 'flag{pwssssssnwwsdssww}', 'OK坎<br>sdss<br>skjkjshdjsa', 'https://baidu.com,http://file.com', 'Web', '', '四四岁四岁,sdsdksjsjdjsdsdssds', 1);
-			COMMIT;
 			CREATE TABLE "notice" (
 			    "id"	INTEGER NOT NULL UNIQUE,
 			    "title" TEXT NOT NULL,
@@ -131,27 +107,6 @@ func Install(c *gin.Context) {
 				"created_at" INTEGER NOT NULL,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);
-			BEGIN;
-			INSERT INTO "notice" VALUES (1, 'Hello World!', 'test
-			tesss*&^*^%$#@@!)(ssssst
-			tes<CYCYCYCYnbnbnbnbnb!!>t
-			', 1637765128);
-			INSERT INTO "notice" VALUES (2, 'Hello_World2222*&^%%事实上成绩', 'test
-			tesss*&山东省地矿局的tes<CYCYCYCYnbnbnbnbnb!!>t
-			', 1637765298);
-			INSERT INTO "notice" VALUES (3, 'Hello_World2222*&^%%成绩', 'test
-			tesss*&山东局的tes<CYCYCYCYnbnbnbnbnb!!>t
-			', 1637765307);
-			INSERT INTO "notice" VALUES (4, 'Hello_World2222*&^%%成绩', 'test
-			tesss*&山东局的tes<CYYCYnbnbnbnbnb!!>t
-			', 1637765313);
-			INSERT INTO "notice" VALUES (5, 'Hello_World2222*&^%%成绩', 'test
-			tesss*&山东局的tes<CYYCYnbnbnbnbnb!!>t
-			', 1637765314);
-			INSERT INTO "notice" VALUES (6, 'Hello HTML', 'test<br>tes试试大家都s<CYYCYnbnbnbnbnb!!>t<br>sssssssss', 1637765367);
-			INSERT INTO "notice" VALUES (7, 'Hello是攻防个vHTML', 'test<br>tes试试大家都s<CYYCYnbnbnbnbnb!!>t<br>sssssssss', 1637765373);
-			INSERT INTO "notice" VALUES (8, 'HellohttpvHTML', '<a href="http://map.baidu.com" target="_blank">地图</a>', 1637765454);
-			COMMIT;
 			CREATE TABLE "category" (
 				"id"	INTEGER NOT NULL UNIQUE,
 				"category"	TEXT NOT NULL UNIQUE,
@@ -182,8 +137,8 @@ func Install(c *gin.Context) {
 			logs.ERROR("db init error:", err)
 		}
 		logs.INFO("db init success!")
-		// sql1 := "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
-		// _, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, "", "", "", 1, 0, 0, cfg.Timestamp(), 1)
+		sql1 := "INSERT INTO user (token,username,password,email,affiliation,country,website,hidden,banned,team_id,created,role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
+		_, err1 := db.Exec(sql1, cfg.Token(), request.Username, cfg.MD5(request.Password), request.Email, "", "", "", 1, 0, 0, cfg.Timestamp(), 1)
 		// sql2 := "INSERT INTO score (username,score) VALUES (?,0);"
 		// _, err2 := db.Exec(sql2, request.Username)
 		// // --- for test purposes ---
@@ -192,13 +147,13 @@ func Install(c *gin.Context) {
 		// sql2 = "INSERT INTO score (username,score) VALUES (?,0);"
 		// _, err2 = db.Exec(sql2, "test")
 		// // --- end ---
-		// if err1 != nil {
-		// 	logs.ERROR("admin insert error", err1)
-		// }
+		if err1 != nil {
+			logs.ERROR("admin insert error", err1)
+		}
 		// if err2 != nil {
 		// 	logs.ERROR("admin insert error", err2)
 		// }
-		// logs.INFO("Administrator account [" + request.Username + "]" + " register success!")
+		logs.INFO("Administrator account [" + request.Username + "]" + " register success!")
 
 		//新建sessions文件夹
 		err = os.MkdirAll(cfg.SESSION_DIR, 0755)
