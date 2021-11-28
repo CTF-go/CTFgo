@@ -42,7 +42,7 @@ func GetScoreByUserID(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "msg": "Format error!"})
 		return
 	}
-	sql := "SELECT s.score FROM score AS s, user AS u WHERE u.id = 3 AND u.hidden = 0 AND u.username = s.username LIMIT 1;"
+	sql := "SELECT s.score FROM score AS s, user AS u WHERE u.id = ? AND u.hidden = 0 AND u.username = s.username LIMIT 1;"
 	row := db.QueryRow(sql, id)
 	err := row.Scan(&score)
 	if err != nil {
@@ -55,7 +55,7 @@ func GetScoreByUserID(c *gin.Context) {
 // GetSelfScoreAndRank 获取当前用户分数和排名。
 func GetSelfScoreAndRank(c *gin.Context) {
 	var scoreAndRank ScoreRankResponse
-	sql := "SELECT score, (SELECT count(DISTINCT score) FROM score WHERE score>=s.score) AS rank FROM score s WHERE id = ? ORDER BY score DESC LIMIT 1;"
+	sql := "SELECT score, (SELECT count(DISTINCT score) FROM score WHERE score>=s.score) AS rank FROM score AS s,user AS u WHERE u.id = ? AND u.username = s.username ORDER BY score DESC LIMIT 1;"
 
 	session, err := Store.Get(c.Request, cfg.SESSION_ID)
 	if err != nil {

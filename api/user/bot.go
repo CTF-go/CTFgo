@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	HEX_BOT_URL     = "http://pi.am473ur.com:30000/send"
+	HEX_BOT_URL     = "http://xxxxx"
 	CONTENT_TYPE    = "application/json"
-	SERVER_CHAN_URL = "https://sctapi.ftqq.com/SCT98477Tj7zDTVzodGVqt8ZlCc3Hc9jU.send?title=%s&desp=%s"
+	SERVER_CHAN_URL = "https://sctapi.ftqq.com/<secret_key>.send?title=%s&desp=%s"
 )
 
 // HexBotRequest 定义对hex酱请求后的返回结构体。
