@@ -45,6 +45,7 @@ A golang CTF competition platform with high-performance, security, and low hardw
 - [Features](#features)
 - [Install](#install)
 - [Contributing](#contributing)
+- [Development Team](#development-team)
 - [License](#license)
 
 
