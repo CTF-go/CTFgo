@@ -57,14 +57,15 @@ CTFgo is a golang CTF competition platform with high-performance, security and l
 
 CTFgo has been used in the [NCTF2021](https://ctf.njupt.edu.cn/727.html) competition. Under more than 400 teams, CTFgo is smooth and stabilized with low resource usage.
 
-Compared to other ctf platforms, CTFgo offers high performance, low system resource usage, small size, cross-platform usability, no additional dependencies to install and fast startup because all resources are packaged into one single executable file.
+Compared to other ctf platforms, CTFgo offers high performance, low system resource usage, small size, cross-platform usability, no additional dependencies to install and fast startup because all resources are packaged into a single executable file.
 
 ## Features
 
 - [x] separation of front-end and back-end
 - [x] RESTful
 - [x] quick start
-- ...
+
+...
 
 
 ## Install
