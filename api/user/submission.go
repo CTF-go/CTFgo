@@ -70,7 +70,8 @@ func SubmitFlag(c *gin.Context) {
 	// 对比flag
 	if request.Flag != flag {
 		c.JSON(200, gin.H{"code": 400, "msg": "Wrong flag!"})
-	} else {
+		return
+	} else { // flag正确
 		// 限制比赛结束时间后不能提交flag
 		if time.Now().Unix() > cfg.END_TIME {
 			c.JSON(200, gin.H{"code": 3000, "msg": "Flag is true, but the game has ended!"})
@@ -115,26 +116,26 @@ func SubmitFlag(c *gin.Context) {
 			hexBot.QQNum = 884196088 //qq群
 			var serverChanTitle, serverChanDesp string
 
-			cname, ccategory, err := getChallengeNameByID(request.Cid)
+			cname, category, err := getChallengeNameByID(request.Cid)
 			if err != nil {
 				logs.WARNING("get challenge name and category error:", err)
 			}
 
 			switch solvedCount {
 			case 0:
-				serverChanTitle = "challenge has solved but have not record"
+				serverChanTitle = "challenge has solved but have not recorded"
 				serverChanDesp = "1111"
 				go GetServerChan(serverChanTitle, serverChanDesp)
 			case 1:
-				hexBot.Msg = fmt.Sprintf("[%s]\nFirst Blood!!!\nCongratulations to team %s for getting the first blood of the challenge %s in the %s category!", cfg.HexBotSayTime(), user.Username, cname, ccategory)
+				hexBot.Msg = fmt.Sprintf("[%s]\nFirst Blood!!!\nCongratulations to team %s for getting the first blood of the challenge %s in the %s category!", cfg.HexBotSayTime(), user.Username, cname, category)
 				go PostHexBot(&hexBot)
 				logs.INFO(hexBot.Msg)
 			case 2:
-				hexBot.Msg = fmt.Sprintf("[%s]\nSecond Blood!!!\nCongratulations to team %s for getting the second blood of the challenge %s in the %s category!", cfg.HexBotSayTime(), user.Username, cname, ccategory)
+				hexBot.Msg = fmt.Sprintf("[%s]\nSecond Blood!!!\nCongratulations to team %s for getting the second blood of the challenge %s in the %s category!", cfg.HexBotSayTime(), user.Username, cname, category)
 				go PostHexBot(&hexBot)
 				logs.INFO(hexBot.Msg)
 			case 3:
-				hexBot.Msg = fmt.Sprintf("[%s]\nThird Blood!!!\nCongratulations to team %s for getting the third blood of the challenge %s in the %s category!", cfg.HexBotSayTime(), user.Username, cname, ccategory)
+				hexBot.Msg = fmt.Sprintf("[%s]\nThird Blood!!!\nCongratulations to team %s for getting the third blood of the challenge %s in the %s category!", cfg.HexBotSayTime(), user.Username, cname, category)
 				go PostHexBot(&hexBot)
 				logs.INFO(hexBot.Msg)
 			}
@@ -142,6 +143,7 @@ func SubmitFlag(c *gin.Context) {
 
 		logs.INFO(fmt.Sprintf("[%s] user solved [%d].", user.Username, request.Cid))
 		c.JSON(200, gin.H{"code": 200, "msg": "Correct flag!"})
+		return
 	}
 }
 
