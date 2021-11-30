@@ -76,3 +76,5 @@ func GetSelfScoreAndRank(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"code": 200, "data": scoreAndRank})
 }
+
+// 获取校内榜：SELECT u.id, u.username, s.score FROM user AS u, score AS s WHERE u.username = s.username AND u.id in (SELECT DISTINCT team_id FROM studentinfo)	ORDER BY score DESC;
