@@ -62,6 +62,19 @@ A golang CTF competition platform with high-performance, security, and low hardw
 $ go build .
 ```
 
+## Development
+
+### Front end
+Go to [ctfgo-theme-default](https://github.com/CTF-go/ctfgo-theme-default)
+
+### Back end
+
+- Environmental requirements: go version > 1.16 (CTFgo uses embed modules)
+
+- The content of the `dist` folder generated at the [front end](https://github.com/CTF-go/ctfgo-theme-default) is put into the back end `themes` folder.
+
+- You can quickly start the development environment using the `go run .` command.
+
 ## Contributing
 
 Feel free to dive in! [Open an issue](https://github.com/CTF-go/CTFgo/issues/new) or submit PRs.
