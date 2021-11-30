@@ -33,7 +33,7 @@ A golang CTF competition platform with high-performance, security, and low hardw
   <a target="_blank" href="https://ctfgo.top/">Live Demo</a> •
   <a target="_blank" href="https://github.com/CTF-go/CTFgo/">Discussion Forum</a> •
   <a target="_blank" href="https://github.com/CTF-go/CTFgo/">Documentation</a> •
-  <a href="ttps://github.com/CTF-go/CTFgo/releases">Download</a> •
+  <a href="https://github.com/CTF-go/CTFgo/releases">Download</a> •
   <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=LjfRVr0qw60VY7P8lqlfOcSMr4kHwoIR&jump_from=webapi">QQ Group</a> •
   <a href="#license">License</a>
 </p>
